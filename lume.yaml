@@ -1,0 +1,465 @@
+# https://stuvel.eu/post/2022-06-05-esphome-touch-dimmer/
+substitutions:
+  name: lume
+  device_description: Супер выключатель
+
+esphome:
+  name: "${name}"
+  comment: "${device_description}"
+  platformio_options:
+    board_upload.maximum_size: 7864320
+
+  includes:
+    - included/touch-dimming.h 
+  on_boot:
+    - priority: 600
+      then:
+        - script.execute: blink_led
+    - priority: 500
+      then:
+        - lambda: new TouchDimmer("dimm1", light_dimmer1, left_touch);
+        - lambda: new TouchDimmer("dimm2", light_dimmer2, right_touch);                
+    - priority: -100
+      then:  
+        - light.addressable_set:
+            id: led_ww
+            range_from: 3
+            range_to: 4
+            red: 25%
+            green: 23%
+            blue: 1%
+        - delay: 50ms    
+        - light.addressable_set:
+            id: led_ww
+            range_from: 0
+            range_to: 2
+            red: 0%
+            green: 0%
+            blue: 0%
+
+api:
+  reboot_timeout: 0s     
+  
+esp32:
+  board: denky_d4
+  flash_size: 8MB
+  framework:
+    type: arduino
+#-------------------------------------------
+# PSRAM
+#-------------------------------------------
+psram:
+  mode: quad
+  speed: 80MHz
+
+#-------------------------------------------
+# MCP453X
+#-------------------------------------------
+mcp453x:
+  id: my_mcp453x
+  address: 0x2F
+
+#-------------------------------------------
+# I2c
+#-------------------------------------------
+i2c:
+  sda:
+    number: GPIO7
+    ignore_pin_validation_error: true
+  scl: 
+    number: GPIO8
+    ignore_pin_validation_error: true
+  scan: true
+  id: bus_a
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+ # time: !include included/time.yaml
+  esp32_temp: !include packages/sensor/esp32_temp.yaml
+
+#-------------------------------------------
+# LOGGER
+#-------------------------------------------
+logger:
+
+#-------------------------------------------
+# SCRIPT
+#-------------------------------------------
+script:
+  - id: blink_led
+    mode: restart
+    then:
+      - light.addressable_set:
+          id: led_ww
+          range_from: 0
+          range_to: 2
+          red: 25%
+          green: 0%
+          blue: 0%
+      - delay: 500ms
+      - light.addressable_set:
+          id: led_ww
+          range_from: 0
+          range_to: 2
+          red: 0%
+          green: 0%
+          blue: 0%
+      - delay: 500ms
+      - script.execute: blink_led
+
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------      
+output:
+  - platform: ac_dimmer
+    id: dimmer1
+    gate_pin: GPIO19  
+    zero_cross_pin:
+      number: GPIO5
+      mode:
+        input: true
+      inverted: yes
+      ignore_strapping_warning: true
+      allow_other_uses: true
+    min_power: 30%
+    init_with_half_cycle: true
+#    method: leading
+
+  - platform: ac_dimmer
+    id: dimmer2
+    gate_pin: GPIO25
+    zero_cross_pin:
+      number: GPIO5
+      mode:
+        input: true
+      inverted: yes
+      ignore_strapping_warning: true
+      allow_other_uses: true
+    min_power: 30%
+    init_with_half_cycle: true
+
+  - platform: ledc
+    pin: GPIO32
+    id: rtttl_out
+
+# Create the MCP453X output
+  - platform: mcp453x
+    id: pir_output
+    mcp453x_id: my_mcp453x
+
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: monochromatic   # binary  если не нужно диммировать
+    output: dimmer1
+    name: "${name} 1 лампа"
+    id: light_dimmer1
+#    restore_mode: ALWAYS_OFF
+
+  - platform: monochromatic   # binary  если не нужно диммировать    
+    output: dimmer2
+    name: "${name} 2 лампа"
+    id: light_dimmer2
+#    restore_mode: ALWAYS_OFF
+
+  - platform: esp32_rmt_led_strip
+    rgb_order: GRB
+    pin: GPIO26
+    num_leds: 5
+    rmt_channel: 2
+    chipset: WS2812
+    id: led_ww
+#    name: "Светодиоды на диммере"
+
+#-------------------------------------------
+# TOUCH
+#-------------------------------------------
+esp32_touch:
+  setup_mode: False
+
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: analog_threshold
+    name: "${name} движение"
+    id: pir
+    threshold: 0.5
+    sensor_id: pir_adc
+    device_class: motion
+
+  - platform: analog_threshold
+    name: "Датчик шума"
+    id: noise
+    threshold: 60
+    sensor_id: Leq_id
+    device_class: sound
+
+  - platform: esp32_touch
+    name: "${name} левая кнопка"
+    id: left_touch
+    pin: GPIO15
+    threshold: 1150
+    on_press:         
+      then:
+          - light.addressable_set:
+              id: led_ww
+              range_from: 3
+              range_to: 3
+              red: 0%
+              green: 0%
+              blue: 20%                  
+    on_release: 
+      then:
+          - light.addressable_set:
+              id: led_ww
+              range_from: 3
+              range_to: 3
+              red: 25%
+              green: 23%
+              blue: 1%       
+    on_click: 
+      then:
+        - rtttl.play: 'short:d=20,o=5,b=100:e6' 
+        
+
+  - platform: esp32_touch
+    name: "${name} правая кнопка"
+    id: right_touch
+    pin: GPIO2
+    threshold: 1150
+    on_press:         
+      then:
+          - light.addressable_set:
+              id: led_ww
+              range_from: 4
+              range_to: 4
+              red: 0%
+              green: 0%
+              blue: 20%                  
+    on_release: 
+      then:
+          - light.addressable_set:
+              id: led_ww
+              range_from: 4
+              range_to: 4
+              red: 25%
+              green: 23%
+              blue: 1%       
+    on_click: 
+      then:
+        - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+
+
+  - platform: gpio
+    pin:
+      number: GPIO33
+      inverted: true
+    id: "input1"
+    name: "${name} Вход 1"
+    on_press:
+      - light.turn_on: light_dimmer1
+      - light.addressable_set:
+          id: led_ww
+          range_from: 3
+          range_to: 3
+          red: 25%
+          green: 0%
+          blue: 0%            
+    on_release:
+      - light.turn_off: light_dimmer1
+      - light.addressable_set:
+          id: led_ww
+          range_from: 3
+          range_to: 3
+          red: 25%
+          green: 23%
+          blue: 1%
+
+
+  - platform: gpio
+    pin:
+      number: GPIO3
+      inverted: true
+    id: "input2"
+    name: "${name} Вход 2"
+    on_press:
+      - light.turn_on: light_dimmer2
+      - light.addressable_set:
+          id: led_ww
+          range_from: 4
+          range_to: 4
+          red: 25%
+          green: 0%
+          blue: 0%            
+    on_release:
+      - light.turn_off: light_dimmer2
+      - light.addressable_set:
+          id: led_ww
+          range_from: 4
+          range_to: 4
+          red: 25%
+          green: 23%
+          blue: 1%
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: adc
+    pin: GPIO35
+    id: pir_adc    
+#    name: "pir_adc_gpio35"
+    update_interval: 1s
+
+  - platform: sht3xd
+    temperature:
+      name: "${name} температура"
+    humidity:
+      name: "${name} влажность"
+    address: 0x44
+    update_interval: 60s
+
+  - platform: bh1750
+    name: "${name} освещенность"
+    address: 0x23
+    update_interval: 60s
+
+  - platform: uptime
+    name: "${name} uptime"
+    
+  - platform: stream_server
+    connection_count:
+      name: "${name} number of connections"
+
+#-------------------------------------------
+# RTTTL
+#-------------------------------------------
+rtttl:
+  output: rtttl_out
+  gain: 60%
+
+
+
+#-------------------------------------------
+# REMOTE_TRANSMITTER
+#-------------------------------------------
+remote_transmitter:
+  pin: GPIO13
+  # Infrared remotes use a 50% carrier signal
+  carrier_duty_percent: 50%
+
+#-------------------------------------------
+# REMOTE_RECEIVER
+#-------------------------------------------
+remote_receiver:
+  pin:
+    number: GPIO4
+    inverted: true 
+  dump: all  
+
+#-------------------------------------------
+# EXTERNAL COMPONENTS
+#-------------------------------------------
+external_components:
+  - source: github://stas-sl/esphome-sound-level-meter
+  - source: github://oxan/esphome-stream-server@master
+  - source: github://ananyevgv/esphome-components/
+    refresh: 0s
+
+#-------------------------------------------
+# I2S
+#-------------------------------------------
+i2s:
+  bck_pin: 21
+  ws_pin: 20
+  din_pin: 22
+  sample_rate: 48000            # default: 48000
+  bits_per_sample: 32           # default: 32
+  bits_shift: 8                 # default: 0
+
+#-------------------------------------------
+# SOUND LEVEL METER
+#-------------------------------------------
+sound_level_meter:
+  update_interval: 1s           # default: 60s
+  buffer_size: 1024             # default: 1024
+  mic_sensitivity: -26dB        # default: empty
+  mic_sensitivity_ref: 94dB     # default: empty
+  groups:
+    - sensors:
+        - type: eq
+          name: "${name} Leq_1s"
+          id: Leq_id
+#-------------------------------------------
+# UART
+#-------------------------------------------
+uart:
+  id: uart_zigbee
+  rx_pin:
+    number: 14
+    mode:
+      input: true
+      output: false
+      open_drain: false
+      pullup: false
+      pulldown: false
+    inverted: false
+    ignore_strapping_warning: false
+    drive_strength: 20.0
+  tx_pin:
+    number: 27
+    mode:
+      output: true
+      input: false
+      open_drain: false
+      pullup: false
+      pulldown: false
+    inverted: false
+    ignore_strapping_warning: false
+    drive_strength: 20.0
+  baud_rate: 115200
+  rx_buffer_size: 256
+  stop_bits: 1
+  data_bits: 8
+  parity: NONE
+#-------------------------------------------
+# STREAM SERVER
+#-------------------------------------------
+stream_server:
+  uart_id: uart_zigbee
+  port: 6638
+  buffer_size: 128
+
+select:
+  - platform: template
+    name: "Чувствительность датчика движения"
+    id: mode
+    options:
+     - "Очень высокая"      
+     - "Высокая"
+     - "Средняя"
+     - "Низкая"
+     - "Очень низкая"     
+    initial_option: "Очень высокая"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            float speed_percent;
+            switch(i) {
+              case 0: id(pir_output).set_level(0); break;
+              case 1: id(pir_output).set_level(0.25); break;
+              case 2: id(pir_output).set_level(0.50); break;
+              case 3: id(pir_output).set_level(0.75); break;
+              case 4: id(pir_output).set_level(1.0); break;
+            }
+
+
+
