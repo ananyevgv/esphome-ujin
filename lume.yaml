@@ -461,5 +461,39 @@ select:
               case 4: id(pir_output).set_level(1.0); break;
             }
 
-
+  - platform: template
+    name: "Чувствительность датчика звука"
+    options:
+     - "Очень высокая"      
+     - "Высокая"
+     - "Средняя"
+     - "Низкая"
+     - "Очень низкая"     
+    initial_option: "Очень высокая"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0:
+                 id(noise).set_lower_threshold(60.0); 
+                 id(noise).set_upper_threshold(60.0); 
+                 break;
+              case 1: 
+                id(noise).set_lower_threshold(70.0);
+                id(noise).set_upper_threshold(70.0); 
+                break;
+              case 2: 
+                id(noise).set_lower_threshold(80.0);
+                id(noise).set_upper_threshold(80.0); 
+                break;
+              case 3: 
+                id(noise).set_lower_threshold(90.0);
+                 id(noise).set_upper_threshold(90.0);
+                 break;
+              case 4: 
+                id(noise).set_lower_threshold(100.0);
+                id(noise).set_upper_threshold(100.0); 
+                break;
+            }
 
