@@ -1,20 +1,3 @@
-# Основные спецификаторы форматирования (printf-стиль)
-# Спецификатор Тип данных Пример использования
-# %d или %i int (знаковое целое) sprintf(buf, "Value: %d", -42);
-# %u unsigned int (беззнаковое) sprintf(buf, "Value: %u", 42);
-# %ld long int (знаковое) sprintf(buf, "Value: %ld", -100000L);
-# %lu unsigned long int sprintf(buf, "Value: %lu", 100000UL);
-# %lld long long int (знаковое) sprintf(buf, "Value: %lld", -5000000000LL);
-# %llu unsigned long long int sprintf(buf, "Value: %llu", 5000000000ULL);
-# %f float / double sprintf(buf, "Temp: %.2f", 23.5f);
-# %e, %E Число в экспоненциальной форме sprintf(buf, "Sci: %e", 0.000045); → 4.500000e-05
-# %x, %X Шестнадцатеричный (unsigned) sprintf(buf, "Hex: 0x%X", 255); → 0xFF
-# %o Восьмеричный (unsigned) sprintf(buf, "Oct: %o", 64); → 100
-# %c Символ (char) sprintf(buf, "Char: %c", 'A');
-# %s Строка (const char*) sprintf(buf, "Name: %s", "ESP32");
-# %% Символ % sprintf(buf, "Battery: 50%%");
-
-
 # EN – RST (XS2)
 # GPIO0 – GPO (XS2)
 # GPIO1 –  TXD (XS2)
@@ -52,26 +35,25 @@
 # Датчик освещенности – адрес I2C 0x23
 # Цифровой потенциометр – адрес I2C 0x2f
 
-
 # https://stuvel.eu/post/2022-06-05-esphome-touch-dimmer/
 substitutions:
   name: lume
   device_description: Супер выключатель
+  light_1_device: light.kithen1
+  light_2_device: light.kithen2
 
 esphome:
   name: "${name}"
   comment: "${device_description}"
   platformio_options:
     board_upload.maximum_size: 7864320
-
-      
   includes:
     - included/touch-dimming.h 
   on_boot:
     - priority: 500
       then:
-        - lambda: new TouchDimmer("dimm1", light_dimmer1, left_touch);
-        - lambda: new TouchDimmer("dimm2", light_dimmer2, right_touch);                
+        - lambda: new TouchDimmer("dimm1", light_dimmer1, left_touch, binary_dimm1);
+        - lambda: new TouchDimmer("dimm2", light_dimmer2, right_touch, binary_dimm2);                
 
 api:
   reboot_timeout: 0s     
@@ -118,6 +100,19 @@ packages:
   device_base: !include packages/device_base.yaml
  # time: !include included/time.yaml
   esp32_temp: !include packages/sensor/esp32_temp.yaml
+  ir_receiver: !include 
+    file: packages/lume/ir_receiver.yaml
+    vars:
+      pin_ir_receiver: GPIO4
+  zigbee: !include 
+    file: packages/lume/zigbee.yaml
+    vars:
+      TX_Z: 27
+      RX_Z: 14
+  ir_transmitter: !include 
+    file: packages/lume/ir_transmitter.yaml
+    vars:
+      pin_ir_transmitter: GPIO13
 
 #-------------------------------------------
 # LOGGER
@@ -156,21 +151,17 @@ script:
               id(light_dimmer2).toggle().perform(); 
               break;
             case 10: 
-              id(light_dimmer1).turn_on().set_brightness(0.5).perform(); 
-              delay_microseconds_safe (1000);
-              id(light_dimmer1).turn_off().set_transition_length(1000).perform(); 
+              id(light_dimmer1).turn_on().set_transition_length(1000).set_brightness(0.5).perform(); 
+              id(binary_timer_noise).publish_state(true);
               break;
             case 11: 
               id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              delay_microseconds_safe (1000);
-              id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
+              id(binary_timer_noise).publish_state(true);
               break;
             case 12:
               id(light_dimmer1).turn_on().set_brightness(0.5).perform();
               id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              delay_microseconds_safe (1000);
-              id(light_dimmer1).turn_off().set_transition_length(1000).perform();
-              id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
+              id(binary_timer_noise).publish_state(true);
               break;       
           }
   - id: action_motion
@@ -200,20 +191,16 @@ script:
               break;
             case 10: 
               id(light_dimmer1).turn_on().set_brightness(0.5).perform(); 
-              delay_microseconds_safe (1000);
-              id(light_dimmer1).turn_off().set_transition_length(1000).perform(); 
+              id(binary_timer_pir).publish_state(true); 
               break;
             case 11: 
               id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              delay_microseconds_safe (1000);
-              id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
+              id(binary_timer_pir).publish_state(true);
               break;
             case 12:
               id(light_dimmer1).turn_on().set_brightness(0.5).perform();
               id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              delay_microseconds_safe (1000);
-              id(light_dimmer1).turn_off().set_transition_length(1000).perform();
-              id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
+              id(binary_timer_pir).publish_state(true);
               break;       
           }
 #-------------------------------------------
@@ -250,7 +237,6 @@ output:
     pin: GPIO32
     id: rtttl_out
 
-# Create the MCP453X output
   - platform: mcp453x
     id: pir_output
     mcp453x_id: my_mcp453x
@@ -259,19 +245,81 @@ output:
 # LIGHT
 #-------------------------------------------
 light:
-  - platform: monochromatic   # binary  если не нужно диммировать
+  - platform: monochromatic
     output: dimmer1
     name: "${name} 1 лампа"
     id: light_dimmer1
     restore_mode: ALWAYS_OFF
     icon: mdi:numeric-1-circle-outline
+    on_turn_on:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 3;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_1_device
+    on_turn_off:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 3;
+          then:
+            - homeassistant.action:
+                action: light.turn_off
+                data:
+                  entity_id: $light_1_device
+    on_state:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 3;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_1_device
+                  brightness: !lambda return (id(light_dimmer1).remote_values.get_brightness());
 
-  - platform: monochromatic   # binary  если не нужно диммировать    
+  - platform: monochromatic   
     output: dimmer2
     name: "${name} 2 лампа"
     id: light_dimmer2
     restore_mode: ALWAYS_OFF
     icon: mdi:numeric-2-circle-outline
+    on_turn_on:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 2;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_2_device
+    on_turn_off:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 2;
+          then:
+            - homeassistant.action:
+                action: light.turn_off
+                data:
+                  entity_id: $light_2_device
+    on_state:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 2;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_2_device
+                  brightness: !lambda return (id(light_dimmer2).remote_values.get_brightness());
 
   - platform: esp32_rmt_led_strip
     rgb_order: GRB
@@ -280,7 +328,6 @@ light:
     rmt_channel: 2
     chipset: WS2812
     id: led_ww
-#    name: "Светодиоды на диммере"
 
 #-------------------------------------------
 # TOUCH
@@ -303,6 +350,8 @@ binary_sensor:
       then:
         - script.execute: action_motion
         - script.stop: action_motion
+        - lambda: |-
+            id(g_timer_pir)=0;
   - platform: analog_threshold
     name: "Датчик шума"
     id: noise
@@ -314,6 +363,8 @@ binary_sensor:
       then:
         - script.execute: action_noise
         - script.stop: action_noise
+        - lambda: |-
+            id(g_timer_noise)=0;
   - platform: esp32_touch
     name: "${name} левая кнопка"
     id: left_touch
@@ -348,6 +399,7 @@ binary_sensor:
       inverted: true
     id: "input1"
     name: "${name} Вход 1"
+    icon: mdi:inbox-arrow-down-outline
     on_press:
       then:
         - lambda: |-
@@ -368,7 +420,7 @@ binary_sensor:
               case 2 ... 43: id(light_dimmer1).toggle().perform(); break;
             }
 
-    icon: mdi:inbox-arrow-down-outline
+
 
   - platform: gpio
     pin:
@@ -396,6 +448,19 @@ binary_sensor:
               case 1: id(light_dimmer2).turn_off(); break;
               case 2 ... 43: id(light_dimmer2).toggle(); break;
             }
+
+  - platform: template
+    id: binary_timer_noise
+
+  - platform: template
+    id: binary_timer_pir
+
+  - platform: template
+    id: binary_dimm1
+
+  - platform: template
+    id: binary_dimm2
+
 #-------------------------------------------
 # SENSOR
 #-------------------------------------------
@@ -403,7 +468,6 @@ sensor:
   - platform: adc
     pin: GPIO35
     id: pir_adc    
-#    name: "pir_adc_gpio35"
     update_interval: 1s
 
   - platform: sht3xd
@@ -424,10 +488,6 @@ sensor:
   - platform: uptime
     name: "${name} uptime"
     
-  - platform: stream_server
-    connection_count:
-      name: "${name} number of connections"
-      icon: mdi:connection
 #-------------------------------------------
 # RTTTL
 #-------------------------------------------
@@ -436,267 +496,10 @@ rtttl:
   gain: 60%
 
 #-------------------------------------------
-# REMOTE_TRANSMITTER
-#-------------------------------------------
-remote_transmitter:
-  pin: GPIO13
-  # Infrared remotes use a 50% carrier signal
-  carrier_duty_percent: 50%
-
-text_sensor:
-  - platform: template
-    name: "IR code"
-    id: ir_code
-    icon: mdi:remote-tv
-#-------------------------------------------
-# REMOTE_RECEIVER
-#-------------------------------------------
-remote_receiver:
-  pin:
-    number: GPIO4
-    inverted: true 
-  id: r_receiver
-  on_abbwelcome:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства abb-welcome: Код %u", x.data()[0]);'
-      - logger.log:
-          format: "abbwelcome: %u"
-          args: ["x.data()[0]"]
-  on_aeha:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства aeha: Команда %u Адрес %u", x.data.front(), x.address);'      
-      - logger.log:
-          format: "on_aeha: %u %u"
-          args: ["x.address", "x.data.front()"]
-  on_byronsx:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства byronsx: Команда %u Адрес %u", x.command, x.address);'  
-      - logger.log:
-          format: "on_byronsx: %u %u"
-          args: ["x.address", "x.command"]
-  on_canalsat:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства canalsat: Команда %u Адрес %u", x.command, x.address);' 
-      - logger.log:
-          format: "on_canalsat: %u %u"
-          args: ["x.address", "x.command"]
- # on_canalsatld:
- #   then:
-  #    - text_sensor.template.publish:
-  #        id: ir_code
-   #       state: !lambda 'return str_sprintf("Получено от устройства canalsatld: Команда %u Адрес %u", x.command, x.address);' 
-    #  - logger.log:
-  #        format: "on_canalsatld: %u %u"
-    #      args: ["x.address", "x.command"]     
-  on_coolix:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства coolix: Первый код %lu Второй код %lu", long(x.first), long(x.second));' 
-      - logger.log:
-          format: "on_coolix: %lu %lu"
-          args: ["long(x.first)", "long(x.second)"]
-  on_dish:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства dish: Команда %u Адрес %u", x.command, x.address);' 
-      - logger.log:
-          format: "on_dish: %u %u"
-          args: ["x.address", "x.command"]
-  on_dooya:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства dooya: Канал %u Кнопка %u Проверка %u", x.channel, x.button, x.check);' 
-      - logger.log:
-          format: "on_dooya: %u %u %u"
-          args: ["x.channel", "x.button", "x.check"]
-  on_drayton:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства drayton: Команда %u Адрес %u Канал %u", x.command, x.address, x.channel);' 
-      - logger.log:
-          format: "on_drayton: %u %u %u"
-          args: ["x.address", "x.channel", "x.command"]
-  on_jvc:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства jvc: Код %lu", long(x.data));' 
-      - logger.log:
-          format: "on_jvc: %lu"
-          args: ["long(x.data)"]
-  on_keeloq:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства keeloq: Команда %u Адрес %lu Код %lu", x.command, long(x.address), long(x.encrypted));' 
-      - logger.log:
-          format: "on_keeloq: %lu %lu %u"
-          args: ["long(x.encrypted)", "long(x.address)", "x.command"]
-  on_haier:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства haier: Код %u", x.data.front());' 
-      - logger.log:
-          format: "on_haier: %u"
-          args: ["x.data.front()"]
-  on_lg:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства lg: Биты %u  Код %lu", x.nbits , long(x.data));'
-      - logger.log:
-          format: "on_lg: %lu %u"
-          args: ["long(x.data)", "x.nbits"]
-  on_magiquest:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства magiquest: Величина %u  Идентификатор %lu", x.magnitude , long(x.wand_id));'
-      - logger.log:
-          format: "on_magiquest: %u %lu"
-          args: ["x.magnitude", "long(x.wand_id)"]
-  on_midea:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства midea: Размер %u  Команда %u", x.size() , x.data()[0]);'
-      - logger.log:
-          format: "on_midea: %u %u"
-          args: ["x.size()", "x.data()[0]"]
-  on_nec:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства nec: Команда %u Адрес %u", x.command, x.address);' 
-      - logger.log:
-          format: "on_nec: %u %u"
-          args: ["x.address", "x.command"]
-  on_nexa:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства nexa: Устройство %lu Группа %u Состояние %u Канал %u Уровень %u", long(x.device), x.group, x.state, x.channel, x.level);' 
-      - logger.log:
-          format: "on_nexa: %lu %u %u %u %u"
-          args: ["long(x.device)", "x.group", "x.state", "x.channel", "x.level"]
-  on_panasonic:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства panasonic: Команда %lu Адрес %u", long(x.command), x.address);' 
-      - logger.log:
-          format: "on_panasonic: %u %lu"
-          args: ["x.address", "long(x.command)"]
-  on_pioneer:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства pioneer: Первый код %u Второй код %u", x.rc_code_1, x.rc_code_2);' 
-      - logger.log:
-          format: "on_pioneer: %u %u"
-          args: ["x.rc_code_1", "x.rc_code_2"]
-  on_rc5:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства rc5: Команда %u Адрес %u", x.command, x.address);' 
-      - logger.log:
-          format: "on_rc5: %u %u"
-          args: ["x.address", "x.command"]
-  on_rc6:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства rc6: Команда %u Адрес %u", x.command, x.address);' 
-      - logger.log:
-          format: "on_rc6: %u %u"
-          args: ["x.address", "x.command"]
-  on_rc_switch:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства rc_switch: Команда %llu Протокол %u", x.code, x.protocol);' 
-      - logger.log:
-          format: "on_rc_switch: %llu %u"
-          args: ["x.code", "x.protocol"]
-  on_samsung:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства samsung: Бит %u Команда %llu", x.nbits, x.data);'
-      - logger.log:
-          format: "on_samsung: %llu %u"
-          args: ["x.data", "x.nbits"]
-  on_samsung36:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства samsung36: Адрес %u Команда %lu", x.address, long(x.command));'
-      - logger.log:
-          format: "on_samsung36: %u %lu"
-          args: ["x.address", "long(x.command)"]
-  on_sony:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства sony: Бит %u Команда %lu", x.nbits, long(x.data));'
-      - logger.log:
-          format: "on_sony: %lu %u"
-          args: ["long(x.data)", "x.nbits"]
-  on_toshiba_ac:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства toshiba_ac: Первый код %llu Второй код %llu", x.rc_code_1, x.rc_code_2);' 
-      - logger.log:
-          format: "on_toshiba_ac: %llu %llu"
-          args: ["x.rc_code_1", "x.rc_code_2"]
-  on_mirage:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства mirage: Код %s", format_hex(x.data).c_str());' 
-      - lambda: |-
-          ESP_LOGD("mirage", "Mirage data: %s", format_hex(x.data).c_str());
-  on_toto:
-    then:
-      - text_sensor.template.publish:
-          id: ir_code
-          state: !lambda 'return str_sprintf("Получено от устройства toto: Первый код %u Второй код %u Команда %u", x.rc_code_1, x.rc_code_2, x.command);' 
-      - logger.log:
-          format: "on_toto: %u %u %u"
-          args: ["x.rc_code_1", "x.rc_code_2", "x.command"]
- # on_roomba:
- #   then:
- #     - text_sensor.template.publish:
-  #        id: ir_code
-  #        state: !lambda 'return str_sprintf("Получено от устройства roomba: Команда %u", x.command);' 
-   #   - logger.log:
-    #      format: "on_toto: %u"
-     #     args: ["x.command"]
-
-
-
-#-------------------------------------------
 # EXTERNAL COMPONENTS
 #-------------------------------------------
 external_components:
   - source: github://stas-sl/esphome-sound-level-meter
-    refresh: 0s
-  - source: github://oxan/esphome-stream-server@master
     refresh: 0s
   - source: github://ananyevgv/esphome-components/
     refresh: 0s
@@ -725,46 +528,10 @@ sound_level_meter:
         - type: eq
           name: "${name} Leq_1s"
           id: Leq_id
-#-------------------------------------------
-# UART
-#-------------------------------------------
-uart:
-  id: uart_zigbee
-  rx_pin:
-    number: 14
-    mode:
-      input: true
-      output: false
-      open_drain: false
-      pullup: false
-      pulldown: false
-    inverted: false
-    ignore_strapping_warning: false
-    drive_strength: 20.0
-  tx_pin:
-    number: 27
-    mode:
-      output: true
-      input: false
-      open_drain: false
-      pullup: false
-      pulldown: false
-    inverted: false
-    ignore_strapping_warning: false
-    drive_strength: 20.0
-  baud_rate: 115200
-  rx_buffer_size: 256
-  stop_bits: 1
-  data_bits: 8
-  parity: NONE
-#-------------------------------------------
-# STREAM SERVER
-#-------------------------------------------
-stream_server:
-  uart_id: uart_zigbee
-  port: 6638
-  buffer_size: 128
 
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
 select:
   - platform: template
     name: "Чувствительность датчика движения"
@@ -825,51 +592,6 @@ select:
                 id(noise).set_upper_threshold(100.0); 
                 break;
             }
-
-  - platform: template
-    name: "Бренд ИК"
-    entity_category: config
-    id: ir_mode
-    icon: mdi:remote-tv
-    options:
-     - "all"
-     - "abbwelcome"
-     - "aeha"
-     - "byronsx"
-     - "canalsat"
-     - "canalsatld"
-     - "coolix"
-     - "dish"
-     - "dooya"
-     - "drayton"
-     - "jvc"
-     - "keeloq"
-     - "haier"
-     - "lg"
-     - "magiquest"
-     - "midea"
-     - "nec"
-     - "nexa"
-     - "panasonic"
-     - "pioneer"
-     - "pronto"
-     - "raw"
-     - "rc5"
-     - "rc6"
-     - "roomba"
-     - "Samsung"
-     - "samsung36"
-     - "sony"
-     - "toshiba_ac"
-     - "mirage"
-     - "toto"
-    initial_option: "all"
-    optimistic: true
-  #  on_value:
-   #   then:
-   #     - lambda: |-
-    #        id(r_receiver).call_dumpers_(char(id(ir_mode).state.c_str()));
-  
 
   - platform: template
     name: "Цвет индикации press"
@@ -1001,6 +723,49 @@ select:
             }
 
   - platform: template
+    name: "Цвет индикации ночник"
+    entity_category: config
+    icon: mdi:palette
+    options:
+      - "Выкл"              # (0, 0, 0) 0
+      - "Белый"             # (255, 255, 255)1
+      - "Красный"           # (255, 0, 0)2
+      - "Синий"             # (0, 0, 255)3
+      - "Морская волна"     # (0, 255, 255)4
+      - "Фуксин"            # (255, 0, 255) 5
+      - "Серый"             # (128, 128, 128)6
+      - "Зеленый"           # (0, 128, 0)7
+      - "Ярко-зеленый"      # (0, 255, 0)8
+      - "Темно-бордовый"    # (128, 0, 0)9
+      - "Темно-синий"       # (0, 0, 128) 10
+      - "Оливковый"         # (128, 128, 0)11
+      - "Фиолетовый"        # (128, 0, 128)12
+      - "Серо-зеленый"      # (80, 100, 80)13
+      - "Желтый"            # (255, 255, 0)14
+    initial_option: "Зеленый"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: id(color_wifi) = Color(0, 0, 0); break;
+              case 1: id(color_wifi) = Color(255, 255, 255); break;
+              case 2: id(color_wifi) = Color(255, 0, 0); break;
+              case 3: id(color_wifi) = Color(0, 0, 255); break;
+              case 4: id(color_wifi) = Color(0, 255, 255); break;
+              case 5: id(color_wifi) = Color(255, 0, 255); break;
+              case 6: id(color_wifi) = Color(128, 128, 128); break;
+              case 7: id(color_wifi) = Color(0, 128, 0); break;
+              case 8: id(color_wifi) = Color(0, 255, 0); break;
+              case 9: id(color_wifi) = Color(128, 0, 0); break;
+              case 10: id(color_wifi) = Color(0, 0, 128); break;
+              case 11: id(color_wifi) = Color(128, 128, 0); break;
+              case 12: id(color_wifi) = Color(128, 0, 128); break;
+              case 13: id(color_wifi) = Color(80, 100, 80); break;
+              case 14: id(color_wifi) = Color(255, 255, 0); break;          
+            }
+
+  - platform: template
     name: "Чувствительность кнопок"
     id: sensitivity_of_touch_id
     entity_category: config
@@ -1076,14 +841,20 @@ select:
     id: type_switch_id
     options:
       - "Двойной"              
-      - "Одиночный"                            
+      - "Одиночный"   # не реализовано
+      - "Локальный-удаленный"   
+      - "Удаленный-локальный"                      
     initial_option: "Двойной"
     optimistic: true
-
+    on_value:
+      then:
+        - lambda: |-
+            id(g_tipe) = (i);
 
   - platform: template
     name: "Каналы диммирования"
     id: dimming_channels_id
+    icon: mdi:brightness-6
     entity_category: config
     options:
       - "Диммировать 2 канала"              
@@ -1092,7 +863,27 @@ select:
       - "Диммирование каналов отключено"                                        
     initial_option: "Диммировать 2 канала"
     optimistic: true
-   
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: 
+                id(binary_dimm1).publish_state(true); 
+                id(binary_dimm2).publish_state(true); 
+                break;
+              case 1:  
+                id(binary_dimm1).publish_state(true); 
+                id(binary_dimm2).publish_state(false); 
+                break;
+              case 2:  
+                id(binary_dimm1).publish_state(false); 
+                id(binary_dimm2).publish_state(true); 
+                break;
+              case 3:  
+                id(binary_dimm1).publish_state(false); 
+                id(binary_dimm2).publish_state(false); 
+                break;
+            }
 
   - platform: template
     name: "Действия датчика шума"
@@ -1151,7 +942,16 @@ select:
         - logger.log:
             format: "Pir option: %s (%d)"
             args: ["x.c_str()", "i"]
+
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------            
 globals:
+  - id: color_wifi
+    type: Color 
+    restore_value: no
+    initial_value: 'Color(255, 255, 0)'
+
   - id: color_press
     type: Color 
     restore_value: no
@@ -1186,7 +986,53 @@ globals:
     type: int
     restore_value: no
     initial_value: '0'
+
+  - id: g_timer_pir
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+  - id: g_timer_noise
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+  - id: g_tipe
+    type: int
+    restore_value: no
+    initial_value: '0'
+#-------------------------------------------
+# Number
+#-------------------------------------------
 number:
+  - platform: template
+    name: OFF timeout PIR
+    optimistic: true
+    id: off_timeout_pir
+    unit_of_measurement: "s"
+    initial_value: 45
+    restore_value: true
+    min_value: 10
+    max_value: 600
+    step: 5
+    mode: box
+    entity_category: config
+    icon: mdi:timer-cog-outline
+
+  - platform: template
+    name: OFF timeout noise
+    optimistic: true
+    id: off_timeout_noise
+    unit_of_measurement: "s"
+    initial_value: 45
+    restore_value: true
+    min_value: 10
+    max_value: 600
+    step: 5
+    mode: box
+    entity_category: config
+    icon: mdi:timer-cog-outline
+
   - platform: template
     name: "${name} Яркость"
     icon: mdi:brightness-5
@@ -1203,6 +1049,9 @@ number:
         - lambda: |-
             id(lume_display)->get_light()->set_correction(x/100, x/100, x/100);
 
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
 switch:
   - platform: template
     name: "Звук нажатие клавиш"
@@ -1211,6 +1060,14 @@ switch:
     entity_category: config
     restore_mode: RESTORE_DEFAULT_ON
     icon: mdi:volume-off
+
+  - platform: template
+    name: "Ночник"
+    optimistic: True
+    id: night
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:lightbulb-night-outline
 
   - platform: template
     name: "Подсведка кнопок"
@@ -1225,7 +1082,9 @@ switch:
       - lambda: |-
           id(lume_display).set_enabled(false);
 
-
+#-------------------------------------------
+# DISPLAY
+#-------------------------------------------
 display:
   - platform: addressable_light
     id: lume_display
@@ -1252,12 +1111,63 @@ display:
         else
           it.rectangle(0, 4, 0, 4, id(color_off));
       }
-      if (id(wifi_id).is_connected())
-        it.rectangle(0, 0, 0, 3, black);
+      if (id(night).state)
+        it.rectangle(0, 0, 0, 3, id(color_wifi));
       else {
-        static int i = 0;
-        i++;
-        if ((i % 10) == 0) 
-          it.rectangle(0, 0, 0, 3, id(color_off));
+        if (id(wifi_id).is_connected())
+          it.rectangle(0, 0, 0, 3, black);
+        else {
+          static int i = 0;
+          i++;
+          if ((i % 10) == 0) 
+            it.rectangle(0, 0, 0, 3, id(color_wifi));
+        }
       }
 
+#-------------------------------------------
+# INTERVAL
+#-------------------------------------------
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (id(binary_timer_noise).state == true) {  
+            id(g_timer_noise)++;
+            if (id(g_timer_noise) >=  id(off_timeout_noise).state) {
+              id(binary_timer_noise).publish_state(false);
+              id(g_timer_noise) = 0;
+              auto t_n = id(g_pir);
+              switch(t_n) {
+                case 10: 
+                  id(light_dimmer1).turn_off().set_transition_length(1000).perform(); 
+                  break;
+                case 11: 
+                  id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
+                  break;
+                case 12:
+                  id(light_dimmer1).turn_off().set_transition_length(1000).perform();
+                  id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
+                  break;      
+              }
+            }
+          }
+          if (id(binary_timer_pir).state == true) {
+            id(g_timer_pir)++;
+            if (id(g_timer_pir) >=  id(off_timeout_pir).state) {
+              id(binary_timer_pir).publish_state(false);
+              id(g_timer_pir) = 0;
+              auto t_pir = id(g_pir);
+              switch(t_pir) {
+                case 10: 
+                  id(light_dimmer1).turn_off().set_transition_length(1000).perform(); 
+                  break;
+                case 11: 
+                  id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
+                  break;
+                case 12:
+                  id(light_dimmer1).turn_off().set_transition_length(1000).perform();
+                  id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
+                  break;      
+              }
+            }
+          }
