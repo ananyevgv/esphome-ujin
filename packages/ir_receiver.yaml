@@ -1,0 +1,400 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  ir_receiver: !include 
+#    file: packages/lume/ir_receiver.yaml
+#    vars:
+#      pin_ir_receiver: GPIO4
+# and copy file esphome/packages/lume
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Ретранслятор ИК"
+    optimistic: True
+    id: repeater
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:remote-tv
+    
+#-------------------------------------------
+# REMOTE_RECEIVER
+#-------------------------------------------
+remote_receiver:
+  pin:
+    number: $pin_ir_receiver
+    inverted: true 
+  id: r_receiver
+  on_raw:    
+    then:
+      - if:
+          condition:
+            switch.is_on: repeater
+          then:
+            - remote_transmitter.transmit_raw:
+                code: !lambda 'return x;'
+  on_abbwelcome:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "abbwelcome";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("ABB|Code:%u", x.data()[0]);'
+  on_aeha:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "aeha";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("AEHA|Addr:%u|Cmd:%u", x.address, x.data.front());'      
+
+  on_byronsx:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "byronsx";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Byron|Addr:%u|Cmd:%u", x.address, x.command);'  
+
+  on_canalsat:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "canalsat";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("CANALSAT|A:0x%02X|C:0x%02X|R:%d", x.address, x.command, x.repeat);' 
+
+  on_coolix:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "coolix";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Coolix|1st:%lu|2nd:%lu", long(x.first), long(x.second));' 
+
+  on_dish:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "dish";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Dish|Addr:%u|Cmd:%u", x.address, x.command);' 
+
+  on_dooya:
+    then:
+      - if:
+          condition:
+            lambda: return id(ir_mode).state == "dooya";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("DOOYA|CH:%u|BTN:%u|CHK:%u", x.channel, x.button, x.check);' 
+
+  on_drayton:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "drayton";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Drayton|Addr:%u|Ch:%u|Cmd:%u", x.address, x.channel, x.command);' 
+
+  on_jvc:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "jvc";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("JVC|Code:%lu", long(x.data));' 
+
+  on_keeloq:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "keeloq";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Keeloq: Команда %u Адрес %lu Код %lu", x.command, long(x.address), long(x.encrypted));' 
+
+  on_haier:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "haier";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Haier: Код %u", x.data.front());' 
+
+  on_lg:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "lg";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("LG|D:0x%08llX|B:%u", x.data, x.nbits);'
+
+  on_magiquest:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "magiquest";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Magiquest: Величина %u  Идентификатор %lu", x.magnitude , long(x.wand_id));'
+
+  on_midea:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "midea";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Midea: Размер %u  Команда %u", x.size() , x.data()[0]);'
+
+  on_nec:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "nec";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("NEC|A:0x%02X|C:0x%02X|R:%d", x.address, x.command, x.command_repeats);' 
+
+  on_nexa:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "nexa";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Nexa: Устройство %lu Группа %u Состояние %u Канал %u Уровень %u", long(x.device), x.group, x.state, x.channel, x.level);' 
+
+
+  on_panasonic:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "panasonic";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Panasonic|Addr:%u|Cmd:%lu", x.address, long(x.command));' 
+
+  on_pioneer:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "pioneer";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("PIONEER|C1:0x%02X|C2:0x%02X", x.rc_code_1, x.rc_code_2);' 
+
+  on_rc5:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "rc5";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("RC5|Addr:%u|Cmd:%u", x.address, x.command);' 
+
+  on_rc6:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "rc6";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("RC6|Addr:%u|Cmd:%u", x.address, x.command);' 
+
+  on_rc_switch:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "rc_switch";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("rc_switch: Команда %llu Протокол %u", x.code, x.protocol);' 
+
+  on_samsung:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "samsung";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda |-
+                  return str_sprintf("Samsung: Data=0x%08llX (%u bits)", x.data, x.nbits);
+
+  on_samsung36:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "samsung36";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("SAMSUNG36|A:0x%04X|C:0x%04X", x.address, x.command);'
+
+  on_sony:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "sony";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Sony|Data:%lu|Bits:%u", long(x.data), x.nbits);'
+
+  on_toshiba_ac:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "toshiba_ac";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Toshiba_ac: Первый код %llu Второй код %llu", x.rc_code_1, x.rc_code_2);' 
+
+  on_mirage:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "mirage";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Mirage: Код %s", format_hex(x.data).c_str());' 
+
+  on_toto:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(ir_mode).state == "toto";
+          then:
+            - text_sensor.template.publish:
+                id: ir_code
+                state: !lambda 'return str_sprintf("Toto: Первый код %u Второй код %u Команда %u", x.rc_code_1, x.rc_code_2, x.command);' 
+      - logger.log:
+          format: "on_toto: %u %u %u"
+          args: ["x.rc_code_1", "x.rc_code_2", "x.command"]
+  on_roomba:
+    then:
+      - text_sensor.template.publish:
+          id: ir_code
+          state: !lambda 'return str_sprintf("Roomba: Команда %u", x.data);' 
+      - logger.log:
+          format: "on_roomba: %u"
+          args: ["x.data"]
+
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Бренд ИК"
+    entity_category: config
+    id: ir_mode
+    icon: mdi:remote-tv
+    options:
+     - "off"
+     - "abbwelcome"
+     - "aeha"
+     - "byronsx"
+     - "canalsat"
+     - "canalsatld"
+     - "coolix"
+     - "dish"
+     - "dooya"
+     - "drayton"
+     - "jvc"
+     - "keeloq"
+     - "haier"
+     - "lg"
+     - "magiquest"
+     - "midea"
+     - "nec"
+     - "nexa"
+     - "panasonic"
+     - "pioneer"
+     - "pronto"
+     - "raw"
+     - "rc5"
+     - "rc6"
+     - "roomba"
+     - "Samsung"
+     - "samsung36"
+     - "sony"
+     - "toshiba_ac"
+     - "mirage"
+     - "toto"
+    initial_option: "off"
+    optimistic: true
+    
+#-------------------------------------------
+# TEXT SENSOR
+#-------------------------------------------
+text_sensor:
+  - platform: template
+    name: "IR code"
+    id: ir_code
+    icon: mdi:remote-tv
+
+    
+    

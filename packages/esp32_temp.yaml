@@ -1,0 +1,6 @@
+#-------------------------------------------
+# SENSOR ESP32 TEMPERATURE
+#-------------------------------------------
+sensor:
+  - platform: internal_temperature
+    name: "${name} ESP32 T"

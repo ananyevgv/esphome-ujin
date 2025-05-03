@@ -1,0 +1,66 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  zigbee: !include 
+#    file: packages/lume/zigbee.yaml
+#    vars:
+#      TX_Z: 27
+#      RX_Z: 14
+# and copy file esphome/packages/lume
+
+#-------------------------------------------
+# EXTERNAL COMPONENTS
+#-------------------------------------------
+external_components:
+  - source: github://oxan/esphome-stream-server@master
+    refresh: 0s
+    
+#-------------------------------------------
+# UART
+#-------------------------------------------
+uart:
+  id: uart_zigbee
+  rx_pin:
+    number: $RX_Z
+    mode:
+      input: true
+      output: false
+      open_drain: false
+      pullup: false
+      pulldown: false
+    inverted: false
+    ignore_strapping_warning: false
+    drive_strength: 20.0
+  tx_pin:
+    number: $TX_Z
+    mode:
+      output: true
+      input: false
+      open_drain: false
+      pullup: false
+      pulldown: false
+    inverted: false
+    ignore_strapping_warning: false
+    drive_strength: 20.0
+  baud_rate: 115200
+  rx_buffer_size: 256
+  stop_bits: 1
+  data_bits: 8
+  parity: NONE
+
+#-------------------------------------------
+# STREAM SERVER
+#-------------------------------------------
+stream_server:
+  uart_id: uart_zigbee
+  port: 6638
+  buffer_size: 128
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: stream_server
+    connection_count:
+      name: "${name} number of connections"
+      icon: mdi:connection

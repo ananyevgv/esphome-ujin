@@ -1,0 +1,7 @@
+web_server:
+  port: 80
+  version: 3
+  local: true
+  auth:
+    username: !secret web_user
+    password: !secret web_pass
