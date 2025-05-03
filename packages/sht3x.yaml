@@ -1,0 +1,37 @@
+#-------------------------------------------
+# Add yaml and copy file esphome/packages/sensor/
+#packages:
+#  sht3x: !include 
+#    file: packages/sensor/sht3x.yaml
+#    vars:
+#      id_sht3x_t: sht3x_t
+#      id_sht3x_h: sht3x_h
+#-------------------------------------------
+
+#-------------------------------------------
+# SENSOR SHT3X
+#-------------------------------------------
+sensor:
+  - platform: sht3xd
+    temperature:
+      name: "${name} temperature"
+      id: ${id_sht3x_t}
+      icon: mdi:thermometer
+      filters:
+        - median:
+    humidity:
+      name: "${name} humidity"
+      id: ${id_sht3x_h}
+      icon: mdi:water-percent
+    update_interval: 60s
+    address: 0x44
+
+
+  - platform: absolute_humidity
+    name: "${name} Absolute Humidity"
+    temperature: ${id_sht3x_t}
+    humidity: ${id_sht3x_h}   
+    icon: mdi:water-outline
+
+ 
+    
