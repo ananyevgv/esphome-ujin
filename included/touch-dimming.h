@@ -75,12 +75,13 @@ class TouchDimmer {
     auto *startDelayAction = new DelayAction<>();
     startDelayAction->set_delay(dimStartDelayMs + 50);  // Add a little margin.
     App.register_component(startDelayAction);
-
+    const bool dim_on = this->dimmerSensor->state;
+    
     // Toggle the dimming direction:
     LambdaAction<> *toggleDimDirLambda = new LambdaAction<>([&]() -> void {
       const float cur_bright = this->lightMain->current_values.get_brightness();
       const bool is_on = this->lightMain->current_values.is_on();
-      const bool dim_on = this->dimmerSensor->state;
+
       if (dim_on) {
         if (!is_on || this->dimming_dir == 0 || cur_bright <= 0.0f) {
           this->dimming_dir = 1;
@@ -92,8 +93,8 @@ class TouchDimmer {
         }
         else {
           this->dimming_dir *= -1;
+        }
       }
-    }
     });
 
     // Perform a dim step every `dimPeriodMs` milliseconds:
@@ -108,15 +109,18 @@ class TouchDimmer {
       const float new_bright = clamp(cur_bright + step, 0.0f, 1.0f);
 
       {
-        auto call = this->lightMain->make_call();
-        call.set_brightness(new_bright);
-        call.set_transition_length(dimPeriodMs / 2.0f);
-        call.set_state(new_bright > 0);
-        call.perform();
+        if (dim_on) {
+          auto call = this->lightMain->make_call();
+          call.set_brightness(new_bright);
+          call.set_transition_length(dimPeriodMs / 2.0f);
+          call.set_state(new_bright > 0);
+          call.perform();
+        }
       }
 
       if (new_bright <= 0.0f || new_bright >= 0.999f) {
         this->scriptDimStop->execute();
+
       }
     });
 
