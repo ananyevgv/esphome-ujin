@@ -31,30 +31,22 @@
 # GPI38 – __________  
 # GPI39 – __________  
 
-# Датчик температуры и влажности – адрес I2C 0x44
-# Датчик освещенности – адрес I2C 0x23
-# Цифровой потенциометр – адрес I2C 0x2f
-
 # https://stuvel.eu/post/2022-06-05-esphome-touch-dimmer/
 substitutions:
   name: lume
-  device_description: Супер выключатель
+  device_description: lume L.te M1
   light_1_device: light.kithen1
   light_2_device: light.kithen2
+  sda_i2c: GPIO7
+  scl_i2c: GPIO8
+  beeper_ledc: GPIO32
 
 esphome:
   name: "${name}"
   comment: "${device_description}"
   platformio_options:
     board_upload.maximum_size: 7864320
-  includes:
-    - included/touch-dimming.h 
-  on_boot:
-    - priority: 500
-      then:
-        - lambda: new TouchDimmer("dimm1", light_dimmer1, left_touch, binary_dimm1);
-        - lambda: new TouchDimmer("dimm2", light_dimmer2, right_touch, binary_dimm2);                
-
+               
 api:
   reboot_timeout: 0s     
   
@@ -72,24 +64,16 @@ psram:
   speed: 80MHz
 
 #-------------------------------------------
-# MCP453X
-#-------------------------------------------
-mcp453x:
-  id: my_mcp453x
-  address: 0x2F
-
-#-------------------------------------------
 # I2c
 #-------------------------------------------
 i2c:
   sda:
-    number: GPIO7
+    number: $sda_i2c
     ignore_pin_validation_error: true
   scl: 
-    number: GPIO8
+    number: $scl_i2c
     ignore_pin_validation_error: true
   scan: true
-  id: bus_a
 
 #-------------------------------------------
 # PACKAGES
@@ -98,8 +82,28 @@ packages:
   wifi: !include packages/wifi.yaml
   web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
+
+  but: !include 
+    file: packages/lume/button.yaml
+    vars:
+      one_butt: GPIO15
+      two_butt: GPIO2
+
+  zero_dimm: !include 
+    file: packages/lume/zero_dimm.yaml
+    vars:
+      dimmer1_zero: GPIO5 
+      dimmer2_zero: GPIO5
+      dimmer1_gate: GPIO19  
+      dimmer2_gate: GPIO25  
+
  # time: !include included/time.yaml
   esp32_temp: !include packages/sensor/esp32_temp.yaml
+#  cap: !include 
+#    file: packages/lume/captive.yaml
+#    vars:
+#      ssid_captive: "Lume"
+#      pass_captive: "12345678"
   ir_receiver: !include 
     file: packages/lume/ir_receiver.yaml
     vars:
@@ -113,941 +117,66 @@ packages:
     file: packages/lume/ir_transmitter.yaml
     vars:
       pin_ir_transmitter: GPIO13
+  bh1750: !include
+    file: packages/lume/bh1750.yaml
+    vars:
+      id_bh: i_lume
+  sht3x: !include 
+    file: packages/lume/sht3x.yaml
+    vars:
+      id_sht3x_t: sht3x_t
+      id_sht3x_h: sht3x_h
+ # bme680_bsec: !include 
+ #   file: packages/lume/bme680_bsec2.yaml
+ #   vars:
+ #     id_bme680_t: bme680_t
+ #     id_bme680_h: bme680_h
+ #     id_bme680_p: bme680_p
+ #     id_bme680_iaq: bme680_iaq
+ #     id_bme680_co2: bme680_co2
+ #     id_bme680_voc: bme680_voc
+ #     model_bme: bme688
+ #     address_bme680: 0x76
+  led: !include 
+    file: packages/lume/led_lume.yaml
+    vars:
+      led_lume_pin: GPIO26
+      led_lume: 5
+  2in: !include 
+    file: packages/lume/2in.yaml
+    vars:
+      one_pin: GPIO33
+      two_pin: GPIO3
+#  1in: !include 
+#    file: packages/lume/1in.yaml
+#    vars:
+#      one_pin: GPIO33
+  noise: !include 
+    file: packages/lume/noise.yaml
+    vars:
+      noise_bck: GPIO21
+      noise_ws: GPIO20
+      noise_din: GPIO22
+  pir: !include 
+    file: packages/lume/pir.yaml
+    vars:
+      pir_pin: GPIO35
+      pir_addres: 0x2F
 
-#-------------------------------------------
-# LOGGER
-#-------------------------------------------
-logger:
-
-wifi:
-  id: wifi_id
-#-------------------------------------------
-# SCRIPT
-#-------------------------------------------
-script:
-  - id: action_noise
-    mode: single
-    then:
-      - lambda: |-
-          uint8_t t_noise =  id(g_noise);
-          switch(t_noise) {
-            case 0: ; break;
-            case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
-            case 2: id(light_dimmer1).turn_off().set_transition_length(1000).perform(); break;
-            case 3: id(light_dimmer1).toggle().perform(); break;
-            case 4: id(light_dimmer2).turn_on().set_brightness(1.0).perform(); break;
-            case 5: id(light_dimmer2).turn_off().set_transition_length(1000).perform(); break;
-            case 6: id(light_dimmer2).toggle().perform(); break;
-            case 7: 
-              id(light_dimmer1).turn_on().set_brightness(1.0).perform();
-              id(light_dimmer2).turn_on().set_brightness(1.0).perform();
-              break;
-            case 8: 
-              id(light_dimmer1).turn_off().set_transition_length(1000).perform();
-              id(light_dimmer2).turn_off().set_transition_length(1000).perform();
-              break;
-            case 9: 
-              id(light_dimmer1).toggle().perform();
-              id(light_dimmer2).toggle().perform(); 
-              break;
-            case 10: 
-              id(light_dimmer1).turn_on().set_transition_length(1000).set_brightness(0.5).perform(); 
-              id(binary_timer_noise).publish_state(true);
-              break;
-            case 11: 
-              id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              id(binary_timer_noise).publish_state(true);
-              break;
-            case 12:
-              id(light_dimmer1).turn_on().set_brightness(0.5).perform();
-              id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              id(binary_timer_noise).publish_state(true);
-              break;       
-          }
-  - id: action_motion
-    mode: single
-    then:
-      - lambda: |-
-          auto t_pir = id(g_pir);
-          switch(t_pir) {
-            case 0: ; break;
-            case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
-            case 2: id(light_dimmer1).turn_off().set_transition_length(1000).perform(); break;
-            case 3: id(light_dimmer1).toggle().perform(); break;
-            case 4: id(light_dimmer2).turn_on().set_brightness(1.0).perform(); break;
-            case 5: id(light_dimmer2).turn_off().set_transition_length(1000).perform(); break;
-            case 6: id(light_dimmer2).toggle().perform(); break;
-            case 7: 
-              id(light_dimmer1).turn_on().set_brightness(1.0).perform();
-              id(light_dimmer2).turn_on().set_brightness(1.0).perform();
-              break;
-            case 8: 
-              id(light_dimmer1).turn_off().set_transition_length(1000).perform();
-              id(light_dimmer2).turn_off().set_transition_length(1000).perform();
-              break;
-            case 9: 
-              id(light_dimmer1).toggle().perform();
-              id(light_dimmer2).toggle().perform(); 
-              break;
-            case 10: 
-              id(light_dimmer1).turn_on().set_brightness(0.5).perform(); 
-              id(binary_timer_pir).publish_state(true); 
-              break;
-            case 11: 
-              id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              id(binary_timer_pir).publish_state(true);
-              break;
-            case 12:
-              id(light_dimmer1).turn_on().set_brightness(0.5).perform();
-              id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              id(binary_timer_pir).publish_state(true);
-              break;       
-          }
 #-------------------------------------------
 # OUTPUT
 #-------------------------------------------      
 output:
-  - platform: ac_dimmer
-    gate_pin: GPIO19  
-    id: dimmer1
-    zero_cross_pin:
-      number: GPIO5
-      mode:
-        input: true
-      inverted: yes
-      ignore_strapping_warning: true
-      allow_other_uses: true
-    min_power: 30%
-    init_with_half_cycle: true
-
-  - platform: ac_dimmer
-    id: dimmer2
-    gate_pin: GPIO25
-    zero_cross_pin:
-      number: GPIO5
-      mode:
-        input: true
-      inverted: yes
-      ignore_strapping_warning: true
-      allow_other_uses: true
-    min_power: 30%
-    init_with_half_cycle: true
-
   - platform: ledc
-    pin: GPIO32
+    pin: $beeper_ledc
     id: rtttl_out
 
-  - platform: mcp453x
-    id: pir_output
-    mcp453x_id: my_mcp453x
-
-#-------------------------------------------
-# LIGHT
-#-------------------------------------------
-light:
-  - platform: monochromatic
-    output: dimmer1
-    name: "${name} 1 лампа"
-    id: light_dimmer1
-    restore_mode: ALWAYS_OFF
-    icon: mdi:numeric-1-circle-outline
-    on_turn_on:
-      - if:
-          condition:
-            lambda: |-
-              return id(g_tipe) == 3;
-          then:
-            - homeassistant.action:
-                action: light.turn_on
-                data:
-                  entity_id: $light_1_device
-    on_turn_off:
-      - if:
-          condition:
-            lambda: |-
-              return id(g_tipe) == 3;
-          then:
-            - homeassistant.action:
-                action: light.turn_off
-                data:
-                  entity_id: $light_1_device
-    on_state:
-      - if:
-          condition:
-            lambda: |-
-              return id(g_tipe) == 3;
-          then:
-            - homeassistant.action:
-                action: light.turn_on
-                data:
-                  entity_id: $light_1_device
-                  brightness: !lambda return (id(light_dimmer1).remote_values.get_brightness());
-
-  - platform: monochromatic   
-    output: dimmer2
-    name: "${name} 2 лампа"
-    id: light_dimmer2
-    restore_mode: ALWAYS_OFF
-    icon: mdi:numeric-2-circle-outline
-    on_turn_on:
-      - if:
-          condition:
-            lambda: |-
-              return id(g_tipe) == 2;
-          then:
-            - homeassistant.action:
-                action: light.turn_on
-                data:
-                  entity_id: $light_2_device
-    on_turn_off:
-      - if:
-          condition:
-            lambda: |-
-              return id(g_tipe) == 2;
-          then:
-            - homeassistant.action:
-                action: light.turn_off
-                data:
-                  entity_id: $light_2_device
-    on_state:
-      - if:
-          condition:
-            lambda: |-
-              return id(g_tipe) == 2;
-          then:
-            - homeassistant.action:
-                action: light.turn_on
-                data:
-                  entity_id: $light_2_device
-                  brightness: !lambda return (id(light_dimmer2).remote_values.get_brightness());
-
-  - platform: esp32_rmt_led_strip
-    rgb_order: GRB
-    pin: GPIO26
-    num_leds: 5
-    rmt_channel: 2
-    chipset: WS2812
-    id: led_ww
-
-#-------------------------------------------
-# TOUCH
-#-------------------------------------------
-esp32_touch:
-  setup_mode: False
-
-#-------------------------------------------
-# BINARY SENSOR
-#-------------------------------------------
-binary_sensor:
-  - platform: analog_threshold
-    name: "${name} движение"
-    id: pir
-    threshold: 0.5
-    sensor_id: pir_adc
-    device_class: motion
-    icon: mdi:motion-sensor
-    on_press: 
-      then:
-        - script.execute: action_motion
-        - script.stop: action_motion
-        - lambda: |-
-            id(g_timer_pir)=0;
-  - platform: analog_threshold
-    name: "Датчик шума"
-    id: noise
-    threshold: 60
-    sensor_id: Leq_id
-    device_class: sound
-    icon: mdi:speaker-wireless
-    on_press: 
-      then:
-        - script.execute: action_noise
-        - script.stop: action_noise
-        - lambda: |-
-            id(g_timer_noise)=0;
-  - platform: esp32_touch
-    name: "${name} левая кнопка"
-    id: left_touch
-    pin: GPIO15
-    icon: mdi:gesture-tap-button
-    threshold: 1150
-    on_click: 
-      then:
-        - if:
-            condition:
-              switch.is_on: sound
-            then:
-              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
-
-  - platform: esp32_touch
-    name: "${name} правая кнопка"
-    id: right_touch
-    pin: GPIO2
-    icon: mdi:gesture-tap-button
-    threshold: 1150
-    on_click: 
-      then:
-        - if:
-            condition:
-              switch.is_on: sound
-            then:
-              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
-
-  - platform: gpio
-    pin:
-      number: GPIO33
-      inverted: true
-    id: "input1"
-    name: "${name} Вход 1"
-    icon: mdi:inbox-arrow-down-outline
-    on_press:
-      then:
-        - lambda: |-
-            int8_t act_in1 = id(g_in1);
-            switch(act_in1) {
-              case 0: break;
-              case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
-              case 2 ... 4: id(light_dimmer1).toggle().perform(); break;
-
-            }
-    on_release: 
-      then:
-        - lambda: |-
-            int8_t act_in1 = id(g_in1);
-            switch(act_in1) {
-              case 0: break;
-              case 1: id(light_dimmer1).turn_off().set_brightness(1.0).perform(); break;
-              case 2 ... 43: id(light_dimmer1).toggle().perform(); break;
-            }
-
-
-
-  - platform: gpio
-    pin:
-      number: GPIO3
-      inverted: true
-    id: "input2"
-    name: "${name} Вход 2"       
-    icon: mdi:inbox-arrow-down-outline
-    on_press:
-      then:
-        - lambda: |-
-            int8_t act_in2 = id(g_in2);
-            switch(act_in2) {
-              case 0: ; break;
-              case 1: id(light_dimmer2).turn_on().set_brightness(1.0).perform(); break;
-              case 2 ... 4: id(light_dimmer2).toggle(); break;
-
-            }
-    on_release: 
-      then:
-        - lambda: |-
-            int8_t act_in2 = id(g_in2);
-            switch(act_in2) {
-              case 0: ; break;
-              case 1: id(light_dimmer2).turn_off(); break;
-              case 2 ... 43: id(light_dimmer2).toggle(); break;
-            }
-
-  - platform: template
-    id: binary_timer_noise
-
-  - platform: template
-    id: binary_timer_pir
-
-  - platform: template
-    id: binary_dimm1
-
-  - platform: template
-    id: binary_dimm2
-
-#-------------------------------------------
-# SENSOR
-#-------------------------------------------
-sensor:
-  - platform: adc
-    pin: GPIO35
-    id: pir_adc    
-    update_interval: 1s
-
-  - platform: sht3xd
-    temperature:
-      name: "${name} температура"
-      icon: mdi:thermometer
-    humidity:
-      name: "${name} влажность"
-      icon: mdi:water-percent
-    address: 0x44
-    update_interval: 60s
-
-  - platform: bh1750
-    name: "${name} освещенность"
-    address: 0x23
-    update_interval: 5s
-    icon: mdi:brightness-5
-  - platform: uptime
-    name: "${name} uptime"
-    
 #-------------------------------------------
 # RTTTL
 #-------------------------------------------
 rtttl:
   output: rtttl_out
   gain: 60%
-
-#-------------------------------------------
-# EXTERNAL COMPONENTS
-#-------------------------------------------
-external_components:
-  - source: github://stas-sl/esphome-sound-level-meter
-    refresh: 0s
-  - source: github://ananyevgv/esphome-components/
-    refresh: 0s
-
-#-------------------------------------------
-# I2S
-#-------------------------------------------
-i2s:
-  bck_pin: 21
-  ws_pin: 20
-  din_pin: 22
-  sample_rate: 48000            # default: 48000
-  bits_per_sample: 32           # default: 32
-  bits_shift: 8                 # default: 0
-
-#-------------------------------------------
-# SOUND LEVEL METER
-#-------------------------------------------
-sound_level_meter:
-  update_interval: 1s           # default: 60s
-  buffer_size: 1024             # default: 1024
-  mic_sensitivity: -26dB        # default: empty
-  mic_sensitivity_ref: 94dB     # default: empty
-  groups:
-    - sensors:
-        - type: eq
-          name: "${name} Leq_1s"
-          id: Leq_id
-
-#-------------------------------------------
-# SELECT
-#-------------------------------------------
-select:
-  - platform: template
-    name: "Чувствительность датчика движения"
-    entity_category: config
-    icon: mdi:motion-sensor
-    options:
-     - "Очень высокая"      
-     - "Высокая"
-     - "Средняя"
-     - "Низкая"
-     - "Очень низкая"     
-    initial_option: "Очень высокая"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            switch(i) {
-              case 0: id(pir_output).set_level(0); break;
-              case 1: id(pir_output).set_level(0.25); break;
-              case 2: id(pir_output).set_level(0.50); break;
-              case 3: id(pir_output).set_level(0.75); break;
-              case 4: id(pir_output).set_level(1.0); break;
-            }
-  - platform: template
-    name: "Чувствительность датчика звука"
-    entity_category: config
-    options:
-     - "Очень высокая"      
-     - "Высокая"
-     - "Средняя"
-     - "Низкая"
-     - "Очень низкая"     
-    initial_option: "Очень высокая"
-    optimistic: true
-    icon: mdi:microphone-message
-    on_value:
-      then:
-        - lambda: |-
-            switch(i) {
-              case 0:
-                 id(noise).set_lower_threshold(60.0); 
-                 id(noise).set_upper_threshold(60.0); 
-                 break;
-              case 1: 
-                id(noise).set_lower_threshold(70.0);
-                id(noise).set_upper_threshold(70.0); 
-                break;
-              case 2: 
-                id(noise).set_lower_threshold(80.0);
-                id(noise).set_upper_threshold(80.0); 
-                break;
-              case 3: 
-                id(noise).set_lower_threshold(90.0);
-                 id(noise).set_upper_threshold(90.0);
-                 break;
-              case 4: 
-                id(noise).set_lower_threshold(100.0);
-                id(noise).set_upper_threshold(100.0); 
-                break;
-            }
-
-  - platform: template
-    name: "Цвет индикации press"
-    entity_category: config
-    icon: mdi:palette
-    options:
-      - "Выкл"              # (0, 0, 0) 0
-      - "Белый"             # (255, 255, 255)1
-      - "Красный"           # (255, 0, 0)2
-      - "Синий"             # (0, 0, 255)3
-      - "Морская волна"     # (0, 255, 255)4
-      - "Фуксин"            # (255, 0, 255) 5
-      - "Серый"             # (128, 128, 128)6
-      - "Зеленый"           # (0, 128, 0)7
-      - "Ярко-зеленый"      # (0, 255, 0)8
-      - "Темно-бордовый"    # (128, 0, 0)9
-      - "Темно-синий"       # (0, 0, 128) 10
-      - "Оливковый"         # (128, 128, 0)11
-      - "Фиолетовый"        # (128, 0, 128)12
-      - "Серо-зеленый"      # (80, 100, 80)13
-      - "Желтый"            # (255, 255, 0)14
-    initial_option: "Красный"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            switch(i) {
-              case 0: id(color_press) = Color(0, 0, 0); break;
-              case 1: id(color_press) = Color(255, 255, 255); break;
-              case 2: id(color_press) = Color(255, 0, 0); break;
-              case 3: id(color_press) = Color(0, 0, 255); break;
-              case 4: id(color_press) = Color(0, 255, 255); break;
-              case 5: id(color_press) = Color(255, 0, 255); break;
-              case 6: id(color_press) = Color(128, 128, 128); break;
-              case 7: id(color_press) = Color(0, 128, 0); break;
-              case 8: id(color_press) = Color(0, 255, 0); break;
-              case 9: id(color_press) = Color(128, 0, 0); break;
-              case 10: id(color_press) = Color(0, 0, 128); break;
-              case 11: id(color_press) = Color(128, 128, 0); break;
-              case 12: id(color_press) = Color(128, 0, 128); break;
-              case 13: id(color_press) = Color(80, 100, 80); break;
-              case 14: id(color_press) = Color(255, 255, 0); break;          
-            }
-
-  - platform: template
-    name: "Цвет индикации on"
-    entity_category: config
-    icon: mdi:palette
-    options:
-      - "Выкл"              # (0, 0, 0) 0
-      - "Белый"             # (255, 255, 255)1
-      - "Красный"           # (255, 0, 0)2
-      - "Синий"             # (0, 0, 255)3
-      - "Морская волна"     # (0, 255, 255)4
-      - "Фуксин"            # (255, 0, 255) 5
-      - "Серый"             # (128, 128, 128)6
-      - "Зеленый"           # (0, 128, 0)7
-      - "Ярко-зеленый"      # (0, 255, 0)8
-      - "Темно-бордовый"    # (128, 0, 0)9
-      - "Темно-синий"       # (0, 0, 128) 10
-      - "Оливковый"         # (128, 128, 0)11
-      - "Фиолетовый"        # (128, 0, 128)12
-      - "Серо-зеленый"      # (80, 100, 80)13
-      - "Желтый"            # (255, 255, 0)14
-    initial_option: "Синий"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            switch(i) {
-              case 0: id(color_on) = Color(0, 0, 0); break;
-              case 1: id(color_on) = Color(255, 255, 255); break;
-              case 2: id(color_on) = Color(255, 0, 0); break;
-              case 3: id(color_on) = Color(0, 0, 255); break;
-              case 4: id(color_on) = Color(0, 255, 255); break;
-              case 5: id(color_on) = Color(255, 0, 255); break;
-              case 6: id(color_on) = Color(128, 128, 128); break;
-              case 7: id(color_on) = Color(0, 128, 0); break;
-              case 8: id(color_on) = Color(0, 255, 0); break;
-              case 9: id(color_on) = Color(128, 0, 0); break;
-              case 10: id(color_on) = Color(0, 0, 128); break;
-              case 11: id(color_on) = Color(128, 128, 0); break;
-              case 12: id(color_on) = Color(128, 0, 128); break;
-              case 13: id(color_on) = Color(80, 100, 80); break;
-              case 14: id(color_on) = Color(255, 255, 0); break;  
-            }
-
-  - platform: template
-    name: "Цвет индикации off"
-    entity_category: config
-    icon: mdi:palette
-    options:
-      - "Выкл"              # (0, 0, 0) 0
-      - "Белый"             # (255, 255, 255)1
-      - "Красный"           # (255, 0, 0)2
-      - "Синий"             # (0, 0, 255)3
-      - "Морская волна"     # (0, 255, 255)4
-      - "Фуксин"            # (255, 0, 255) 5
-      - "Серый"             # (128, 128, 128)6
-      - "Зеленый"           # (0, 128, 0)7
-      - "Ярко-зеленый"      # (0, 255, 0)8
-      - "Темно-бордовый"    # (128, 0, 0)9
-      - "Темно-синий"       # (0, 0, 128) 10
-      - "Оливковый"         # (128, 128, 0)11
-      - "Фиолетовый"        # (128, 0, 128)12
-      - "Серо-зеленый"      # (80, 100, 80)13
-      - "Желтый"            # (255, 255, 0)14
-    initial_option: "Зеленый"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            switch(i) {
-              case 0: id(color_off) = Color(0, 0, 0); break;
-              case 1: id(color_off) = Color(255, 255, 255); break;
-              case 2: id(color_off) = Color(255, 0, 0); break;
-              case 3: id(color_off) = Color(0, 0, 255); break;
-              case 4: id(color_off) = Color(0, 255, 255); break;
-              case 5: id(color_off) = Color(255, 0, 255); break;
-              case 6: id(color_off) = Color(128, 128, 128); break;
-              case 7: id(color_off) = Color(0, 128, 0); break;
-              case 8: id(color_off) = Color(0, 255, 0); break;
-              case 9: id(color_off) = Color(128, 0, 0); break;
-              case 10: id(color_off) = Color(0, 0, 128); break;
-              case 11: id(color_off) = Color(128, 128, 0); break;
-              case 12: id(color_off) = Color(128, 0, 128); break;
-              case 13: id(color_off) = Color(80, 100, 80); break;
-              case 14: id(color_off) = Color(255, 255, 0); break;          
-            }
-
-  - platform: template
-    name: "Цвет индикации ночник"
-    entity_category: config
-    icon: mdi:palette
-    options:
-      - "Выкл"              # (0, 0, 0) 0
-      - "Белый"             # (255, 255, 255)1
-      - "Красный"           # (255, 0, 0)2
-      - "Синий"             # (0, 0, 255)3
-      - "Морская волна"     # (0, 255, 255)4
-      - "Фуксин"            # (255, 0, 255) 5
-      - "Серый"             # (128, 128, 128)6
-      - "Зеленый"           # (0, 128, 0)7
-      - "Ярко-зеленый"      # (0, 255, 0)8
-      - "Темно-бордовый"    # (128, 0, 0)9
-      - "Темно-синий"       # (0, 0, 128) 10
-      - "Оливковый"         # (128, 128, 0)11
-      - "Фиолетовый"        # (128, 0, 128)12
-      - "Серо-зеленый"      # (80, 100, 80)13
-      - "Желтый"            # (255, 255, 0)14
-    initial_option: "Зеленый"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            switch(i) {
-              case 0: id(color_wifi) = Color(0, 0, 0); break;
-              case 1: id(color_wifi) = Color(255, 255, 255); break;
-              case 2: id(color_wifi) = Color(255, 0, 0); break;
-              case 3: id(color_wifi) = Color(0, 0, 255); break;
-              case 4: id(color_wifi) = Color(0, 255, 255); break;
-              case 5: id(color_wifi) = Color(255, 0, 255); break;
-              case 6: id(color_wifi) = Color(128, 128, 128); break;
-              case 7: id(color_wifi) = Color(0, 128, 0); break;
-              case 8: id(color_wifi) = Color(0, 255, 0); break;
-              case 9: id(color_wifi) = Color(128, 0, 0); break;
-              case 10: id(color_wifi) = Color(0, 0, 128); break;
-              case 11: id(color_wifi) = Color(128, 128, 0); break;
-              case 12: id(color_wifi) = Color(128, 0, 128); break;
-              case 13: id(color_wifi) = Color(80, 100, 80); break;
-              case 14: id(color_wifi) = Color(255, 255, 0); break;          
-            }
-
-  - platform: template
-    name: "Чувствительность кнопок"
-    id: sensitivity_of_touch_id
-    entity_category: config
-    icon: mdi:gesture-tap-hold
-    options:
-      - "Низкая"              
-      - "Средняя"             
-      - "Высокая"          
-    initial_option: "Высокая"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            switch(i) {
-              case 0: 
-                id(right_touch).set_threshold (1150); 
-                id(left_touch).set_threshold (1150); 
-                break;
-              case 1:  
-                id(right_touch).set_threshold (1160); 
-                id(left_touch).set_threshold (1160); 
-                break;
-              case 2:  
-                id(right_touch).set_threshold (1170); 
-                id(left_touch).set_threshold (1170); 
-                break;
-            }
-
-  - platform: template
-    name: "Тип внешнего выключателя 1"
-    entity_category: config
-    id: type_external_1
-    icon: mdi:dip-switch
-    options:
-      - "Не использовать"              
-      - "Стандартный"             
-      - "Проходной"
-      - "Без фиксации замыкающий"             
-      - "Без фиксации размыкающий"                
-    initial_option: "Не использовать"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            id(g_in1) = (i);
-        - logger.log:
-            format: "IN2 option: %s (%d)"
-            args: ["x.c_str()", "i"]
-  - platform: template
-    name: "Тип внешнего выключателя 2"
-    entity_category: config
-    id: type_external_2
-    icon: mdi:dip-switch
-    options:
-      - "Не использовать"              
-      - "Стандартный"             
-      - "Проходной"
-      - "Без фиксации замыкающий"             
-      - "Без фиксации размыкающий"                
-    initial_option: "Не использовать"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            id(g_in2) = (i);
-        - logger.log:
-            format: "IN2 option: %s (%d)"
-            args: ["x.c_str()", "i"]
-
-  - platform: template
-    name: "Тип выключателя"
-    entity_category: config
-    id: type_switch_id
-    options:
-      - "Двойной"              
-      - "Одиночный"   # не реализовано
-      - "Локальный-удаленный"   
-      - "Удаленный-локальный"                      
-    initial_option: "Двойной"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            id(g_tipe) = (i);
-
-  - platform: template
-    name: "Каналы диммирования"
-    id: dimming_channels_id
-    icon: mdi:brightness-6
-    entity_category: config
-    options:
-      - "Диммировать 2 канала"              
-      - "Диммировать только 1 канал"  
-      - "Диммировать только 2 канал"
-      - "Диммирование каналов отключено"                                        
-    initial_option: "Диммировать 2 канала"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            switch(i) {
-              case 0: 
-                id(binary_dimm1).publish_state(true); 
-                id(binary_dimm2).publish_state(true); 
-                break;
-              case 1:  
-                id(binary_dimm1).publish_state(true); 
-                id(binary_dimm2).publish_state(false); 
-                break;
-              case 2:  
-                id(binary_dimm1).publish_state(false); 
-                id(binary_dimm2).publish_state(true); 
-                break;
-              case 3:  
-                id(binary_dimm1).publish_state(false); 
-                id(binary_dimm2).publish_state(false); 
-                break;
-            }
-
-  - platform: template
-    name: "Действия датчика шума"
-    id: triggered_noise
-    entity_category: config
-    icon: mdi:account-reactivate-outline
-    options:
-      - "Нет действия"              
-      - "Включить 1 канал"  
-      - "Выключить 1 канал"
-      - "Переключить 1 канал" 
-      - "Включить 2 канал"  
-      - "Выключить 2 канал"
-      - "Переключить 2 канал"  
-      - "Включить оба канала"  
-      - "Выключить оба канала"
-      - "Переключить оба канала"  
-      - "Включить 1 канал на время"  
-      - "Включить 2 канал на время"  
-      - "Включить оба канала на время"                                      
-    initial_option: "Нет действия"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            id(g_noise) = (i);
-        - logger.log:
-            format: "Noise option: %s (%d)"
-            args: ["x.c_str()", "i"]
-
-  - platform: template
-    name: "Действия датчика движения"
-    id: triggered_pir
-    entity_category: config
-    icon: mdi:account-reactivate-outline
-    options:
-      - "Нет действия"              
-      - "Включить 1 канал"  
-      - "Выключить 1 канал"
-      - "Переключить 1 канал" 
-      - "Включить 2 канал"  
-      - "Выключить 2 канал"
-      - "Переключить 2 канал"  
-      - "Включить оба канала"  
-      - "Выключить оба канала"
-      - "Переключить оба канала"  
-      - "Включить 1 канал на время"  
-      - "Включить 2 канал на время"  
-      - "Включить оба канала на время"                    
-    initial_option: "Нет действия"
-    optimistic: true
-    on_value:
-      then:
-        - lambda: |-
-            id(g_pir) = (i);
-        - logger.log:
-            format: "Pir option: %s (%d)"
-            args: ["x.c_str()", "i"]
-
-#-------------------------------------------
-# GLOBALS
-#-------------------------------------------            
-globals:
-  - id: color_wifi
-    type: Color 
-    restore_value: no
-    initial_value: 'Color(255, 255, 0)'
-
-  - id: color_press
-    type: Color 
-    restore_value: no
-    initial_value: 'Color(255, 255, 0)'
-
-  - id: color_on
-    type: Color 
-    restore_value: no
-    initial_value: 'Color(0, 0, 255)'
-
-  - id: color_off
-    type: Color 
-    restore_value: no
-    initial_value: 'Color(0, 255, 255)'
-
-  - id: g_noise
-    type: int
-    restore_value: no
-    initial_value: '0'
-
-  - id: g_pir
-    type: int
-    restore_value: no
-    initial_value: '0'
-
-  - id: g_in1
-    type: int
-    restore_value: no
-    initial_value: '0'
-
-  - id: g_in2
-    type: int
-    restore_value: no
-    initial_value: '0'
-
-  - id: g_timer_pir
-    type: int
-    restore_value: no
-    initial_value: '0'
-
-  - id: g_timer_noise
-    type: int
-    restore_value: no
-    initial_value: '0'
-
-  - id: g_tipe
-    type: int
-    restore_value: no
-    initial_value: '0'
-#-------------------------------------------
-# Number
-#-------------------------------------------
-number:
-  - platform: template
-    name: OFF timeout PIR
-    optimistic: true
-    id: off_timeout_pir
-    unit_of_measurement: "s"
-    initial_value: 45
-    restore_value: true
-    min_value: 10
-    max_value: 600
-    step: 5
-    mode: box
-    entity_category: config
-    icon: mdi:timer-cog-outline
-
-  - platform: template
-    name: OFF timeout noise
-    optimistic: true
-    id: off_timeout_noise
-    unit_of_measurement: "s"
-    initial_value: 45
-    restore_value: true
-    min_value: 10
-    max_value: 600
-    step: 5
-    mode: box
-    entity_category: config
-    icon: mdi:timer-cog-outline
-
-  - platform: template
-    name: "${name} Яркость"
-    icon: mdi:brightness-5
-    id: brid
-    min_value: 20
-    max_value: 100
-    step: 10
-    optimistic: true
-    initial_value: 100
-    mode: slider
-    entity_category: config
-    on_value:
-      then:
-        - lambda: |-
-            id(lume_display)->get_light()->set_correction(x/100, x/100, x/100);
 
 #-------------------------------------------
 # SWITCH
@@ -1060,114 +189,3 @@ switch:
     entity_category: config
     restore_mode: RESTORE_DEFAULT_ON
     icon: mdi:volume-off
-
-  - platform: template
-    name: "Ночник"
-    optimistic: True
-    id: night
-    entity_category: config
-    restore_mode: RESTORE_DEFAULT_OFF
-    icon: mdi:lightbulb-night-outline
-
-  - platform: template
-    name: "Подсведка кнопок"
-    icon: mdi:light-switch-off
-    optimistic: True
-    entity_category: config
-    restore_mode: RESTORE_DEFAULT_ON
-    on_turn_on:
-      - lambda: |-
-          id(lume_display).set_enabled(true);
-    on_turn_off:
-      - lambda: |-
-          id(lume_display).set_enabled(false);
-
-#-------------------------------------------
-# DISPLAY
-#-------------------------------------------
-display:
-  - platform: addressable_light
-    id: lume_display
-    addressable_light_id: led_ww
-    width: 1
-    height: 5
-    update_interval: 0.1s
-    lambda: |-
-      Color black = Color(0x000000);
-      if (id(left_touch).state)
-          it.rectangle(0, 3, 0, 3, id(color_press));
-      else {
-        if (id(light_dimmer1).remote_values.is_on())
-          it.rectangle(0, 3, 0, 3, id(color_on));
-        else
-          it.rectangle(0, 3, 0, 3, id(color_off));
-      }
-
-      if (id(right_touch).state)
-          it.rectangle(0, 4, 0, 4, id(color_press));
-      else {
-        if (id(light_dimmer2).remote_values.is_on())
-          it.rectangle(0, 4, 0, 4, id(color_on));
-        else
-          it.rectangle(0, 4, 0, 4, id(color_off));
-      }
-      if (id(night).state)
-        it.rectangle(0, 0, 0, 3, id(color_wifi));
-      else {
-        if (id(wifi_id).is_connected())
-          it.rectangle(0, 0, 0, 3, black);
-        else {
-          static int i = 0;
-          i++;
-          if ((i % 10) == 0) 
-            it.rectangle(0, 0, 0, 3, id(color_wifi));
-        }
-      }
-
-#-------------------------------------------
-# INTERVAL
-#-------------------------------------------
-interval:
-  - interval: 1s
-    then:
-      - lambda: |-
-          if (id(binary_timer_noise).state == true) {  
-            id(g_timer_noise)++;
-            if (id(g_timer_noise) >=  id(off_timeout_noise).state) {
-              id(binary_timer_noise).publish_state(false);
-              id(g_timer_noise) = 0;
-              auto t_n = id(g_pir);
-              switch(t_n) {
-                case 10: 
-                  id(light_dimmer1).turn_off().set_transition_length(1000).perform(); 
-                  break;
-                case 11: 
-                  id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
-                  break;
-                case 12:
-                  id(light_dimmer1).turn_off().set_transition_length(1000).perform();
-                  id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
-                  break;      
-              }
-            }
-          }
-          if (id(binary_timer_pir).state == true) {
-            id(g_timer_pir)++;
-            if (id(g_timer_pir) >=  id(off_timeout_pir).state) {
-              id(binary_timer_pir).publish_state(false);
-              id(g_timer_pir) = 0;
-              auto t_pir = id(g_pir);
-              switch(t_pir) {
-                case 10: 
-                  id(light_dimmer1).turn_off().set_transition_length(1000).perform(); 
-                  break;
-                case 11: 
-                  id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
-                  break;
-                case 12:
-                  id(light_dimmer1).turn_off().set_transition_length(1000).perform();
-                  id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
-                  break;      
-              }
-            }
-          }
