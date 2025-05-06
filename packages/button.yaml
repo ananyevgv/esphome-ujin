@@ -35,6 +35,24 @@ binary_sensor:
     threshold: 1150
     on_click: 
       then: 
+   #     - lambda: |-
+    #        if id(binary_dimm1) {
+    #          const float id(light_dimmer1).current_values.get_brightness();
+    #          const bool id(light_dimmer1).current_values.is_on();  
+    #          dimming_dir = id(light_dimmer1).current_values.get_brightness() > 0.5f ? 1 : -1;
+    #          if (!is_on || this->dimming_dir == 0 || cur_bright <= 0.0f) {
+    #            this->dimming_dir = 1;
+    #            // Once we start increasing the brightness, it should start at 0%.
+    #            id(light_dimmer1).set_brightness(0.0f);
+    #          }
+    #          else if (cur_bright >= 1.0f ) {
+    #            this->dimming_dir = -1;
+    #          }
+    #          else {
+    #            this->dimming_dir *= -1;
+    #          }
+    #        }
+
         - if:
             condition:
               switch.is_on: sound

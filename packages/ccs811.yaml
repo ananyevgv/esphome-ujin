@@ -1,0 +1,32 @@
+#-------------------------------------------
+# Add yaml and copy file esphome/packages/lume/
+#packages:
+#  ccs811: !include 
+#    file: packages/lume/ccs811.yaml
+#    vars:
+#      id_ccs811_t: sht3x_t
+#      id_ccs811_h: sht3x_h
+#      id_ccs811_eco2: ccs811_eco2
+#      id_ccs811_tvoc: ccs811_tvoc
+#-------------------------------------------
+
+i2c:
+  frequency: 100kHz #
+
+
+#-------------------------------------------
+# SENSOR CCS811
+#-------------------------------------------
+sensor:
+  - platform: ccs811
+    eco2:
+      name: "${name}  eCO2"
+      id: $id_ccs811_eco2
+    tvoc:
+      name: "${name}  Volatile Organic"
+      id: $id_ccs811_tvoc
+    address: 0x5A
+    update_interval: 60s
+    temperature: $id_ccs811_t
+    humidity: $id_ccs811_h
+    baseline: 0xA483

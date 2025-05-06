@@ -1,5 +1,5 @@
 # -------------------------------------------
-#  Add yaml and copy file esphome/packages/sensor/
+#  Add yaml and copy file esphome/packages/lume/
 #packages:
 #  bh: !include 
 #    file: packages/lume/bh1750.yaml
@@ -17,3 +17,58 @@ sensor:
     address: 0x23
     update_interval: 5s
     icon: mdi:brightness-5
+    
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: analog_threshold
+    name: "Датчик освещенности"
+    id: illum
+    threshold: 300
+    sensor_id: ${id_bh}
+    device_class: light
+    icon: mdi:brightness-5
+
+    
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Чувствительность датчика освещенности"
+    entity_category: config
+    options:
+     - "Очень высокая"      
+     - "Высокая"
+     - "Средняя"
+     - "Низкая"
+     - "Очень низкая"     
+    initial_option: "Очень высокая"
+    optimistic: true
+    icon: mdi:microphone-message
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0:
+                 id(illum).set_lower_threshold(100.0); 
+                 id(illum).set_upper_threshold(100.0); 
+                 break;
+              case 1: 
+                id(illum).set_lower_threshold(150.0);
+                id(illum).set_upper_threshold(150.0); 
+                break;
+              case 2: 
+                id(illum).set_lower_threshold(200.0);
+                id(illum).set_upper_threshold(200.0); 
+                break;
+              case 3: 
+                id(illum).set_lower_threshold(250.0);
+                 id(illum).set_upper_threshold(250.0);
+                 break;
+              case 4: 
+                id(illum).set_lower_threshold(300.0);
+                id(illum).set_upper_threshold(300.0); 
+                break;
+            }
