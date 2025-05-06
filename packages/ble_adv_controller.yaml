@@ -1,0 +1,85 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  ble_adv: !include 
+#    file: packages/lume/ble_adv_controller.yaml
+#    vars:
+#      variant_light: v1
+#      encoding_light: lampsmart_pro
+#      dimmer1_zero: GPIO5 
+#      dimmer1_gate: GPIO19  
+#      type_light1: monochromatic # binary
+#      type_light2: monochromatic # binary
+# and copy file esphome/packages/lume
+
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------      
+output:
+  - platform: ac_dimmer
+    gate_pin: $dimmer1_gate 
+    id: dimmer1
+    zero_cross_pin:
+      number: $dimmer1_zero
+      mode:
+        input: true
+      inverted: yes
+      ignore_strapping_warning: true
+      allow_other_uses: true
+    min_power: 30%
+    init_with_half_cycle: true
+    
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: $type_light1
+    output: dimmer1
+    name: "${name} 1 лампа"
+    id: light_dimmer1
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-1-circle-outline
+
+  - platform: ble_adv_controller
+    ble_adv_controller_id: my_controller
+    id: light_dimmer1
+    name: "${name} 2 лампа"
+    min_brightness: 5%
+
+
+#-------------------------------------------
+# EXTERNAL COMPONENT
+#-------------------------------------------
+external_components:
+  - source: github://aronsky/esphome-components
+    components: [ble_adv_controller]
+    refresh: 0s
+    
+#-------------------------------------------
+# BLE ADV
+#-------------------------------------------
+ble_adv_controller:
+  - id: my_controller
+    encoding: $encoding_light
+    variant: $variant_light
+    # max_duration (default 3000, range 300 -> 10000): the maximum duration in ms during which the command is advertized.
+    # if a command is received before the 'max_duration' but after the 'duration', it is processed immediately 
+    # Increasing this parameter will have no major consequences, the component will just keep advertize the command
+    # Could be interesting at pairing time to have the pairing command advertized for a long time
+ #   max_duration: 3000
+    # duration (default 200, range 100 -> 500): the MINIMUM duration in ms during which the command is sent.
+    # It corresponds to the maximum time the controlled device is taking to process a command and be ready to receive a new one.
+    # if a command is received before the 'duration' it is queued and processed later, 
+    # if there is already a similar command pending, in this case the pending command is removed from the queue
+    # Increasing this parameter will make the combination of commands slower. See 'Dynamic Configuration'.
+    # Can be configured dynamically in HA directly, device 'Configuration' section, "Duration".
+    duration: 100
+    
+#-------------------------------------------
+# BUTTON
+#-------------------------------------------
+button:
+  - platform: ble_adv_controller
+    ble_adv_controller_id: my_controller
+    name: "${name} Pair 2 light"
+    cmd: pair
