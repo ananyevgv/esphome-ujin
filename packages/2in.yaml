@@ -1,0 +1,130 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  2in: !include 
+#    file: packages/lume/2in.yaml
+#    vars:
+#      one_pin: GPIO33
+#      two_pin: GPIO3
+# and copy file esphome/packages/lume
+
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: $one_pin
+      inverted: true
+    id: "input1"
+    name: "${name} Вход 1"
+    icon: mdi:inbox-arrow-down-outline
+    on_press:
+      then:
+        - lambda: |-
+            int8_t act_in1 = id(g_in1);
+            switch(act_in1) {
+              case 0: break;
+              case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
+              case 2 ... 4: id(light_dimmer1).toggle().perform(); break;
+
+            }
+    on_release: 
+      then:
+        - lambda: |-
+            int8_t act_in1 = id(g_in1);
+            switch(act_in1) {
+              case 0: break;
+              case 1: id(light_dimmer1).turn_off().set_brightness(1.0).perform(); break;
+              case 2 ... 43: id(light_dimmer1).toggle().perform(); break;
+            }
+
+
+
+  - platform: gpio
+    pin:
+      number: $two_pin
+      inverted: true
+    id: "input2"
+    name: "${name} Вход 2"       
+    icon: mdi:inbox-arrow-down-outline
+    on_press:
+      then:
+        - lambda: |-
+            int8_t act_in2 = id(g_in2);
+            switch(act_in2) {
+              case 0: ; break;
+              case 1: id(light_dimmer2).turn_on().set_brightness(1.0).perform(); break;
+              case 2 ... 4: id(light_dimmer2).toggle(); break;
+
+            }
+    on_release: 
+      then:
+        - lambda: |-
+            int8_t act_in2 = id(g_in2);
+            switch(act_in2) {
+              case 0: ; break;
+              case 1: id(light_dimmer2).turn_off(); break;
+              case 2 ... 43: id(light_dimmer2).toggle(); break;
+            }
+            
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Тип внешнего выключателя 1"
+    entity_category: config
+    id: type_external_1
+    icon: mdi:dip-switch
+    options:
+      - "Не использовать"              
+      - "Стандартный"             
+      - "Проходной"
+      - "Без фиксации замыкающий"             
+      - "Без фиксации размыкающий"                
+    initial_option: "Не использовать"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            id(g_in1) = (i);
+        - logger.log:
+            format: "IN2 option: %s (%d)"
+            args: ["x.c_str()", "i"]
+  - platform: template
+    name: "Тип внешнего выключателя 2"
+    entity_category: config
+    id: type_external_2
+    icon: mdi:dip-switch
+    options:
+      - "Не использовать"              
+      - "Стандартный"             
+      - "Проходной"
+      - "Без фиксации замыкающий"             
+      - "Без фиксации размыкающий"                
+    initial_option: "Не использовать"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            id(g_in2) = (i);
+        - logger.log:
+            format: "IN2 option: %s (%d)"
+            args: ["x.c_str()", "i"]
+
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------            
+globals:
+  - id: g_in1
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+  - id: g_in2
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+            

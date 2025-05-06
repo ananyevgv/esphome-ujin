@@ -2,7 +2,7 @@
 #  Add yaml and copy file esphome/packages/sensor/
 #packages:
 #  bh: !include 
-#    file: packages/sensor/bh1750.yaml
+#    file: packages/lume/bh1750.yaml
 #    vars:
 #      id_bh: light_bh
 # -------------------------------------------

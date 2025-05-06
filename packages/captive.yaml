@@ -1,0 +1,16 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  cap: !include 
+#    file: packages/lume/captive.yaml
+#    vars:
+#      ssid_captive: "Lume"
+#      pass_captive: "12345678"
+# and copy file esphome/packages/lume
+
+wifi:
+  ap:
+    ssid: $ssid_captive
+    password: $pass_captive
+
+captive_portal:

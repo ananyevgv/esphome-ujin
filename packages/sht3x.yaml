@@ -32,6 +32,3 @@ sensor:
     temperature: ${id_sht3x_t}
     humidity: ${id_sht3x_h}   
     icon: mdi:water-outline
-
- 
-    
