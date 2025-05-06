@@ -96,7 +96,9 @@ packages:
       dimmer2_zero: GPIO5
       dimmer1_gate: GPIO19  
       dimmer2_gate: GPIO25  
-
+      type_light1: monochromatic # binary
+      type_light2: monochromatic # binary
+      
  # time: !include included/time.yaml
   esp32_temp: !include packages/sensor/esp32_temp.yaml
 #  cap: !include 
