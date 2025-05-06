@@ -89,6 +89,7 @@ packages:
       one_butt: GPIO15
       two_butt: GPIO2
 
+# Двойной выключатель для lume L.te M1
   zero_dimm: !include 
     file: packages/lume/zero_dimm.yaml
     vars:
@@ -98,6 +99,17 @@ packages:
       dimmer2_gate: GPIO25  
       type_light1: monochromatic # binary
       type_light2: monochromatic # binary
+
+# Один встроенный, второй удаленный  прямое управление через BLE люстрой на 2 канале !!!!zero_dimm  убрать!!!! для lume L.te M1
+#  ble_adv: !include 
+#    file: packages/lume/ble_adv_controller.yaml
+#    vars:
+#      variant_light: v1
+#      encoding_light: lampsmart_pro
+#      dimmer1_zero: GPIO5 
+#      dimmer1_gate: GPIO19  
+#      type_light1: monochromatic # binary
+#      type_light2: monochromatic # binary
       
  # time: !include included/time.yaml
   esp32_temp: !include packages/sensor/esp32_temp.yaml
