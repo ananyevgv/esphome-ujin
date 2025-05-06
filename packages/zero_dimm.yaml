@@ -8,6 +8,8 @@
 #      dimmer2_zero: GPIO5
 #      dimmer1_gate: GPIO19  
 #      dimmer2_gate: GPIO25  
+#      type_light1: monochromatic # binary
+#      type_light2: monochromatic # binary
 # and copy file esphome/packages/lume
 
 #-------------------------------------------
@@ -44,7 +46,7 @@ output:
 # LIGHT
 #-------------------------------------------
 light:
-  - platform: monochromatic
+  - platform: $type_light1
     output: dimmer1
     name: "${name} 1 лампа"
     id: light_dimmer1
@@ -82,7 +84,7 @@ light:
                   entity_id: $light_1_device
                   brightness: !lambda return (id(light_dimmer1).remote_values.get_brightness());
 
-  - platform: monochromatic   
+  - platform: $type_light2 
     output: dimmer2
     name: "${name} 2 лампа"
     id: light_dimmer2
@@ -141,6 +143,40 @@ select:
         - lambda: |-
             id(g_tipe) = (i);
 
+  - platform: template
+    name: "Каналы диммирования"
+    id: dimming_channels_id
+    icon: mdi:brightness-6
+    entity_category: config
+    options:
+      - "Диммировать 2 канала"              
+      - "Диммировать только 1 канал"  
+      - "Диммировать только 2 канал"
+      - "Диммирование каналов отключено"                                        
+    initial_option: "Диммировать 2 канала"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: 
+                id(light_dimmer1).get_traits().set_supported_color_modes({light::ColorMode::BRIGHTNESS});
+                id(light_dimmer2).get_traits().set_supported_color_modes({light::ColorMode::BRIGHTNESS});
+                break;
+              case 1:  
+                id(light_dimmer1).get_traits().set_supported_color_modes({light::ColorMode::BRIGHTNESS});
+                id(light_dimmer2).get_traits().set_supported_color_modes({light::ColorMode::ON_OFF}); 
+                break;
+              case 2:  
+                id(light_dimmer1).get_traits().set_supported_color_modes({light::ColorMode::ON_OFF}); 
+                id(light_dimmer2).get_traits().set_supported_color_modes({light::ColorMode::BRIGHTNESS});
+                break;
+              case 3:  
+                auto traits = light::LightTraits();
+                id(light_dimmer1).get_traits().set_supported_color_modes({light::ColorMode::ON_OFF});
+                id(light_dimmer2).get_traits().set_supported_color_modes({light::ColorMode::ON_OFF}); 
+                break;
+            }
 
 #-------------------------------------------
 # GLOBALS
