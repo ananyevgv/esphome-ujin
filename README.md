@@ -3,7 +3,6 @@
 
 # [Lume L.te M1](https://github.com/ananyevgv/esphome-ujin/blob/main/lume%20L.te%20M1.yaml)
 
-
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Flumi%20zigbee.jpg" height="300" alt="Lume L.te lite">
 
 Должно работать с подобными (прямое управление диммером с отслеживанием нуля).
@@ -15,6 +14,8 @@
       3. BLE
 
 # [Lume Luxe wifi/BLE/IR/CO2]
+
+<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Flumi%20coq.jpg" height="300" alt="Lume CO2 lite">
 
 и ему подобными с управлением диммером по цифровому интерфейсу.
 
