@@ -31,4 +31,7 @@
       5. Ограничение включения света по датчику освещенности.
 
 
-# [Lume relay din]
+# [Lume relay din] (https://github.com/ananyevgv/esphome-ujin/blob/main/rele-ujin.yaml)
+
+ 
+# [Lume leak sensor] (https://github.com/ananyevgv/esphome-ujin/blob/main/leak-sensor.yaml)
