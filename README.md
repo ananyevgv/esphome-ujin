@@ -4,7 +4,7 @@
 # [Lume L.te M1](https://github.com/ananyevgv/esphome-ujin/blob/main/lume%20L.te%20M1.yaml)
 
 
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/atom.jpg" height="300" alt="Atom lite">
+<img src="" height="300" alt="Atom lite">
 
 Должно работать с подобными (прямое управление диммером с отслеживанием нуля).
 
