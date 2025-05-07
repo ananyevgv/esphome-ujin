@@ -34,7 +34,7 @@
 # https://stuvel.eu/post/2022-06-05-esphome-touch-dimmer/
 substitutions:
   name: lume
-  device_description: lume L.te M1
+  device_description: luxe L.te M1
   light_1_device: light.kithen1
   light_2_device: light.kithen2
   sda_i2c: GPIO7
@@ -89,7 +89,7 @@ packages:
       one_butt: GPIO15
       two_butt: GPIO2
 
-# Двойной выключатель для lume L.te M1
+# Двойной выключатель для lume Luxe L.te M1
   zero_dimm: !include 
     file: packages/lume/zero_dimm.yaml
     vars:
@@ -100,7 +100,7 @@ packages:
       type_light1: monochromatic # binary
       type_light2: monochromatic # binary
 
-# Один встроенный, второй удаленный  прямое управление через BLE люстрой на 2 канале !!!!zero_dimm  убрать!!!! для lume L.te M1
+# Один встроенный, второй удаленный  прямое управление через BLE люстрой на 2 канале !!!!zero_dimm  убрать!!!! для lume Luxe L.te M1
 #  ble_adv: !include 
 #    file: packages/lume/ble_adv_controller.yaml
 #    vars:
