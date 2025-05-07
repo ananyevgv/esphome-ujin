@@ -14,7 +14,7 @@
 
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Flumi%20zigbee.jpg" height="300" alt="Lume L.te lite">
 
-Должно работать с подобными (прямое управление диммером с отслеживанием нуля).
+Работает с подобными диммерами (прямое управление диммером с отслеживанием нуля).
 
 # todo: 
       
