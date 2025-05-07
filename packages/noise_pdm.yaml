@@ -1,0 +1,238 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  noise: !include 
+#    file: packages/lume/noise_pdm.yaml
+#    vars:
+#      noise_ws: GPIO13
+#      noise_din: GPIO15
+# and copy file esphome/packages/lume
+
+#-------------------------------------------
+# EXTERNAL COMPONENTS
+#-------------------------------------------
+external_components:
+  - source: github://viotemp1/esphome-sound-level-meter 
+    refresh: 0s
+    
+#-------------------------------------------
+# I2S
+#-------------------------------------------
+i2s:
+  ws_pin: $noise_ws
+  din_pin: $noise_din
+  sample_rate: 16000 
+  bits_per_sample: 16
+  dma_buf_count: 2
+  dma_buf_len: 128
+  bits_shift: 0
+  channel: left
+
+#-------------------------------------------
+# SOUND LEVEL METER
+#-------------------------------------------
+sound_level_meter:
+  update_interval: 1s           # default: 60s
+  buffer_size: 1024             # default: 1024
+  mic_sensitivity: -26dB        # default: empty
+  mic_sensitivity_ref: 94dB     # default: empty
+  groups:
+    - sensors:
+        - type: eq
+          name: "${name} Leq_1s"
+          id: Leq_id
+
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: analog_threshold
+    name: "Датчик шума"
+    id: noise
+    threshold: 60
+    sensor_id: Leq_id
+    device_class: sound
+    icon: mdi:speaker-wireless
+    on_press: 
+      then:
+        - script.execute: action_noise
+        - script.stop: action_noise
+        - lambda: |-
+            id(g_timer_noise)=0;
+            
+  - platform: template
+    id: binary_timer_noise
+    
+#-------------------------------------------
+# INTERVAL
+#-------------------------------------------
+interval:    
+  - interval: 1s
+    then:
+      - lambda: |-    
+          if (id(binary_timer_noise).state == true) {  
+            id(g_timer_noise)++;
+            if (id(g_timer_noise) >=  id(off_timeout_noise).state) {
+              id(binary_timer_noise).publish_state(false);
+              id(g_timer_noise) = 0;
+              auto t_n = id(g_noise);
+              switch(t_n) {
+                case 10: 
+                  id(light_dimmer1).turn_off().set_transition_length(1000).perform(); 
+                  break;
+                case 11: 
+                  id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
+                  break;
+                case 12:
+                  id(light_dimmer1).turn_off().set_transition_length(1000).perform();
+                  id(light_dimmer2).turn_off().set_transition_length(1000).perform(); 
+                  break;      
+              }
+            }
+          }    
+#-------------------------------------------
+# Number
+#-------------------------------------------
+number:
+  - platform: template
+    name: OFF timeout noise
+    optimistic: true
+    id: off_timeout_noise
+    unit_of_measurement: "s"
+    initial_value: 45
+    restore_value: true
+    min_value: 10
+    max_value: 600
+    step: 5
+    mode: box
+    entity_category: config
+    icon: mdi:timer-cog-outline
+    
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Чувствительность датчика звука"
+    entity_category: config
+    options:
+     - "Очень высокая"      
+     - "Высокая"
+     - "Средняя"
+     - "Низкая"
+     - "Очень низкая"     
+    initial_option: "Очень высокая"
+    optimistic: true
+    icon: mdi:microphone-message
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0:
+                 id(noise).set_lower_threshold(70.0); 
+                 id(noise).set_upper_threshold(70.0); 
+                 break;
+              case 1: 
+                id(noise).set_lower_threshold(75.0);
+                id(noise).set_upper_threshold(75.0); 
+                break;
+              case 2: 
+                id(noise).set_lower_threshold(80.0);
+                id(noise).set_upper_threshold(80.0); 
+                break;
+              case 3: 
+                id(noise).set_lower_threshold(85.0);
+                 id(noise).set_upper_threshold(85.0);
+                 break;
+              case 4: 
+                id(noise).set_lower_threshold(90.0);
+                id(noise).set_upper_threshold(90.0); 
+                break;
+            }
+
+  - platform: template
+    name: "Действия датчика шума"
+    id: triggered_noise
+    entity_category: config
+    icon: mdi:account-reactivate-outline
+    options:
+      - "Нет действия"              
+      - "Включить 1 канал"  
+      - "Выключить 1 канал"
+      - "Переключить 1 канал" 
+      - "Включить 2 канал"  
+      - "Выключить 2 канал"
+      - "Переключить 2 канал"  
+      - "Включить оба канала"  
+      - "Выключить оба канала"
+      - "Переключить оба канала"  
+      - "Включить 1 канал на время"  
+      - "Включить 2 канал на время"  
+      - "Включить оба канала на время"                                      
+    initial_option: "Нет действия"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            id(g_noise) = (i);
+        - logger.log:
+            format: "Noise option: %s (%d)"
+            args: ["x.c_str()", "i"]
+
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------            
+globals:
+  - id: g_noise
+    type: int
+    restore_value: no
+    initial_value: '0'
+    
+  - id: g_timer_noise
+    type: int
+    restore_value: no
+    initial_value: '0'
+    
+#-------------------------------------------
+# SCRIPT
+#-------------------------------------------
+script:
+  - id: action_noise
+    mode: single
+    then:
+      - lambda: |-
+          uint8_t t_noise =  id(g_noise);
+          switch(t_noise) {
+            case 0: ; break;
+            case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
+            case 2: id(light_dimmer1).turn_off().set_transition_length(1000).perform(); break;
+            case 3: id(light_dimmer1).toggle().perform(); break;
+            case 4: id(light_dimmer2).turn_on().set_brightness(1.0).perform(); break;
+            case 5: id(light_dimmer2).turn_off().set_transition_length(1000).perform(); break;
+            case 6: id(light_dimmer2).toggle().perform(); break;
+            case 7: 
+              id(light_dimmer1).turn_on().set_brightness(1.0).perform();
+              id(light_dimmer2).turn_on().set_brightness(1.0).perform();
+              break;
+            case 8: 
+              id(light_dimmer1).turn_off().set_transition_length(1000).perform();
+              id(light_dimmer2).turn_off().set_transition_length(1000).perform();
+              break;
+            case 9: 
+              id(light_dimmer1).toggle().perform();
+              id(light_dimmer2).toggle().perform(); 
+              break;
+            case 10: 
+              id(light_dimmer1).turn_on().set_transition_length(1000).set_brightness(0.5).perform(); 
+              id(binary_timer_noise).publish_state(true);
+              break;
+            case 11: 
+              id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
+              id(binary_timer_noise).publish_state(true);
+              break;
+            case 12:
+              id(light_dimmer1).turn_on().set_brightness(0.5).perform();
+              id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
+              id(binary_timer_noise).publish_state(true);
+              break;       
+          }
