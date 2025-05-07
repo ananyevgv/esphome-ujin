@@ -1,0 +1,205 @@
+# EN – RST (XS2)
+# GPIO0 – GPO (XS2)
+# GPIO1 –  TXD (XS2)
+# GPIO2 – touch sensor 2
+# GPIO3 – внешний вход для выключателя 2, RXD (XS2)
+# GPIO4 – infrared receiver
+# GPIO5 – переход через ноль
+# GPIO6 – CLK PSRAM
+# GPIO7 – I2C SDA
+# GPIO8 – I2C SCL
+# GPIO9 – SD PSRAM
+# GPIO10 – SD PSRAM
+# GPIO11 – CMD PSRAM
+# GPIO12 – __________
+# GPIO13 – infrared transmitter
+# GPIO14 – ZIGBEE 2652 (DIO16) rx_pin
+# GPIO15 – touch sensor 1
+# GPIO19 – управление лампой 1
+# GPIO20 – I2S ws_pin
+# GPIO21 – I2S bck_pin
+# GPIO22 – I2S din_pin
+# GPIO25 – управление лампой 2
+# GPIO26 – адресные светодиоды WS2812 (5 штук)
+# GPIO27 – ZIGBEE 2652 (DIO17) tx_pin
+# GPIO32 – buzzer
+# GPIO33 – внешний вход для выключателя 1
+# GPI34 – __________  
+# GPI35 – датчик движения PIR612
+# GPI36 – __________  
+# GPI37 – __________  
+# GPI38 – __________  
+# GPI39 – __________  
+
+# https://stuvel.eu/post/2022-06-05-esphome-touch-dimmer/
+substitutions:
+  name: lume
+  device_description: luxe L.te M1
+  light_1_device: light.kithen1
+  light_2_device: light.kithen2
+  sda_i2c: GPIO7
+  scl_i2c: GPIO8
+  beeper_ledc: GPIO32
+
+esphome:
+  name: "${name}"
+  comment: "${device_description}"
+  platformio_options:
+    board_upload.maximum_size: 7864320
+               
+api:
+  reboot_timeout: 0s     
+  
+esp32:
+  board: denky_d4
+  flash_size: 8MB
+  framework:
+    type: arduino
+    
+#-------------------------------------------
+# PSRAM
+#-------------------------------------------
+psram:
+  mode: quad
+  speed: 80MHz
+
+#-------------------------------------------
+# I2c
+#-------------------------------------------
+i2c:
+  sda:
+    number: $sda_i2c
+    ignore_pin_validation_error: true
+  scl: 
+    number: $scl_i2c
+    ignore_pin_validation_error: true
+  scan: true
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+
+  but: !include 
+    file: packages/lume/button.yaml
+    vars:
+      one_butt: GPIO15
+      two_butt: GPIO2
+
+# Двойной выключатель для lume Luxe L.te M1
+  zero_dimm: !include 
+    file: packages/lume/zero_dimm.yaml
+    vars:
+      dimmer1_zero: GPIO5 
+      dimmer2_zero: GPIO5
+      dimmer1_gate: GPIO19  
+      dimmer2_gate: GPIO25  
+      type_light1: monochromatic # binary
+      type_light2: monochromatic # binary
+
+# Один встроенный, второй удаленный  прямое управление через BLE люстрой на 2 канале !!!!zero_dimm  убрать!!!! для lume Luxe L.te M1
+#  ble_adv: !include 
+#    file: packages/lume/ble_adv_controller.yaml
+#    vars:
+#      variant_light: v1
+#      encoding_light: lampsmart_pro
+#      dimmer1_zero: GPIO5 
+#      dimmer1_gate: GPIO19  
+#      type_light1: monochromatic # binary
+#      type_light2: monochromatic # binary
+      
+ # time: !include included/time.yaml
+  esp32_temp: !include packages/sensor/esp32_temp.yaml
+#  cap: !include 
+#    file: packages/lume/captive.yaml
+#    vars:
+#      ssid_captive: "Lume"
+#      pass_captive: "12345678"
+  ir_receiver: !include 
+    file: packages/lume/ir_receiver.yaml
+    vars:
+      pin_ir_receiver: GPIO4
+  zigbee: !include 
+    file: packages/lume/zigbee.yaml
+    vars:
+      TX_Z: 27
+      RX_Z: 14
+  ir_transmitter: !include 
+    file: packages/lume/ir_transmitter.yaml
+    vars:
+      pin_ir_transmitter: GPIO13
+  bh1750: !include
+    file: packages/lume/bh1750.yaml
+    vars:
+      id_bh: i_lume
+  sht3x: !include 
+    file: packages/lume/sht3x.yaml
+    vars:
+      id_sht3x_t: sht3x_t
+      id_sht3x_h: sht3x_h
+ # bme680_bsec: !include 
+ #   file: packages/lume/bme680_bsec2.yaml
+ #   vars:
+ #     id_bme680_t: bme680_t
+ #     id_bme680_h: bme680_h
+ #     id_bme680_p: bme680_p
+ #     id_bme680_iaq: bme680_iaq
+ #     id_bme680_co2: bme680_co2
+ #     id_bme680_voc: bme680_voc
+ #     model_bme: bme688
+ #     address_bme680: 0x76
+  led: !include 
+    file: packages/lume/led_lume.yaml
+    vars:
+      led_lume_pin: GPIO26
+      led_lume: 5
+  2in: !include 
+    file: packages/lume/2in.yaml
+    vars:
+      one_pin: GPIO33
+      two_pin: GPIO3
+#  1in: !include 
+#    file: packages/lume/1in.yaml
+#    vars:
+#      one_pin: GPIO33
+  noise: !include 
+    file: packages/lume/noise.yaml
+    vars:
+      noise_bck: GPIO21
+      noise_ws: GPIO20
+      noise_din: GPIO22
+  pir: !include 
+    file: packages/lume/pir.yaml
+    vars:
+      pir_pin: GPIO35
+      pir_addres: 0x2F
+
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------      
+output:
+  - platform: ledc
+    pin: $beeper_ledc
+    id: rtttl_out
+
+#-------------------------------------------
+# RTTTL
+#-------------------------------------------
+rtttl:
+  output: rtttl_out
+  gain: 60%
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Звук нажатие клавиш"
+    optimistic: True
+    id: sound
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    icon: mdi:volume-off
