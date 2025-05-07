@@ -15,7 +15,7 @@
 
 # [Lume Luxe wifi/BLE/IR/CO2]
 
-<img src="" height="300" alt="Lume CO2 lite">
+<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Flumi%20co2.jpg" height="300" alt="Lume CO2 lite">
 
 и ему подобными с управлением диммером по цифровому интерфейсу.
 
