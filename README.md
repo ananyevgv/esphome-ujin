@@ -44,4 +44,4 @@
  
 # [Lume leak sensor](https://github.com/ananyevgv/esphome-ujin/blob/main/leak-sensor.yaml)
 
-<img src="" height="300" alt="Lume leak sensor lite">
+<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Faqua.jpg" height="300" alt="Lume leak sensor lite">
