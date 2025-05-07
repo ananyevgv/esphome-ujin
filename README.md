@@ -30,7 +30,7 @@
 
 # [Lume relay din](https://github.com/ananyevgv/esphome-ujin/blob/main/rele-ujin.yaml)
 
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Frelay.jpg" height="300" alt="Lume CO2 lite">
+<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Frelay.jpg" height="300" alt="Lume relay">
 
  
 # [Lume leak sensor](https://github.com/ananyevgv/esphome-ujin/blob/main/leak-sensor.yaml)
