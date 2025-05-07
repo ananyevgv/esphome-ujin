@@ -10,7 +10,7 @@
 # Esphome-ujin
 
 
-# [Lume L.te M1](https://github.com/ananyevgv/esphome-ujin/blob/main/lume%20L.te%20M1.yaml)
+# [Lume Luxe L.te M1](https://github.com/ananyevgv/esphome-ujin/blob/main/lume%20L.te%20M1.yaml)
 
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Flumi%20zigbee.jpg" height="300" alt="Lume L.te lite">
 
