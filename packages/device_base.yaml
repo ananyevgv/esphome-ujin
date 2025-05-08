@@ -2,10 +2,11 @@ esphome:
   name: "${name}"
   comment: "${device_description}"
   
-# Enable logging
+#-------------------------------------------
+# LOGGER
+#-------------------------------------------
 logger:
  
-
 # Enable Home Assistant API бля
 api:
   password: !secret api_pass
@@ -14,13 +15,27 @@ ota:
   password: !secret ota_pass
   platform: esphome
 
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
 binary_sensor:
   - platform: status
     name: "${name} API HA"
     id: system_status  
+    icon: mdi:check-network-outline
     
+#-------------------------------------------
+# BUTTON
+#-------------------------------------------    
 button:
   - platform: restart
     name: "${name} Restart"
+    
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: uptime
+    name: "${name} uptime"
     
 

@@ -20,6 +20,8 @@ sensor:
     update_interval: 60s  
     id: wifi_signal_db
     entity_category: "diagnostic"
+    icon: mdi:wifi
+    
   - platform: copy # Reports the WiFi signal strength in %
     source_id: wifi_signal_db
     name: "${name} WiFi Percent"
@@ -28,7 +30,7 @@ sensor:
     unit_of_measurement: "%"
     entity_category: "diagnostic"
     id: WiFiP
-    
+    icon: mdi:wifi
 #-------------------------------------------
 # TEXT SENSOR
 #------------------------------------------- 
