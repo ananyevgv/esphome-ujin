@@ -18,8 +18,7 @@
 
 # to do: 
       
-      1. Ограничение включения света по датчику освещенности
-      2. BLE
+      1. BLE
 
 # [Lume Luxe wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/edit/main/lume-co2.yaml)
 test
@@ -33,7 +32,6 @@ test
 
       1. Управление диммером
       2. BLE (мало памяти необходимо замена flash)
-      3. Ограничение включения света по датчику освещенности.
 
 
 # [Lume relay din](https://github.com/ananyevgv/esphome-ujin/blob/main/rele-ujin.yaml)
