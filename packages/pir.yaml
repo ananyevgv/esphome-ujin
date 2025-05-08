@@ -184,38 +184,40 @@ script:
     mode: single
     then:
       - lambda: |-
-          auto t_pir = id(g_pir);
-          switch(t_pir) {
-            case 0: ; break;
-            case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
-            case 2: id(light_dimmer1).turn_off().set_transition_length(1000).perform(); break;
-            case 3: id(light_dimmer1).toggle().perform(); break;
-            case 4: id(light_dimmer2).turn_on().set_brightness(1.0).perform(); break;
-            case 5: id(light_dimmer2).turn_off().set_transition_length(1000).perform(); break;
-            case 6: id(light_dimmer2).toggle().perform(); break;
-            case 7: 
-              id(light_dimmer1).turn_on().set_brightness(1.0).perform();
-              id(light_dimmer2).turn_on().set_brightness(1.0).perform();
-              break;
-            case 8: 
-              id(light_dimmer1).turn_off().set_transition_length(1000).perform();
-              id(light_dimmer2).turn_off().set_transition_length(1000).perform();
-              break;
-            case 9: 
-              id(light_dimmer1).toggle().perform();
-              id(light_dimmer2).toggle().perform(); 
-              break;
-            case 10: 
-              id(light_dimmer1).turn_on().set_brightness(0.5).perform(); 
-              id(binary_timer_pir).publish_state(true); 
-              break;
-            case 11: 
-              id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              id(binary_timer_pir).publish_state(true);
-              break;
-            case 12:
-              id(light_dimmer1).turn_on().set_brightness(0.5).perform();
-              id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              id(binary_timer_pir).publish_state(true);
-              break;       
+          if (id(illum).state) {
+            auto t_pir = id(g_pir);
+            switch(t_pir) {
+              case 0: ; break;
+              case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
+              case 2: id(light_dimmer1).turn_off().set_transition_length(1000).perform(); break;
+              case 3: id(light_dimmer1).toggle().perform(); break;
+              case 4: id(light_dimmer2).turn_on().set_brightness(1.0).perform(); break;
+              case 5: id(light_dimmer2).turn_off().set_transition_length(1000).perform(); break;
+              case 6: id(light_dimmer2).toggle().perform(); break;
+              case 7: 
+                id(light_dimmer1).turn_on().set_brightness(1.0).perform();
+                id(light_dimmer2).turn_on().set_brightness(1.0).perform();
+                break;
+              case 8: 
+                id(light_dimmer1).turn_off().set_transition_length(1000).perform();
+                id(light_dimmer2).turn_off().set_transition_length(1000).perform();
+                break;
+              case 9: 
+                id(light_dimmer1).toggle().perform();
+                id(light_dimmer2).toggle().perform(); 
+                break;
+              case 10: 
+                id(light_dimmer1).turn_on().set_brightness(0.5).perform(); 
+                id(binary_timer_pir).publish_state(true); 
+                break;
+              case 11: 
+                id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
+                id(binary_timer_pir).publish_state(true);
+                break;
+              case 12:
+                id(light_dimmer1).turn_on().set_brightness(0.5).perform();
+                id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
+                id(binary_timer_pir).publish_state(true);
+                break;       
+            }
           }

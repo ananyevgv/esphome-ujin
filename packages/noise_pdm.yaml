@@ -41,7 +41,7 @@ sound_level_meter:
         - type: eq
           name: "${name} Leq_1s"
           id: Leq_id
-
+          icon: mdi:waveform
 #-------------------------------------------
 # BINARY SENSOR
 #-------------------------------------------
@@ -201,38 +201,40 @@ script:
     mode: single
     then:
       - lambda: |-
-          uint8_t t_noise =  id(g_noise);
-          switch(t_noise) {
-            case 0: ; break;
-            case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
-            case 2: id(light_dimmer1).turn_off().set_transition_length(1000).perform(); break;
-            case 3: id(light_dimmer1).toggle().perform(); break;
-            case 4: id(light_dimmer2).turn_on().set_brightness(1.0).perform(); break;
-            case 5: id(light_dimmer2).turn_off().set_transition_length(1000).perform(); break;
-            case 6: id(light_dimmer2).toggle().perform(); break;
-            case 7: 
-              id(light_dimmer1).turn_on().set_brightness(1.0).perform();
-              id(light_dimmer2).turn_on().set_brightness(1.0).perform();
-              break;
-            case 8: 
-              id(light_dimmer1).turn_off().set_transition_length(1000).perform();
-              id(light_dimmer2).turn_off().set_transition_length(1000).perform();
-              break;
-            case 9: 
-              id(light_dimmer1).toggle().perform();
-              id(light_dimmer2).toggle().perform(); 
-              break;
-            case 10: 
-              id(light_dimmer1).turn_on().set_transition_length(1000).set_brightness(0.5).perform(); 
-              id(binary_timer_noise).publish_state(true);
-              break;
-            case 11: 
-              id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              id(binary_timer_noise).publish_state(true);
-              break;
-            case 12:
-              id(light_dimmer1).turn_on().set_brightness(0.5).perform();
-              id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-              id(binary_timer_noise).publish_state(true);
-              break;       
+          if  (id(illum).state) {
+            uint8_t t_noise =  id(g_noise);
+            switch(t_noise) {
+              case 0: ; break;
+              case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
+              case 2: id(light_dimmer1).turn_off().set_transition_length(1000).perform(); break;
+              case 3: id(light_dimmer1).toggle().perform(); break;
+              case 4: id(light_dimmer2).turn_on().set_brightness(1.0).perform(); break;
+              case 5: id(light_dimmer2).turn_off().set_transition_length(1000).perform(); break;
+              case 6: id(light_dimmer2).toggle().perform(); break;
+              case 7: 
+                id(light_dimmer1).turn_on().set_brightness(1.0).perform();
+                id(light_dimmer2).turn_on().set_brightness(1.0).perform();
+                break;
+              case 8: 
+                id(light_dimmer1).turn_off().set_transition_length(1000).perform();
+                id(light_dimmer2).turn_off().set_transition_length(1000).perform();
+                break;
+              case 9: 
+                id(light_dimmer1).toggle().perform();
+                id(light_dimmer2).toggle().perform(); 
+                break;
+              case 10: 
+                id(light_dimmer1).turn_on().set_transition_length(1000).set_brightness(0.5).perform(); 
+                id(binary_timer_noise).publish_state(true);
+                break;
+              case 11: 
+                id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
+                id(binary_timer_noise).publish_state(true);
+                break;
+              case 12:
+                id(light_dimmer1).turn_on().set_brightness(0.5).perform();
+                id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
+                id(binary_timer_noise).publish_state(true);
+                break;       
+            }
           }
