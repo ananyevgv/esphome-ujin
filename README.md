@@ -9,7 +9,6 @@
 
 # Интегрированные устройства UJIN в ESPHome
 
-https://github.com/NagibinA/esphome-ujin-1/blob/7df921a225203874b50efc2a2f6a108fb8cb2985/Lume%20Luxe_L.te%20M1/lume%20luxe%20L.te%20M1.yaml
 
 # [Lume Luxe L.te M1](https://github.com/NagibinA/esphome-ujin-1/blob/7df921a225203874b50efc2a2f6a108fb8cb2985/Lume%20Luxe_L.te%20M1/lume%20luxe%20L.te%20M1.yaml)
 
