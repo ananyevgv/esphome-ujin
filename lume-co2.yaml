@@ -99,7 +99,10 @@ packages:
     vars:
       one_butt: GPIO2
       two_butt: GPIO4
-
+      touch_threshold: 1000 #1150
+      delta_threshold: 5
+      setup_threshold: false #true
+      
 # не обязательные пакеты
  # time: !include included/time.yaml
 
