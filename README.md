@@ -64,7 +64,7 @@
 
 # [Connect din](https://github.com/NagibinA/esphome-ujin-1/blob/f9e8dd99a58445ae1349fafaf5a36c6e7d8ec50f/Connect-din%20Wi-Fi/rele-ujin.yaml)
 
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Frelay.jpg" height="300" alt="Lume relay">
+<img src="https://github.com/NagibinA/esphome-ujin-1/blob/65961438cc7a0ce8dfc24b3891ebbf458555e8bc/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg" height="300" alt="Lume relay">
 
  
 # [Aqua Sense](https://github.com/ananyevgv/esphome-ujin/blob/main/leak-sensor.yaml)
