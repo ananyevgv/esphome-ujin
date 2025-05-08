@@ -1,3 +1,5 @@
+# https://stuvel.eu/post/2022-06-05-esphome-touch-dimmer/
+
 #-------------------------------------------
 # Add yaml 
 #packages:
@@ -10,12 +12,12 @@
 
 esphome:
   includes:
-    - included/touch-dimming.h 
+    - packages/lume/touch-dimming.h 
   on_boot:
     - priority: 500
       then:
-        - lambda: new TouchDimmer("dimm1", light_dimmer1, left_touch);
-        - lambda: new TouchDimmer("dimm2", light_dimmer2, right_touch);   
+        - lambda: new TouchDimmer("dimm1", light_dimmer1, left_touch, binary_dimm1);
+        - lambda: new TouchDimmer("dimm2", light_dimmer2, right_touch, binary_dimm2);   
 #-------------------------------------------
 # TOUCH
 #-------------------------------------------
@@ -33,6 +35,26 @@ binary_sensor:
     pin: $one_butt
     icon: mdi:gesture-tap-button
     threshold: 1150
+    on_click: 
+      then: 
+   #     - lambda: |-
+    #        if id(binary_dimm1) {
+    #          const float id(light_dimmer1).current_values.get_brightness();
+    #          const bool id(light_dimmer1).current_values.is_on();  
+    #          dimming_dir = id(light_dimmer1).current_values.get_brightness() > 0.5f ? 1 : -1;
+    #          if (!is_on || this->dimming_dir == 0 || cur_bright <= 0.0f) {
+    #            this->dimming_dir = 1;
+    #            // Once we start increasing the brightness, it should start at 0%.
+    #            id(light_dimmer1).set_brightness(0.0f);
+    #          }
+    #          else if (cur_bright >= 1.0f ) {
+    #            this->dimming_dir = -1;
+    #          }
+    #          else {
+    #            this->dimming_dir *= -1;
+    #          }
+    #        }
+
         - if:
             condition:
               switch.is_on: sound
@@ -52,7 +74,12 @@ binary_sensor:
               switch.is_on: sound
             then:
               - rtttl.play: 'short:d=20,o=5,b=100:e6'  
-              
+
+  - platform: template
+    id: binary_dimm1
+
+  - platform: template
+    id: binary_dimm2              
 #-------------------------------------------
 # SELECT
 #-------------------------------------------

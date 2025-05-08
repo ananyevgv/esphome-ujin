@@ -143,6 +143,41 @@ select:
         - lambda: |-
             id(g_tipe) = (i);
 
+  - platform: template
+    name: "Каналы диммирования"
+    id: dimming_channels_id
+    icon: mdi:brightness-6
+    entity_category: config
+    options:
+      - "Диммировать 2 канала"              
+      - "Диммировать только 1 канал"  
+      - "Диммировать только 2 канал"
+      - "Диммирование каналов отключено"                                        
+    initial_option: "Диммировать 2 канала"
+    optimistic: true
+    on_value:
+      then:
+          #color_mode: BRIGHTNESS #ON_OFF
+        - lambda: |-
+            switch(i) {
+              case 0: 
+                id(binary_dimm1).publish_state(true); 
+                id(binary_dimm2).publish_state(true); 
+                break;
+              case 1:  
+                id(binary_dimm1).publish_state(true); 
+                id(binary_dimm2).publish_state(false); 
+                break;
+              case 2:  
+                id(binary_dimm1).publish_state(false); 
+                id(binary_dimm2).publish_state(true); 
+                break;
+              case 3:  
+                id(binary_dimm1).publish_state(false); 
+                id(binary_dimm2).publish_state(false); 
+                break;
+            }
+
 #-------------------------------------------
 # GLOBALS
 #-------------------------------------------            
