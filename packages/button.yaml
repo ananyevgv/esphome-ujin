@@ -8,6 +8,9 @@
 #    vars:
 #      one_butt: GPIO15
 #      two_butt: GPIO2
+#      touch_threshold: 1000 #1150
+#      delta_threshold: 5
+#      setup_threshold: false #true
 # and copy file esphome/packages/lume
 
 esphome:
@@ -22,7 +25,7 @@ esphome:
 # TOUCH
 #-------------------------------------------
 esp32_touch:
-#  setup_mode: true
+  setup_mode: $setup_threshold
 
 
 #-------------------------------------------
@@ -34,9 +37,27 @@ binary_sensor:
     id: left_touch
     pin: $one_butt
     icon: mdi:gesture-tap-button
-    threshold: 1150
+    threshold: $touch_threshold
     on_click: 
       then: 
+   #     - lambda: |-
+    #        if id(binary_dimm1) {
+    #          const float id(light_dimmer1).current_values.get_brightness();
+    #          const bool id(light_dimmer1).current_values.is_on();  
+    #          dimming_dir = id(light_dimmer1).current_values.get_brightness() > 0.5f ? 1 : -1;
+    #          if (!is_on || this->dimming_dir == 0 || cur_bright <= 0.0f) {
+    #            this->dimming_dir = 1;
+    #            // Once we start increasing the brightness, it should start at 0%.
+    #            id(light_dimmer1).set_brightness(0.0f);
+    #          }
+    #          else if (cur_bright >= 1.0f ) {
+    #            this->dimming_dir = -1;
+    #          }
+    #          else {
+    #            this->dimming_dir *= -1;
+    #          }
+    #        }
+
         - if:
             condition:
               switch.is_on: sound
@@ -48,7 +69,7 @@ binary_sensor:
     id: right_touch
     pin: $two_butt
     icon: mdi:gesture-tap-button
-    threshold: 1150
+    threshold: $touch_threshold
     on_click: 
       then:
         - if:
@@ -82,16 +103,16 @@ select:
         - lambda: |-
             switch(i) {
               case 0: 
-                id(right_touch).set_threshold (1145); 
-                id(left_touch).set_threshold (1145); 
+                id(right_touch).set_threshold ($touch_threshold - $delta_threshold); 
+                id(left_touch).set_threshold ($touch_threshold - $delta_threshold); 
                 break;
               case 1:  
-                id(right_touch).set_threshold (1150); 
-                id(left_touch).set_threshold (1150); 
+                id(right_touch).set_threshold ($touch_threshold); 
+                id(left_touch).set_threshold ($touch_threshold); 
                 break;
               case 2:  
-                id(right_touch).set_threshold (1155); 
-                id(left_touch).set_threshold (1155); 
+                id(right_touch).set_threshold ($touch_threshold + $delta_threshold); 
+                id(left_touch).set_threshold ($touch_threshold + $delta_threshold); 
                 break;
             }
               
