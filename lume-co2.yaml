@@ -77,9 +77,12 @@ i2c:
 # PACKAGES
 #-------------------------------------------
 packages:
+# обязательные пакеты
   wifi: !include packages/wifi.yaml
   web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
+
+# Диммер
   zero_dimm: !include 
     file: packages/lume/zero_dimm.yaml
     vars:
@@ -89,30 +92,62 @@ packages:
       dimmer2_gate: GPIO18  
       type_light1: monochromatic # binary
       type_light2: monochromatic # binary
+
+# Сенсорные кнопки
   but: !include 
     file: packages/lume/button.yaml
     vars:
       one_butt: GPIO2
       two_butt: GPIO4
+
+# не обязательные пакеты
  # time: !include included/time.yaml
+
+# Температура ESP32
   esp32_temp: !include packages/sensor/esp32_temp.yaml
+
+# Captive portal
+#  cap: !include 
+#    file: packages/lume/captive.yaml
+#    vars:
+#      ssid_captive: "Lume"
+#      pass_captive: "12345678"
+
+# ИК приемник
   ir_receiver: !include 
     file: packages/lume/ir_receiver.yaml
     vars:
       pin_ir_receiver: GPIO33
+
+# ИК передатчик
   ir_transmitter: !include 
     file: packages/lume/ir_transmitter.yaml
     vars:
       pin_ir_transmitter: GPIO25
+
+# Датчик освещености
   bh1750: !include
     file: packages/sensor/bh1750.yaml
     vars:
       id_bh: i_lume
+
+# Датчик температуры и влажности 
  # sht3x: !include 
   #  file: packages/sensor/sht3x.yaml
   # vars:
    #   id_sht3x_t: sht3x_t
    #   id_sht3x_h: sht3x_h
+
+# Датчик CO2
+#  ccs811: !include 
+#    file: packages/lume/ccs811.yaml
+#    vars:
+#      id_ccs811_t: sht3x_t
+#      id_ccs811_h: sht3x_h
+#      id_ccs811_eco2: ccs811_eco2
+#      id_ccs811_tvoc: ccs811_tvoc
+
+# Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
   bme680_bsec: !include 
     file: packages/sensor/bme680_bsec2.yaml
     vars:
@@ -124,21 +159,28 @@ packages:
       id_bme680_voc: bme680_voc
       model_bme: bme688
       address_bme680: 0x76
+
+# Подсведка кнопок
   led: !include 
     file: packages/lume/led_lume.yaml
     vars:
       led_lume_pin: GPIO26
       led_lume: 5
+
+# Входы
   1in: !include 
     file: packages/lume/1in.yaml
     vars:
       one_pin: GPIO32
 
+# Шумомер
   noise: !include 
     file: packages/lume/noise_pdm.yaml
     vars:
       noise_ws: GPIO13
       noise_din: GPIO15
+
+# Датчик движения
   pir: !include 
     file: packages/lume/pir.yaml
     vars:
