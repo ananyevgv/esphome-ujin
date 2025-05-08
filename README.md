@@ -12,8 +12,9 @@
 
 # [Lume Luxe L.te M1](https://github.com/NagibinA/esphome-ujin-1/blob/7df921a225203874b50efc2a2f6a108fb8cb2985/Lume%20Luxe_L.te%20M1/lume%20luxe%20L.te%20M1.yaml)
 
-<img src="https://github.com/NagibinA/esphome-ujin-1/blob/5f76cadf9561d7a832881ac16208bb044533d744/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg" height="300" alt="Lume L.te lite">
+<img src="https://github.com/NagibinA/esphome-ujin-1/blob/5f76cadf9561d7a832881ac16208bb044533d744/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg" height="300" alt="Lume L.te lite"> 
 
+В этом выключателе, ипользуется прямое управление диммером (с отслеживанием нуля).
 
 В прошивке выключателя реализовано:
 1. Диммирование двух каналов.
@@ -51,8 +52,7 @@
 
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Flumi%20co2.jpg" height="300" alt="Lume CO2 lite">
 
-и ему подобными с управлением диммером по цифровому интерфейсу.
-
+В этом выключателе, управление диммером происходит по цифровому интерфейсу.
 
 # todo: 
 
