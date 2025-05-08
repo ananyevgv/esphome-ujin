@@ -22,7 +22,8 @@
       2. Ограничение включения света по датчику освещенности
       3. BLE
 
-# [Lume Luxe wifi/BLE/IR/CO2]
+# [Lume Luxe wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/edit/main/lume-co2.yaml)
+test
 
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Flumi%20co2.jpg" height="300" alt="Lume CO2 lite">
 
