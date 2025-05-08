@@ -69,4 +69,4 @@
  
 # [Aqua Sense](https://github.com/ananyevgv/esphome-ujin/blob/main/leak-sensor.yaml)
 
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Faqua.jpg" height="300" alt="Lume leak sensor lite">
+<img src="https://github.com/NagibinA/esphome-ujin-1/blob/9f9ec3743ae0b0ab61f9c3933ee5707e63ab953d/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg" height="300" alt="Lume leak sensor lite">
