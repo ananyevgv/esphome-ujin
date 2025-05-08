@@ -67,6 +67,6 @@
 <img src="https://github.com/NagibinA/esphome-ujin-1/blob/65961438cc7a0ce8dfc24b3891ebbf458555e8bc/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg" height="300" alt="Lume relay">
 
  
-# [Aqua Sense](https://github.com/ananyevgv/esphome-ujin/blob/main/leak-sensor.yaml)
+# [Aqua Sense](https://github.com/NagibinA/esphome-ujin-1/blob/02668abdb31d5efbcec2e42ae0b62cf414c559d0/Aqua-Sense%20BLE/leak-sensor.yaml)
 
 <img src="https://github.com/NagibinA/esphome-ujin-1/blob/9f9ec3743ae0b0ab61f9c3933ee5707e63ab953d/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg" height="300" alt="Lume leak sensor lite">
