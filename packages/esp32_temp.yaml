@@ -4,4 +4,4 @@
 sensor:
   - platform: internal_temperature
     name: "${name} ESP32 T"
-    icon: mdi:cpu-64-bit
+    icon: mdi:cpu-32-bit
