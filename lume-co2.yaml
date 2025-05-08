@@ -82,7 +82,7 @@ packages:
   web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
 
-# Диммер
+# Диммер для теста !!!Не рабочий в этой версии!!!
   zero_dimm: !include 
     file: packages/lume/zero_dimm.yaml
     vars:
