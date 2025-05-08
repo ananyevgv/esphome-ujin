@@ -1,3 +1,6 @@
+
+![Connect-Din](https://github.com/NagibinA/esphome-ujin-1/blob/dceea5255d78a8091bd3e1e8c10577156e4d6b57/Connect-din%20Wi-Fi/images/connect-din_wi-fi_5.png)
+
 Для перевода ESP в режим прошивки, нажмите и удерживайте кнопку "Настройка", до подачи питания.
 
 Второй вариант прошивки.
