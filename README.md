@@ -7,7 +7,7 @@
 [esphome-release]: https://GitHub.com/esphome/esphome/releases/
 
 
-# Esphome-ujin
+# Интегрированные устройства UJIN в ESPHome
 
 
 # [Lume Luxe L.te M1](https://github.com/ananyevgv/esphome-ujin/blob/main/lume%20L.te%20M1.yaml)
