@@ -70,3 +70,15 @@
 # [Aqua Sense](https://github.com/NagibinA/esphome-ujin-1/blob/02668abdb31d5efbcec2e42ae0b62cf414c559d0/Aqua-Sense%20BLE/leak-sensor.yaml)
 
 <img src="https://github.com/NagibinA/esphome-ujin-1/blob/9f9ec3743ae0b0ab61f9c3933ee5707e63ab953d/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg" height="300" alt="Lume leak sensor lite">
+
+
+# [Heat Wi-Fi]
+
+<img src="https://github.com/NagibinA/esphome-ujin-1/blob/382708609ab669d9a017be2ed7dc692cb6605322/Heat%20Wi-Fi/images/heat_1.jpg" height="300" alt="Lume leak sensor lite">
+
+
+# todo: 
+
+      1. Подключение сенсорных кнопок
+      2. Подсветка режимов работы и текущего состояния термостата, адресными светодиодами
+
