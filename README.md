@@ -50,7 +50,7 @@
 
 # [Lume wifi/BLE/IR/CO2]
 
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/image%2Flumi%20co2.jpg" height="300" alt="Lume CO2 lite">
+<img src="https://github.com/NagibinA/esphome-ujin-1/blob/f60548e132d49c0a066dafadcd2c0793e3239c1f/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg" height="300" alt="Lume CO2 lite">
 
 В этом выключателе, управление диммером происходит по цифровому интерфейсу.
 
