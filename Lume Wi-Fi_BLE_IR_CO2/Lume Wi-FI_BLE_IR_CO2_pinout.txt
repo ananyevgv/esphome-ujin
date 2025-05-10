@@ -1,0 +1,30 @@
+#GPIO36 I  Датчик Холла                             #GPIO23 I/O 
+#GPIO39 I                                           #GPIO22 I/O I2C SCL
+#GPIO34 I GPIO34 PIR                                #GPIO3  I/O U0RXD Dimmer
+#GPIO35 I                                           #GPIO1  I/O U0TXD Dimmer
+#GPIO32 I/O Вход 1                                  #GPIO21 I/O I2C SDA
+#GPIO33 I/O remote_receiver                         #GPIO19 I/O 
+#GPIO25 I/O ir transmitter                          #GPIO18 I/O
+#GPIO26 I/O LED                                     #GPIO5  I/O
+#GPIO27 I/O off all i2c                             #17
+#GPIO14 I/O CSS811 bh1750 ON LOW (HIGH OFF)         #16
+#GPIO12 I/O                                         #GPIO4  I/O touch2 (s2) 
+#GPIO13 I/O MP45DT02 I2S WS                         #GPIO2 ADC touch1(s1)
+                                                    #GPIO15 I/O MP45DT02 I2S DOUT 
+                                                    #GPIO0 Button
+
+#####################################################################################
+#9                                                  #8
+#10                                                 #7
+#11                                                 #6
+
+#GPIO37 I SENSOR_CAPP
+#GPIO38 I SENSOR_CAPN
+#GPIO39 I Датчик Холла
+
+#####################
+#Pic     # pic uart #
+#5в.     # Вх2      #
+#3.3в    # pic uart #
+#Gnd.    # Вх1      #
+#####################
