@@ -1,0 +1,32 @@
+EN – RST (XS2)
+GPIO0 – GPO (XS2)
+GPIO1 –  TXD (XS2)
+GPIO2 – touch sensor 2
+GPIO3 – внешний вход для выключателя 2, RXD (XS2)
+GPIO4 – infrared receiver
+GPIO5 – переход через ноль
+GPIO6 – CLK PSRAM
+GPIO7 – I2C SDA
+GPIO8 – I2C SCL
+GPIO9 – SD PSRAM
+GPIO10 – SD PSRAM
+GPIO11 – CMD PSRAM
+GPIO12 – __________
+GPIO13 – infrared transmitter
+GPIO14 – ZIGBEE 2652 (DIO16) rx_pin
+GPIO15 – touch sensor 1
+GPIO19 – управление лампой 1
+GPIO20 – I2S ws_pin
+GPIO21 – I2S bck_pin
+GPIO22 – I2S din_pin
+GPIO25 – управление лампой 2
+GPIO26 – адресные светодиоды WS2812 (5 штук)
+GPIO27 – ZIGBEE 2652 (DIO17) tx_pin
+GPIO32 – buzzer
+GPIO33 – внешний вход для выключателя 1
+GPI34 – __________  
+GPI35 – датчик движения PIR612
+GPI36 – __________  
+GPI37 – __________  
+GPI38 – __________  
+GPI39 – __________  
