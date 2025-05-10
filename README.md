@@ -46,7 +46,7 @@
       
       1. BLE
 
-# [Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/lume-co2.yaml)
+# [Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/Lume%20Wi-FI_BLE_IR_CO2.yaml)
 
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg" height="300" alt="Lume CO2 lite">
 
