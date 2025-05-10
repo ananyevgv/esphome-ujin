@@ -4,7 +4,7 @@ GPIO1 –  TXD (XS2)
 GPIO2 – touch sensor 2
 GPIO3 – внешний вход для выключателя 2, RXD (XS2)
 GPIO4 – infrared receiver
-GPIO5 – переход через ноль
+GPIO5 – переход через ноль для первого и второго диммера
 GPIO6 – CLK PSRAM
 GPIO7 – I2C SDA
 GPIO8 – I2C SCL
