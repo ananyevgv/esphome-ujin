@@ -68,7 +68,7 @@
 <img src="https://github.com/NagibinA/esphome-ujin-1/blob/9f9ec3743ae0b0ab61f9c3933ee5707e63ab953d/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg" height="300" alt="Lume leak sensor lite">
 
 
-# [Heat (Wi-Fi]https://github.com/ananyevgv/esphome-ujin/blob/main/Heat%20Wi-Fi%2Fheat_wifi.yaml)
+# [Heat Wi-Fi](https://github.com/ananyevgv/esphome-ujin/blob/main/Heat%20Wi-Fi%2Fheat_wifi.yaml)
 
 <img src="https://github.com/Ananyevgv/esphome-ujin/blob/382708609ab669d9a017be2ed7dc692cb6605322/Heat%20Wi-Fi/images/heat_1.jpg" height="300" alt="Lume leak sensor lite">
 
