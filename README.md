@@ -82,3 +82,9 @@
       1. Подключение сенсорных кнопок
       2. Подсветка режимов работы и текущего состояния термостата, адресными светодиодами
 
+
+# [Aqua Wi-Fi/BLE/ 220В СУ-02 R2]
+
+<img src="https://github.com/NagibinA/esphome-ujin-1/blob/0e2a2386f07cc2625be3c4d6233af40368df16d9/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_1.jpg" height="300" alt="Lume leak sensor lite">
+
+
