@@ -1,0 +1,32 @@
+EN – RST (XS2)
+GPIO0 – GPO (XS2)
+GPIO1 –  TXD (XS2)
+GPIO2 – touch sensor 2
+GPIO3 – реле 1 (открыто), RXD (XS2)
+GPIO4 – __________
+GPIO5 – __________
+GPIO6 – CLK PSRAM
+GPIO7 – __________
+GPIO8 – __________
+GPIO9 – SD PSRAM
+GPIO10 – SD PSRAM
+GPIO11 – CMD PSRAM
+GPIO12 – __________
+GPIO13 – __________
+GPIO14 – __________
+GPIO15 – touch sensor 1
+GPIO19 – реле 2 (закрыто)
+GPIO20 – __________
+GPIO21 – __________
+GPIO22 – __________
+GPIO25 – buzzer
+GPIO26 – адресные светодиоды WS2812 (5 штук)
+GPIO27 – __________
+GPIO32 – __________
+GPIO33 – внешний вход
+GPI34 – __________  
+GPI35 – __________
+GPI36 – __________  
+GPI37 – __________  
+GPI38 – __________  
+GPI39 – __________  
