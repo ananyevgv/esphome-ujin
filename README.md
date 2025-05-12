@@ -65,7 +65,7 @@
  
 # [Aqua Sense](https://github.com/Ananyevgv/esphome-ujin/blob/02668abdb31d5efbcec2e42ae0b62cf414c559d0/Aqua-Sense%20BLE/leak-sensor.yaml)
 
-<img src="https://github.com/NagibinA/esphome-ujin-1/blob/9f9ec3743ae0b0ab61f9c3933ee5707e63ab953d/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg" height="300" alt="Lume leak sensor lite">
+<img src="https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg" height="300" alt="Lume leak sensor lite">
 
 
 # [Heat Wi-Fi](https://github.com/ananyevgv/esphome-ujin/blob/main/Heat%20Wi-Fi%2Fheat_wifi.yaml)
@@ -73,7 +73,6 @@
 <img src="https://github.com/Ananyevgv/esphome-ujin/blob/382708609ab669d9a017be2ed7dc692cb6605322/Heat%20Wi-Fi/images/heat_1.jpg" height="300" alt="Lume leak sensor lite">
 
 
-# to do: 
 
-      1. Подсветка режимов работы и текущего состояния термостата, адресными светодиодами
 
+<img src="https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_1.jpg" height="300" alt="Lume leak sensor lite">
