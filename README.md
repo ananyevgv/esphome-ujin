@@ -60,19 +60,19 @@
 
 # [Connect din](https://github.com/Ananyevgv/esphome-ujin/blob/f9e8dd99a58445ae1349fafaf5a36c6e7d8ec50f/Connect-din%20Wi-Fi/rele-ujin.yaml)
 
-<img src="https://github.com/Ananyevgv/esphome-ujin/blob/65961438cc7a0ce8dfc24b3891ebbf458555e8bc/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg" height="300" alt="Lume relay">
+<img src="https://github.com/Ananyevgv/esphome-ujin/blob/65961438cc7a0ce8dfc24b3891ebbf458555e8bc/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg" height="300" alt="Connect-Din">
 
  
 # [Aqua Sense](https://github.com/Ananyevgv/esphome-ujin/blob/02668abdb31d5efbcec2e42ae0b62cf414c559d0/Aqua-Sense%20BLE/leak-sensor.yaml)
 
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg" height="300" alt="Lume leak sensor lite">
+<img src="https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg" height="300" alt="leak sensor lite">
 
 
 # [Heat Wi-Fi](https://github.com/ananyevgv/esphome-ujin/blob/main/Heat%20Wi-Fi%2Fheat_wifi.yaml)
 
-<img src="https://github.com/Ananyevgv/esphome-ujin/blob/382708609ab669d9a017be2ed7dc692cb6605322/Heat%20Wi-Fi/images/heat_1.jpg" height="300" alt="Lume leak sensor lite">
+<img src="https://github.com/Ananyevgv/esphome-ujin/blob/382708609ab669d9a017be2ed7dc692cb6605322/Heat%20Wi-Fi/images/heat_1.jpg" height="300" alt="Heat Wi-Fi ">
 
 
 
-
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_1.jpg" height="300" alt="Lume leak sensor lite">
+# [Aqua Wi-Fi BLE 220В СУ-02 R2](https://github.com/ananyevgv/esphome-ujin/blob/ab583b7662ee3f60981c07a3cfd8f1724de03bbe/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/Aqua%20Wi-Fi_pinout.txt)
+<img src="https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_1.jpg" height="300" alt="Aqua Wi-Fi">
