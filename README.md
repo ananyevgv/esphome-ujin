@@ -60,7 +60,7 @@
 
 # [Connect din](https://github.com/Ananyevgv/esphome-ujin/blob/f9e8dd99a58445ae1349fafaf5a36c6e7d8ec50f/Connect-din%20Wi-Fi/rele-ujin.yaml)
 
-<img src="https://github.com/Ananyevgv/esphome-ujin/blob/65961438cc7a0ce8dfc24b3891ebbf458555e8bc/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg" height="300" alt="Connect-Din">
+<img src="https://github.com/ananyevgv/esphome-ujin/blob/0098fa99f428bf6730a7f8af4ea90c74ea1c70b0/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg" height="300" alt="Connect-Din">
 
  
 # [Aqua Sense](https://github.com/Ananyevgv/esphome-ujin/blob/02668abdb31d5efbcec2e42ae0b62cf414c559d0/Aqua-Sense%20BLE/leak-sensor.yaml)
