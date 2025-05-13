@@ -49,8 +49,11 @@
 # [Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/Lume%20Wi-FI_BLE_IR_CO2.yaml)
 
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg" height="300" alt="Lume CO2 lite">
+Версия платы 2.3 с датчиками css811, sht30, bh1750
 
-В этом выключателе, управление диммером происходит по цифровому интерфейсу.
+Версия платы 2.4 с датчиком bme680, bh1750
+
+В этих выключателях, управление диммером происходит по цифровому интерфейсу.
 
 # to do: 
 
