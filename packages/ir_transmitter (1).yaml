@@ -1,0 +1,62 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  ir_transmitter: !include 
+#    file: packages/lume/ir_transmitter.yaml
+#    vars:
+#      pin_ir_transmitter: GPIO13
+# and copy file esphome/packages/lume
+
+#-------------------------------------------
+# REMOTE_RECEIVER
+#-------------------------------------------
+#remote_receiver:
+#  - id: !extend r_receiver
+#    on_raw:    
+#      then:
+#        - if:
+#            condition:
+#              switch.is_on: repeater
+#            then:
+#              - remote_transmitter.transmit_raw:
+#                  code: !lambda 'return x;'
+
+#-------------------------------------------
+# REMOTE TRANSMITTER
+#-------------------------------------------
+remote_transmitter:
+  pin: $pin_ir_transmitter
+  # Infrared remotes use a 50% carrier signal
+  carrier_duty_percent: 50%
+
+
+api:
+  services:
+    - service: send_samsung_command
+      variables:
+        command: string
+      then:
+        - remote_transmitter.transmit_samsung:
+            data: !lambda 'return strtoull(command.c_str(), nullptr, 16);'
+            nbits: 48
+
+
+
+
+    #- service: send_ir_code
+     # variables:
+      #  code: int[]
+       # times: int
+#      then:
+ #       - remote_transmitter.transmit_raw:
+  #          carrier_frequency: 38kHz
+   #         code: !lambda 'return code;'
+    #        repeat:
+     #         times: !lambda 'return times;'
+
+#    - service: send_lg_command
+ #     variables:
+  #      my_command: int
+   #   then:
+    #    - remote_transmitter.transmit_lg:
+     #       data: !lambda 'return my_command;
