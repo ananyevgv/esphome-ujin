@@ -1,0 +1,157 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  but_clim: !include 
+#    file: packages/lume/climate_button_heat.yaml
+#    vars:
+#      heat_pin: GPIO3
+#      room: kithen
+#      heat_threshold: 0x40
+# and copy file esphome/packages/lume
+
+#-------------------------------------------
+# EXTERNAL COMPONENTS
+#-------------------------------------------
+external_components:
+  - source: github://ananyevgv/esphome-components/
+    refresh: 0s
+
+#-------------------------------------------
+# CAP1293
+#-------------------------------------------
+cap1293:
+  id: cap1293_component
+  address: 0x28
+  reset_pin: GPIO12
+  touch_threshold: $heat_threshold
+  allow_multiple_touches: true
+  
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------  
+binary_sensor:
+  - platform: cap1293
+    id: touch_key0
+    channel: 0
+    name: "${room} Thermostat -"
+    on_multi_click:
+      # Short click
+      - timing:
+          - ON for at most 1000ms
+          - OFF for at least 500ms
+        then:
+          - climate.control:
+              id:  ${room}_thermostat
+              target_temperature: !lambda "return id(${room}_thermostat).target_temperature -1;"
+      - timing:
+          - ON for at most 4000ms
+          - OFF for at least 500ms
+        then:
+          - switch.toggle:
+              id: climate_toggle
+  - platform: cap1293
+    id: touch_key2
+    channel: 2
+    name: "${room} Thermostat +"
+    on_multi_click:
+      # Short click
+      - timing:
+          - ON for at most 1000ms
+          - OFF for at least 500ms
+        then:
+          - climate.control:
+              id:  ${room}_thermostat
+              target_temperature: !lambda "return id(${room}_thermostat).target_temperature +1;"
+      - timing:
+          - ON for at most 4000ms
+          - OFF for at least 500ms
+        then:
+          - switch.toggle:
+              id: climate_toggle
+
+#-------------------------------------------
+# CLIMATE
+#-------------------------------------------     
+climate:
+  - platform: thermostat
+    name: "${room} Thermostat"
+    sensor: NTC_Temperature
+    min_heating_off_time: 60s
+    min_heating_run_time: 60s
+    min_idle_time: 30s
+    id:  ${room}_thermostat
+    heat_action:
+      - switch.turn_on: relay
+    idle_action:
+      - switch.turn_off: relay
+    off_mode: 
+      - switch.turn_off: relay       
+    default_preset: Home
+    preset:
+      - name: Home
+        default_target_temperature_low: 20 °C
+    visual:
+      min_temperature: 18
+      max_temperature: 34
+      temperature_step:
+        target_temperature: 0.5
+        current_temperature: 0.1
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: gpio
+    pin: $heat_pin
+    id: relay
+  - platform: template
+    id: climate_toggle
+    lambda: |-
+      if (id(${room}_thermostat).mode  == 3) {
+        return true;
+      } else {
+        return false;
+      }
+    turn_on_action:
+      - climate.control:
+          id: ${room}_thermostat
+          mode: "HEAT"
+    turn_off_action:
+      - climate.control:
+          id:  ${room}_thermostat
+          mode: "OFF"
+
+
+#-------------------------------------------
+# Number
+#-------------------------------------------
+number:
+  - platform: template
+    name: Гистерезис охлаждение
+    optimistic: true
+    id: deadband
+    unit_of_measurement: "°c"
+    icon: mdi:chart-sankey
+    initial_value: 0.5
+    restore_value: true
+    min_value: 0.1
+    max_value: 2
+    step: 0.1
+    mode: box
+    on_value: 
+      - lambda: return id(${room}_thermostat).set_heat_deadband(x);
+
+  - platform: template
+    name: Гистерезис нагрев
+    optimistic: true
+    id: overrun
+    unit_of_measurement: "°c"
+    icon: mdi:chart-bell-curve-cumulative
+    initial_value: 0.5
+    restore_value: true
+    min_value: 0.1
+    max_value: 2
+    step: 0.1
+    mode: box
+    on_value: 
+      - lambda: return id(${room}_thermostat).set_heat_overrun(x);
