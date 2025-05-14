@@ -49,8 +49,11 @@
 # [Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/Lume%20Wi-FI_BLE_IR_CO2.yaml)
 
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg" height="300" alt="Lume CO2 lite">
+Версия платы 2.3 с датчиками css811, sht30, bh1750
 
-В этом выключателе, управление диммером происходит по цифровому интерфейсу.
+Версия платы 2.4 с датчиками bme680, bh1750
+
+В этих выключателях, управление диммером происходит по цифровому интерфейсу.
 
 # to do: 
 
@@ -60,7 +63,7 @@
 
 # [Connect din](https://github.com/Ananyevgv/esphome-ujin/blob/f9e8dd99a58445ae1349fafaf5a36c6e7d8ec50f/Connect-din%20Wi-Fi/rele-ujin.yaml)
 
-<img src="https://github.com/Ananyevgv/esphome-ujin/blob/65961438cc7a0ce8dfc24b3891ebbf458555e8bc/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg" height="300" alt="Connect-Din">
+<img src="https://github.com/ananyevgv/esphome-ujin/blob/0098fa99f428bf6730a7f8af4ea90c74ea1c70b0/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg" height="300" alt="Connect-Din">
 
  
 # [Aqua Sense](https://github.com/Ananyevgv/esphome-ujin/blob/02668abdb31d5efbcec2e42ae0b62cf414c559d0/Aqua-Sense%20BLE/leak-sensor.yaml)
