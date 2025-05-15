@@ -10,7 +10,7 @@
 # Интегрированные устройства UJIN в ESPHome
 
 
-| [Lume Luxe L.te M1](https://github.com/Ananyevgv/esphome-ujin/blob/7df921a225203874b50efc2a2f6a108fb8cb2985/Lume%20Luxe_L.te%20M1/lume%20luxe%20L.te%20M1.yaml)  | Lume Wi-Fi Z1 | Lume wifi/BLE/IR/CO2 | Lume Luxe L.te M2 | 
+| [Lume Luxe L.te M1](https://github.com/Ananyevgv/esphome-ujin/blob/7df921a225203874b50efc2a2f6a108fb8cb2985/Lume%20Luxe_L.te%20M1/lume%20luxe%20L.te%20M1.yaml)  |  [Lume Wi-Fi Z1](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/lume%20WIFI%20Z1.yaml) | [Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/Lume%20Wi-FI_BLE_IR_CO2.yaml) | Lume Luxe L.te M2 | 
 |--------------------|---------------|----------------------|-------------------|
 | ![Lume Luxe L.te M1](https://github.com/Ananyevgv/esphome-ujin/blob/5f76cadf9561d7a832881ac16208bb044533d744/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg) | ![Lume Wi-Fi Z1](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/Lume%20WIFI%20Z1.jpg) | ![Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg) | ![Lume Luxe L.te M2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Luxe_L.te%20M2/Lume%20Luxe_L.te%20M2.jpg) |
 
@@ -47,7 +47,7 @@
 12. Реализована работа ZigBee координатора ZHA
 
     
-# [Lume Wi-Fi Z1](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/lume%20WIFI%20Z1.yaml)
+
 
 
 
@@ -56,7 +56,7 @@
       1. BLE
 
 
-# [Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/Lume%20Wi-FI_BLE_IR_CO2.yaml)
+
 
 Версия платы 2.3 с датчиками css811, sht30, bh1750
 
