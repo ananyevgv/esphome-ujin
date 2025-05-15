@@ -17,8 +17,6 @@
 
 # [Lume Luxe L.te M1](https://github.com/Ananyevgv/esphome-ujin/blob/7df921a225203874b50efc2a2f6a108fb8cb2985/Lume%20Luxe_L.te%20M1/lume%20luxe%20L.te%20M1.yaml)
 
-<img src="https://github.com/Ananyevgv/esphome-ujin/blob/5f76cadf9561d7a832881ac16208bb044533d744/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg" height="300" alt="Lume L.te lite"> 
-
 В этом выключателе, ипользуется прямое управление диммером (с отслеживанием нуля).
 
 В прошивке выключателя реализовано:
@@ -46,22 +44,24 @@
 
     
 # [Lume Wi-Fi Z1](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/lume%20WIFI%20Z1.yaml)
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/Lume%20WIFI%20Z1.jpg" height="300" alt="Wi-Fi_Z1 lite"> 
+
 
 
 # to do: 
       
       1. BLE
 
+| Lume wifi/BLE/IR/CO2                                                   | Lume Luxe L.te M2                                                 | 
+|------------------------------------------------------------|-----------------------------------------------------------|
+| ![Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg) | ![Lume Luxe L.te M2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Luxe_L.te%20M2/Lume%20Luxe_L.te%20M2.jpg) 
+
 # [Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/Lume%20Wi-FI_BLE_IR_CO2.yaml)
 
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg" height="300" alt="Lume CO2 lite">
 Версия платы 2.3 с датчиками css811, sht30, bh1750
 
 Версия платы 2.4 с датчиками bme680, bh1750
 
 # [Lume Luxe L.te M2]
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Luxe_L.te%20M2/Lume%20Luxe_L.te%20M2.jpg" height="300" alt="Luxe L.te M2 lite">
 
 В этих выключателях, управление диммером происходит по UART 115200 8n1 (+LOG).
 
