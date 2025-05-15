@@ -40,7 +40,7 @@
 12. Реализована работа ZigBee координатора ZHA
 
     
-# [Lume Wi-Fi Z1]
+# [Lume Wi-Fi Z1](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/lume%20WIFI%20Z1.yaml)
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/Lume%20WIFI%20Z1.jpg" height="300" alt="Wi-Fi_Z1 lite"> 
 
 
