@@ -56,7 +56,7 @@ packages:
       one_butt: GPIO15
       two_butt: GPIO2
 
-# Двойной выключатель для lume Luxe L.te M1
+# Двойной выключатель для lume WI-Fi Z1
   zero_dimm: !include 
     file: packages/lume/zero_dimm.yaml
     vars:
