@@ -14,6 +14,11 @@
 |--------------------|---------------|----------------------|-------------------|
 | ![Lume Luxe L.te M1](https://github.com/Ananyevgv/esphome-ujin/blob/5f76cadf9561d7a832881ac16208bb044533d744/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg) | ![Lume Wi-Fi Z1](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/Lume%20WIFI%20Z1.jpg) | ![Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg) | ![Lume Luxe L.te M2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Luxe_L.te%20M2/Lume%20Luxe_L.te%20M2.jpg) |
 
+
+| Connect din        | Aqua Sense    | Heat Wi-Fi           |  Aqua Wi-Fi       | 
+|--------------------|---------------|----------------------|-------------------|
+| ![Connect din](https://github.com/ananyevgv/esphome-ujin/blob/0098fa99f428bf6730a7f8af4ea90c74ea1c70b0/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg) | ![Aqua Sense](https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg) | ![Heat Wi-Fi](https://github.com/Ananyevgv/esphome-ujin/blob/382708609ab669d9a017be2ed7dc692cb6605322/Heat%20Wi-Fi/images/heat_1.jpg) | ![Aqua Wi-Fi](https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_1.jpg) |
+
 # [Lume Luxe L.te M1](https://github.com/Ananyevgv/esphome-ujin/blob/7df921a225203874b50efc2a2f6a108fb8cb2985/Lume%20Luxe_L.te%20M1/lume%20luxe%20L.te%20M1.yaml)
 
 В этом выключателе, ипользуется прямое управление диммером (с отслеживанием нуля).
@@ -68,20 +73,9 @@
 
 
 # [Connect din](https://github.com/Ananyevgv/esphome-ujin/blob/f9e8dd99a58445ae1349fafaf5a36c6e7d8ec50f/Connect-din%20Wi-Fi/rele-ujin.yaml)
-
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/0098fa99f428bf6730a7f8af4ea90c74ea1c70b0/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg" height="300" alt="Connect-Din">
-
  
 # [Aqua Sense](https://github.com/Ananyevgv/esphome-ujin/blob/02668abdb31d5efbcec2e42ae0b62cf414c559d0/Aqua-Sense%20BLE/leak-sensor.yaml)
 
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg" height="300" alt="leak sensor lite">
-
-
 # [Heat Wi-Fi](https://github.com/ananyevgv/esphome-ujin/blob/main/Heat%20Wi-Fi%2Fheat_wifi.yaml)
 
-<img src="https://github.com/Ananyevgv/esphome-ujin/blob/382708609ab669d9a017be2ed7dc692cb6605322/Heat%20Wi-Fi/images/heat_1.jpg" height="300" alt="Heat Wi-Fi ">
-
-
-
 # [Aqua Wi-Fi BLE 220В СУ-02 R2](https://github.com/ananyevgv/esphome-ujin/blob/ab583b7662ee3f60981c07a3cfd8f1724de03bbe/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/Aqua%20Wi-Fi_pinout.txt)
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_1.jpg" height="300" alt="Aqua Wi-Fi">
