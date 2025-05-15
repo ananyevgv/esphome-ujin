@@ -42,7 +42,7 @@
     
 # [Lume Wi-Fi Z1]
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/Lume%20WIFI%20Z1.jpg" height="300" alt="Wi-Fi_Z1 lite"> 
-https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/Lume%20WIFI%20Z1.jpg
+
 
 # to do: 
       
@@ -56,7 +56,7 @@ https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1/Lume%20WIFI%
 Версия платы 2.4 с датчиками bme680, bh1750
 
 # [Lume Luxe L.te M2]
-<img src="https://github.com/ananyevgv/esphome-ujin/tree/main/Lume%20Luxe_L.te%20M2" height="300" alt="Luxe L.te M2 lite">
+<img src="https://github.com/ananyevgv/esphome-ujin/tree/main/Lume%20Luxe_L.te%20M2.jpg" height="300" alt="Luxe L.te M2 lite">
 
 В этих выключателях, управление диммером происходит по UART 115200 8n1 (+LOG).
 
