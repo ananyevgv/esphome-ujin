@@ -11,7 +11,7 @@
 
 
 # [Lume Luxe L.te M1](https://github.com/Ananyevgv/esphome-ujin/blob/7df921a225203874b50efc2a2f6a108fb8cb2985/Lume%20Luxe_L.te%20M1/lume%20luxe%20L.te%20M1.yaml)
-
+# [Lume WI Fi Z1]
 <img src="https://github.com/Ananyevgv/esphome-ujin/blob/5f76cadf9561d7a832881ac16208bb044533d744/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg" height="300" alt="Lume L.te lite"> 
 
 В этом выключателе, ипользуется прямое управление диммером (с отслеживанием нуля).
@@ -47,7 +47,7 @@
       1. BLE
 
 # [Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/Lume%20Wi-FI_BLE_IR_CO2.yaml)
-
+# [Lume Luxe L.te M2]
 <img src="https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg" height="300" alt="Lume CO2 lite">
 Версия платы 2.3 с датчиками css811, sht30, bh1750
 
