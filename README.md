@@ -51,9 +51,6 @@
       1. BLE
 
 
-|------------------------------------------------------------|-----------------------------------------------------------|
-| ![Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg) | ![Lume Luxe L.te M2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Luxe_L.te%20M2/Lume%20Luxe_L.te%20M2.jpg) 
-
 # [Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2/Lume%20Wi-FI_BLE_IR_CO2.yaml)
 
 Версия платы 2.3 с датчиками css811, sht30, bh1750
