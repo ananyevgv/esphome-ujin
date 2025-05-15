@@ -1,7 +1,7 @@
 # https://stuvel.eu/post/2022-06-05-esphome-touch-dimmer/
 substitutions:
   name: lume
-  device_description: luxe L.te M1
+  device_description: WI-Fi Z1
   light_1_device: light.kithen1
   light_2_device: light.kithen2
   sda_i2c: GPIO7
