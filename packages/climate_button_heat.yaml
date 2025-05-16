@@ -40,6 +40,11 @@ binary_sensor:
           - ON for at most 1000ms
           - OFF for at least 500ms
         then:
+          - if:
+              condition:
+                switch.is_on: sound
+              then:
+                - rtttl.play: 'short:d=20,o=5,b=100:e6'  
           - climate.control:
               id:  ${room}_thermostat
               target_temperature: !lambda "return id(${room}_thermostat).target_temperature -1;"
@@ -59,6 +64,11 @@ binary_sensor:
           - ON for at most 1000ms
           - OFF for at least 500ms
         then:
+          - if:
+              condition:
+                switch.is_on: sound
+              then:
+                - rtttl.play: 'short:d=20,o=5,b=100:e6'  
           - climate.control:
               id:  ${room}_thermostat
               target_temperature: !lambda "return id(${room}_thermostat).target_temperature +1;"
@@ -121,6 +131,13 @@ switch:
           id:  ${room}_thermostat
           mode: "OFF"
 
+  - platform: template
+    name: "Звук нажатие клавиш"
+    optimistic: True
+    id: sound
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    icon: mdi:volume-off
 
 #-------------------------------------------
 # Number
@@ -155,3 +172,33 @@ number:
     mode: box
     on_value: 
       - lambda: return id(${room}_thermostat).set_heat_overrun(x);
+      
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Чувствительность кнопок"
+    id: sensitivity_of_touch_id
+    entity_category: config
+    icon: mdi:gesture-tap-hold
+    options:
+      - "Низкая"              
+      - "Средняя"             
+      - "Высокая"          
+    initial_option: "Средняя"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: 
+                id(cap1293_component).set_touch_threshold(0x60); 
+                break;
+              case 1:  
+                id(cap1293_component).set_touch_threshold(0x40);
+                break;
+              case 2:  
+                id(cap1293_component).set_touch_threshold(0x20);
+                break;
+            }
