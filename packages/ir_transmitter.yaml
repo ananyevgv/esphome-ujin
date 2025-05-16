@@ -39,10 +39,254 @@ api:
         - remote_transmitter.transmit_samsung:
             data: !lambda 'return strtoull(command.c_str(), nullptr, 16);'
             nbits: 48
-
-
-
-
+    - service: send_raw_command
+      variables:
+        command: int[]
+      then:
+        - remote_transmitter.transmit_raw:
+            code: !lambda 'return command;'
+    - service: send_lg_command
+      variables:
+        command: string
+      then:
+        - remote_transmitter.transmit_lg:
+            data: !lambda 'return strtoull(command.c_str(), nullptr, 16);'
+            nbits: 32
+    - service: send_pronto
+      variables:
+        data: string
+      then:
+        - remote_transmitter.transmit_pronto:
+            data: !lambda 'return data;'
+    - service: remote_ir_rc5
+      variables:
+        address: int
+        command: int
+      then:
+        - remote_transmitter.transmit_rc5:
+            address: !lambda 'return address;'
+            command: !lambda 'return command;'
+            
+    - service: remote_2code_pioneer
+      variables:
+        rc_code_1: int
+        rc_code_2: int
+      then:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: !lambda 'return rc_code_1;'
+          rc_code_2: !lambda 'return rc_code_2;'
+          repeat:
+            times: 2
+    - service: remote_1code_pioneer
+      variables:
+        rc_code_1: int
+      then:
+      - remote_transmitter.transmit_pioneer:
+          rc_code_1: !lambda 'return rc_code_1;'
+          repeat:
+            times: 2
+            
+            
+    - service: send_ir
+      variables:
+        protocol: string
+        code: string
+        command: string
+        command2: string
+        repeats: string
+      then:
+        - lambda: 'ESP_LOGD("main", "Protocol: %s - Code: %s - Command: %s",  protocol.c_str(), code.c_str(), command.c_str() ); '
+        - if:
+            condition: # --=[ *** COOLIX *** ]=--
+              lambda: 'return protocol == "COOLIX";'
+            then:
+              - logger.log: "Sending COOLIX data...!"
+              - remote_transmitter.transmit_coolix:
+                  first: !lambda |-
+                        return std::stoi( command );
+                  second: !lambda |-
+                        return std::stoi( command2 ); 
+        - if:
+            condition: # --=[ *** DISH *** ]=--
+              lambda: 'return protocol == "DISH";'
+            then:
+              - logger.log: "Sending DISH data...!"
+              - remote_transmitter.transmit_dish:
+                  address: !lambda |-
+                        return std::stoi( code );
+                  command: !lambda |-
+                        return std::stoi( command );
+        - if:
+            condition: # --=[ *** JVC *** ]=--
+              lambda: 'return protocol == "JVC";'
+            then:
+              - logger.log: "Sending JVC data...!"
+              - remote_transmitter.transmit_jvc:
+                  data: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i;                      
+        - if:
+            condition: # --=[ *** LG *** ]=--
+              lambda: 'return protocol == "LG";'
+            then:
+              - logger.log: "Sending LG data...!"
+              - remote_transmitter.transmit_lg:
+                  data: !lambda |-
+                       int i;
+                       sscanf(code.c_str(), "%x", &i );
+                       return i;
+                  nbits: !lambda |-
+                        return std::stoi( command );
+        - if:
+            condition: # --=[ *** MAGIQUEST *** ]=--
+              lambda: 'return protocol == "MAGIQUEST";'
+            then:
+              - logger.log: "Sending MAGIQUEST data...!"
+              - remote_transmitter.transmit_magiquest:
+                  wand_id: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i;
+                  magnitude: !lambda |-
+                      int i;
+                      sscanf( command.c_str(), "%x", &i );
+                      return i;
+        - if:
+            condition: # --=[ *** NEC *** ]=--
+              lambda: 'return protocol == "NEC";'
+            then:
+              - logger.log: "Sending NEC data...!"
+              - remote_transmitter.transmit_nec:
+                  address: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i;
+                  command: !lambda |-
+                      int i;
+                      sscanf( command.c_str(), "%x", &i );
+                      return i;
+                    
+        - if:
+            condition: # --=[ *** PANASONIC *** ]=--
+              lambda: 'return protocol == "PANASONIC";'
+            then:
+              - logger.log: "Sending PANASONIC data...!"
+              - remote_transmitter.transmit_panasonic:
+                  address: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i; 
+                  command: !lambda |-
+                      int i;
+                      sscanf( command.c_str(), "%x", &i );
+                      return i;
+        - if:
+            condition: # --=[ *** PIONEER *** ]=--
+              lambda: 'return protocol == "PIONEER";'
+            then:
+              - logger.log: "Sending PIONEER data...!"
+              - remote_transmitter.transmit_pioneer:
+                  rc_code_1: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i;
+                  rc_code_2: !lambda |-
+                      int i;
+                      sscanf( command.c_str(), "%x", &i );
+                      return i;
+                  repeat:
+                    times: !lambda |-
+                        return std::stoi( repeats );
+        - if:
+            condition: # --=[ *** PRONTO *** ]=--
+              lambda: 'return protocol == "PRONTO";'
+            then:
+              - logger.log: "Sending PRONTO data...!"
+              - remote_transmitter.transmit_pronto:
+                  data: !lambda |-
+                      return code.c_str();
+        - if:
+            condition: # --=[ *** RC5 *** ]=--
+              lambda: 'return protocol == "RC5";'
+            then:
+              - logger.log: "Sending RC5 data...!"
+              - remote_transmitter.transmit_rc5:
+                  address: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i; 
+                  command: !lambda |-
+                      int i;
+                      sscanf( command.c_str(), "%x", &i );
+                      return i;
+        - if:
+            condition: # --=[ *** RC6 *** ]=--
+              lambda: 'return protocol == "RC6";'
+            then:
+              - logger.log: "Sending RC6 data...!"
+              - remote_transmitter.transmit_rc6:
+                  address: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i;
+                  command: !lambda |-
+                      int i;
+                      sscanf( command.c_str(), "%x", &i );
+                      return i;
+        - if:
+            condition: # --=[ *** SAMSUNG *** ]=--
+              lambda: 'return protocol == "SAMSUNG";'
+            then:
+              - logger.log: "Sending SAMSUNG data...!"
+              - remote_transmitter.transmit_samsung:
+                  data: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i; 
+                  nbits: !lambda |-
+                        return std::stoi( command );   
+        - if:
+            condition: # --=[ *** SAMSUNG36 *** ]=--
+              lambda: 'return protocol == "SAMSUNG36";'
+            then:
+              - logger.log: "Sending SAMSUNG36 data...!"
+              - remote_transmitter.transmit_samsung36:
+                  address: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i;
+                  command: !lambda |-
+                      int i;
+                      sscanf( command.c_str(), "%x", &i );
+                      return i;
+        - if:
+            condition: # --=[ *** SONY *** ]=--
+              lambda: 'return protocol == "SONY";'
+            then:
+              - logger.log: "Sending SONY data...!"
+              - remote_transmitter.transmit_sony:
+                  data: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i; 
+                  nbits: !lambda |-
+                        return std::stoi( command );
+        - if:
+            condition: # --=[ *** TOSHIBA AC *** ]=--
+              lambda: 'return protocol == "TOSHIBA_AC";'
+            then:
+              - logger.log: "Sending TOSHIBA data...!"
+              - remote_transmitter.transmit_toshiba_ac:
+                  rc_code_1: !lambda |-
+                      int i;
+                      sscanf( code.c_str(), "%x", &i );
+                      return i;
+                  rc_code_2: !lambda |-
+                      int i;
+                      sscanf( command.c_str(), "%x", &i );
+                      return i;                 
+            
     #- service: send_ir_code
      # variables:
       #  code: int[]
