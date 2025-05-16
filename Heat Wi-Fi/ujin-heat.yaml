@@ -1,0 +1,116 @@
+#GPIO0 - Кнопка "Настройка" на плате сверху
+#GPIO1 - идет на выпаянный резистор R13 на силовой плате (TX)
+#GPIO2 - Адресные светодиоды (5 штук)
+#GPIO3 - Реле (RX)
+#GPIO4 - i2c  SDA
+#GPIO5 - i2c  SCL
+#GPIO12- идет на чип управления Тач кнопками
+#GPIO15 - Буззер
+#GPIO16 - идет на выпаянный резистор R17 на силовой плате
+#A0 - Вход для подключения резистивного датчика температуры, при полном замыкании 0,7 вольта
+
+#44 адрес i2c - SHT30
+#28 адрес i2c - CAP1293
+
+substitutions:
+  room: kitchen
+  name: ujin-heat
+  device_description: Ujin heat
+
+esphome:
+  name: $name
+
+esp8266:
+  board: esp12e
+
+# Enable Home Assistant API
+api:
+  actions:
+    - action: rtttl_play
+      variables:
+        song_str: string
+      then:
+        - rtttl.play:
+            rtttl: !lambda 'return song_str;'
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+# обязательные пакеты
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+  sht3x: !include 
+    file: packages/lume/sht3x.yaml
+    vars:
+      id_sht3x_t: sht3x_t
+      id_sht3x_h: sht3x_h
+  but_clim: !include 
+    file: packages/lume/climate_button_heat.yaml
+    vars:
+      heat_pin: GPIO3
+      heat_threshold: 0x40
+  led: !include 
+    file: packages/lume/led_heat.yaml
+    vars:
+      led_heat_pin: GPIO2
+      led_heat: 3
+
+#-------------------------------------------
+# I2c
+#-------------------------------------------
+i2c:
+  sda: GPIO4
+  scl: GPIO5
+  scan: true
+
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------      
+output:
+  - platform: esp8266_pwm
+    pin: GPIO15
+    id: rtttl_out
+    
+rtttl:
+  output: rtttl_out
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: adc
+    pin: A0
+    id: adc_A0    
+    name: "adc_A0"
+    update_interval: 1s
+    filters:
+      - multiply: 3.3
+
+  - platform: ntc
+    sensor: resistance_sensor
+    calibration:
+      b_constant: 3980
+      reference_temperature: 25°C
+      reference_resistance: 10kOhm
+    name: NTC Temperature
+    icon: mdi:thermometer
+    id: NTC_Temperature
+    filters:
+      - lambda: |-
+          if (x < -60 || x > 60) {
+            return id(sht3x_t).state;
+            ESP_LOGW("Termostat", "Error connect NTC resistace");
+          } else
+            return x;
+  - platform: resistance
+    id: resistance_sensor
+    sensor: adc_A0
+    configuration: UPSTREAM
+    resistor: 4.5kOhm
+    name: Resistance Sensor
+
+
+
+
