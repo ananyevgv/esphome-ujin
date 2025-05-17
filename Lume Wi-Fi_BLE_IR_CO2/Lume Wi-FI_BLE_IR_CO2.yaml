@@ -48,16 +48,11 @@ packages:
   web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
 
-# Диммер для теста !!!Не рабочий в этой версии!!!
-  zero_dimm: !include 
-    file: packages/ujin/zero_dimm.yaml
-    vars:
-      dimmer1_zero: GPIO5 
-      dimmer2_zero: GPIO5
-      dimmer1_gate: GPIO19  
-      dimmer2_gate: GPIO18  
-      type_light1: monochromatic # binary
-      type_light2: monochromatic # binary
+# Диммер 
+#  zero_dimm: !include 
+#    file: packages/ujin/dimm_ujin_uart.yaml
+#    vars:
+
 
 # Сенсорные кнопки
   but: !include 
@@ -69,8 +64,6 @@ packages:
       delta_threshold: 5
       setup_threshold: false #true
       
-# не обязательные пакеты
- # time: !include included/time.yaml
 
 # Температура ESP32
   esp32_temp: !include packages/esp32_temp.yaml
@@ -129,7 +122,7 @@ packages:
       model_bme: bme688
       address_bme680: 0x76
 
-# Подсведка кнопок
+# Подсветка кнопок
   led: !include 
     file: packages/ujin/led_lume.yaml
     vars:
