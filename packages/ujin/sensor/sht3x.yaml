@@ -1,8 +1,8 @@
 #-------------------------------------------
-# Add yaml and copy file esphome/packages/lume/
+# Add yaml and copy file esphome/packages/ujin/sensor/
 #packages:
 #  sht3x: !include 
-#    file: packages/lume/sht3x.yaml
+#    file: packages/ujin/sensor/sht3x.yaml
 #    vars:
 #      id_sht3x_t: sht3x_t
 #      id_sht3x_h: sht3x_h
