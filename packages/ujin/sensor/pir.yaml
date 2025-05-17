@@ -2,11 +2,11 @@
 # Add yaml 
 #packages:
 #  pir: !include 
-#    file: packages/lume/pir.yaml
+#    file: packages/ujin/sensor/pir.yaml
 #    vars:
 #      pir_pin: GPIO35
 #      pir_addres: 0x2F
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/ujin/sensor
 
 #-------------------------------------------
 # EXTERNAL COMPONENTS
