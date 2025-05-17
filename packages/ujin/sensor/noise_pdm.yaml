@@ -2,11 +2,11 @@
 # Add yaml 
 #packages:
 #  noise: !include 
-#    file: packages/lume/noise_pdm.yaml
+#    file: packages/ujin/sensor/noise_pdm.yaml
 #    vars:
 #      noise_ws: GPIO13
 #      noise_din: GPIO15
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/ujin/sensor
 
 #-------------------------------------------
 # EXTERNAL COMPONENTS
