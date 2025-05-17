@@ -1,8 +1,8 @@
 #-------------------------------------------
-# Add yaml and copy file esphome/packages/lume/
+# Add yaml and copy file esphome/packages/ujin/sensor
 #packages:
 #  ccs811: !include 
-#    file: packages/lume/ccs811.yaml
+#    file: packages/ujin/sensor/ccs811.yaml
 #    vars:
 #      id_ccs811_t: sht3x_t
 #      id_ccs811_h: sht3x_h
