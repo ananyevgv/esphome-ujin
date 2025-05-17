@@ -2,11 +2,11 @@
 # Add yaml 
 #packages:
 #  2in: !include 
-#    file: packages/lume/2in.yaml
+#    file: packages/ujin/2in.yaml
 #    vars:
 #      one_pin: GPIO33
 #      two_pin: GPIO3
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/ujin
 
 #-------------------------------------------
 # BINARY SENSOR
