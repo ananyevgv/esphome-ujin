@@ -2,11 +2,11 @@
 # Add yaml 
 #packages:
 #  led: !include 
-#    file: packages/lume/led_heat.yaml
+#    file: packages/ujin/led_heat.yaml
 #    vars:
 #      led_heat_pin: GPIO2
 #      led_heat: 3
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/ujin
 
 #-------------------------------------------
 # WIFI
