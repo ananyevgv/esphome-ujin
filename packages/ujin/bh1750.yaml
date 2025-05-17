@@ -1,8 +1,8 @@
 # -------------------------------------------
-#  Add yaml and copy file esphome/packages/lume/
+#  Add yaml and copy file esphome/packages/ujin/
 #packages:
 #  bh: !include 
-#    file: packages/lume/bh1750.yaml
+#    file: packages/ujin/bh1750.yaml
 #    vars:
 #      id_bh: light_bh
 # -------------------------------------------
