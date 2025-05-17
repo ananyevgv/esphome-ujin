@@ -4,14 +4,14 @@
 # Add yaml 
 #packages:
 #  but: !include 
-#    file: packages/lume/button.yaml
+#    file: packages/ujin/button.yaml
 #    vars:
 #      one_butt: GPIO15
 #      two_butt: GPIO2
 #      touch_threshold: 1000 #1150
 #      delta_threshold: 5
 #      setup_threshold: false #true
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/ujin
 
 esphome:
   includes:
