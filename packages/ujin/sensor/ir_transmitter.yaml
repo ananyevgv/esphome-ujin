@@ -2,10 +2,10 @@
 # Add yaml 
 #packages:
 #  ir_transmitter: !include 
-#    file: packages/lume/ir_transmitter.yaml
+#    file: packages/ujin/sensor/ir_transmitter.yaml
 #    vars:
 #      pin_ir_transmitter: GPIO13
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/ujin/sensor
 
 #-------------------------------------------
 # REMOTE_RECEIVER

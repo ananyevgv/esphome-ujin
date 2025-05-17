@@ -28,17 +28,17 @@ packages:
   web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
   sht3x: !include 
-    file: packages/lume/sht3x.yaml
+    file: packages/ujin/sensor/sht3x.yaml
     vars:
       id_sht3x_t: sht3x_t
       id_sht3x_h: sht3x_h
   but_clim: !include 
-    file: packages/lume/climate_button_heat.yaml
+    file: packages/ujin/climate_button_heat.yaml
     vars:
       heat_pin: GPIO3
       heat_threshold: 0x40
   led: !include 
-    file: packages/lume/led_heat.yaml
+    file: packages/ujin/led_heat.yaml
     vars:
       led_heat_pin: GPIO2
       led_heat: 3

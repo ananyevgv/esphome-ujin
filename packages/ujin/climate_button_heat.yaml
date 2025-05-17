@@ -2,12 +2,12 @@
 # Add yaml 
 #packages:
 #  but_clim: !include 
-#    file: packages/lume/climate_button_heat.yaml
+#    file: packages/ujin/climate_button_heat.yaml
 #    vars:
 #      heat_pin: GPIO3
 #      room: kithen
 #      heat_threshold: 0x40
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/ujin
 
 #-------------------------------------------
 # EXTERNAL COMPONENTS

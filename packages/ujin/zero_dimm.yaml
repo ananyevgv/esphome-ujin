@@ -2,7 +2,7 @@
 # Add yaml 
 #packages:
 #  zero_dimm: !include 
-#    file: packages/lume/zero_dimm.yaml
+#    file: packages/ujin/zero_dimm.yaml
 #    vars:
 #      dimmer1_zero: GPIO5 
 #      dimmer2_zero: GPIO5
@@ -10,7 +10,7 @@
 #      dimmer2_gate: GPIO25  
 #      type_light1: monochromatic # binary
 #      type_light2: monochromatic # binary
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/ujin
 
 #-------------------------------------------
 # OUTPUT

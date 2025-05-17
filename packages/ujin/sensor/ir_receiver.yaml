@@ -18,10 +18,10 @@
 # Add yaml 
 #packages:
 #  ir_receiver: !include 
-#    file: packages/lume/ir_receiver.yaml
+#    file: packages/ujin/sensor/ir_receiver.yaml
 #    vars:
 #      pin_ir_receiver: GPIO4
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/ujin/sensor
 
 #-------------------------------------------
 # SWITCH

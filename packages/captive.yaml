@@ -2,11 +2,11 @@
 # Add yaml 
 #packages:
 #  cap: !include 
-#    file: packages/lume/captive.yaml
+#    file: packages/captive.yaml
 #    vars:
-#      ssid_captive: "Lume"
+#      ssid_captive: "Ujin"
 #      pass_captive: "12345678"
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/
 
 wifi:
   ap:
