@@ -2,31 +2,30 @@
 # Add yaml 
 #packages:
 #  noise: !include 
-#    file: packages/lume/noise_pdm.yaml
+#    file: packages/ujin/sensor/noise.yaml
 #    vars:
-#      noise_ws: GPIO13
-#      noise_din: GPIO15
-# and copy file esphome/packages/lume
+#      noise_bck: GPIO21
+#      noise_ws: GPIO20
+#      noise_din: GPIO22
+# and copy file esphome/packages/ujin/sensor
 
 #-------------------------------------------
 # EXTERNAL COMPONENTS
 #-------------------------------------------
 external_components:
-  - source: github://viotemp1/esphome-sound-level-meter 
+  - source: github://stas-sl/esphome-sound-level-meter
     refresh: 0s
     
 #-------------------------------------------
 # I2S
 #-------------------------------------------
 i2s:
+  bck_pin: $noise_bck
   ws_pin: $noise_ws
   din_pin: $noise_din
-  sample_rate: 16000 
-  bits_per_sample: 16
-  dma_buf_count: 2
-  dma_buf_len: 128
-  bits_shift: 0
-  channel: left
+  sample_rate: 16000 # 48000            # default: 48000
+  bits_per_sample: 16 #32           # default: 32
+  bits_shift: 8                 # default: 0
 
 #-------------------------------------------
 # SOUND LEVEL METER
@@ -129,24 +128,24 @@ select:
         - lambda: |-
             switch(i) {
               case 0:
-                 id(noise).set_lower_threshold(70.0); 
-                 id(noise).set_upper_threshold(70.0); 
+                 id(noise).set_lower_threshold(60.0); 
+                 id(noise).set_upper_threshold(60.0); 
                  break;
               case 1: 
-                id(noise).set_lower_threshold(75.0);
-                id(noise).set_upper_threshold(75.0); 
+                id(noise).set_lower_threshold(70.0);
+                id(noise).set_upper_threshold(70.0); 
                 break;
               case 2: 
                 id(noise).set_lower_threshold(80.0);
                 id(noise).set_upper_threshold(80.0); 
                 break;
               case 3: 
-                id(noise).set_lower_threshold(85.0);
-                 id(noise).set_upper_threshold(85.0);
+                id(noise).set_lower_threshold(90.0);
+                 id(noise).set_upper_threshold(90.0);
                  break;
               case 4: 
-                id(noise).set_lower_threshold(90.0);
-                id(noise).set_upper_threshold(90.0); 
+                id(noise).set_lower_threshold(100.0);
+                id(noise).set_upper_threshold(100.0); 
                 break;
             }
 

@@ -2,11 +2,11 @@
 # Add yaml 
 #packages:
 #  zigbee: !include 
-#    file: packages/lume/zigbee.yaml
+#    file: packages/ujin/zigbee.yaml
 #    vars:
 #      TX_Z: 27
 #      RX_Z: 14
-# and copy file esphome/packages/lume
+# and copy file esphome/packages/ujin
 
 #-------------------------------------------
 # EXTERNAL COMPONENTS

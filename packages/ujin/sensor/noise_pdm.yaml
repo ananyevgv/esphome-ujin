@@ -1,93 +1,82 @@
 #-------------------------------------------
 # Add yaml 
 #packages:
-#  pir: !include 
-#    file: packages/lume/pir.yaml
+#  noise: !include 
+#    file: packages/ujin/sensor/noise_pdm.yaml
 #    vars:
-#      pir_pin: GPIO35
-#      pir_addres: 0x2F
-# and copy file esphome/packages/lume
+#      noise_ws: GPIO13
+#      noise_din: GPIO15
+# and copy file esphome/packages/ujin/sensor
 
 #-------------------------------------------
 # EXTERNAL COMPONENTS
 #-------------------------------------------
 external_components:
-  - source: github://ananyevgv/esphome-components/
+  - source: github://viotemp1/esphome-sound-level-meter 
     refresh: 0s
-
-#-------------------------------------------
-# SENSOR
-#-------------------------------------------
-sensor:
-  - platform: adc
-    pin: $pir_pin
-    id: pir_adc    
-    update_interval: 1s
     
 #-------------------------------------------
-# MCP453X
+# I2S
 #-------------------------------------------
-mcp453x:
-  id: my_mcp453x
-  address: $pir_addres    
-  
+i2s:
+  ws_pin: $noise_ws
+  din_pin: $noise_din
+  sample_rate: 16000 
+  bits_per_sample: 16
+  dma_buf_count: 2
+  dma_buf_len: 128
+  bits_shift: 0
+  channel: left
+
+#-------------------------------------------
+# SOUND LEVEL METER
+#-------------------------------------------
+sound_level_meter:
+  update_interval: 1s           # default: 60s
+  buffer_size: 1024             # default: 1024
+  mic_sensitivity: -26dB        # default: empty
+  mic_sensitivity_ref: 94dB     # default: empty
+  groups:
+    - sensors:
+        - type: eq
+          name: "${name} Leq_1s"
+          id: Leq_id
+          icon: mdi:waveform
 #-------------------------------------------
 # BINARY SENSOR
 #-------------------------------------------
 binary_sensor:
   - platform: analog_threshold
-    name: "${name} движение"
-    id: pir
-    threshold: 0.5
-    sensor_id: pir_adc
-    device_class: motion
-    icon: mdi:motion-sensor
+    name: "Датчик шума"
+    id: noise
+    threshold: 60
+    sensor_id: Leq_id
+    device_class: sound
+    icon: mdi:speaker-wireless
     on_press: 
       then:
-        - script.execute: action_motion
-        - script.stop: action_motion
+        - script.execute: action_noise
+        - script.stop: action_noise
         - lambda: |-
-            id(g_timer_pir)=0;
+            id(g_timer_noise)=0;
             
   - platform: template
-    id: binary_timer_pir
+    id: binary_timer_noise
     
-#-------------------------------------------
-# OUTPUT
-#-------------------------------------------      
-output:
-  - platform: mcp453x
-    id: pir_output
-    mcp453x_id: my_mcp453x
-    
-#-------------------------------------------
-# GLOBALS
-#-------------------------------------------            
-globals:
-  - id: g_pir
-    type: int
-    restore_value: no
-    initial_value: '0'
-
-  - id: g_timer_pir
-    type: int
-    restore_value: no
-    initial_value: '0'
-
 #-------------------------------------------
 # INTERVAL
 #-------------------------------------------
-interval:
+interval:    
   - interval: 1s
     then:
-      - lambda: |-
-          if (id(binary_timer_pir).state == true) {
-            id(g_timer_pir)++;
-            if (id(g_timer_pir) >=  id(off_timeout_pir).state) {
-              id(binary_timer_pir).publish_state(false);
-              id(g_timer_pir) = 0;
-              auto t_pir = id(g_pir);
-              switch(t_pir) {
+      - lambda: |-    
+          if (id(binary_timer_noise).state == true) {  
+            id(g_timer_noise)++;
+            if (id(g_timer_noise) >=  id(off_timeout_noise).state) {
+              id(binary_timer_noise).publish_state(false);
+              id(g_timer_noise) = 0;
+              auto t_n = id(g_noise);
+              switch(t_n) {
                 case 10: 
                   id(light_dimmer1).turn_off().set_transition_length(1000).perform(); 
                   break;
@@ -100,16 +89,15 @@ interval:
                   break;      
               }
             }
-          }
-
+          }    
 #-------------------------------------------
 # Number
 #-------------------------------------------
 number:
   - platform: template
-    name: OFF timeout PIR
+    name: OFF timeout noise
     optimistic: true
-    id: off_timeout_pir
+    id: off_timeout_noise
     unit_of_measurement: "s"
     initial_value: 45
     restore_value: true
@@ -119,15 +107,14 @@ number:
     mode: box
     entity_category: config
     icon: mdi:timer-cog-outline
-
+    
 #-------------------------------------------
 # SELECT
 #-------------------------------------------
 select:
   - platform: template
-    name: "Чувствительность датчика движения"
+    name: "Чувствительность датчика звука"
     entity_category: config
-    icon: mdi:motion-sensor
     options:
      - "Очень высокая"      
      - "Высокая"
@@ -136,20 +123,36 @@ select:
      - "Очень низкая"     
     initial_option: "Очень высокая"
     optimistic: true
+    icon: mdi:microphone-message
     on_value:
       then:
         - lambda: |-
             switch(i) {
-              case 0: id(pir_output).set_level(0); break;
-              case 1: id(pir_output).set_level(0.25); break;
-              case 2: id(pir_output).set_level(0.50); break;
-              case 3: id(pir_output).set_level(0.75); break;
-              case 4: id(pir_output).set_level(1.0); break;
+              case 0:
+                 id(noise).set_lower_threshold(70.0); 
+                 id(noise).set_upper_threshold(70.0); 
+                 break;
+              case 1: 
+                id(noise).set_lower_threshold(75.0);
+                id(noise).set_upper_threshold(75.0); 
+                break;
+              case 2: 
+                id(noise).set_lower_threshold(80.0);
+                id(noise).set_upper_threshold(80.0); 
+                break;
+              case 3: 
+                id(noise).set_lower_threshold(85.0);
+                 id(noise).set_upper_threshold(85.0);
+                 break;
+              case 4: 
+                id(noise).set_lower_threshold(90.0);
+                id(noise).set_upper_threshold(90.0); 
+                break;
             }
-            
+
   - platform: template
-    name: "Действия датчика движения"
-    id: triggered_pir
+    name: "Действия датчика шума"
+    id: triggered_noise
     entity_category: config
     icon: mdi:account-reactivate-outline
     options:
@@ -165,28 +168,42 @@ select:
       - "Переключить оба канала"  
       - "Включить 1 канал на время"  
       - "Включить 2 канал на время"  
-      - "Включить оба канала на время"                    
+      - "Включить оба канала на время"                                      
     initial_option: "Нет действия"
     optimistic: true
     on_value:
       then:
         - lambda: |-
-            id(g_pir) = (i);
+            id(g_noise) = (i);
         - logger.log:
-            format: "Pir option: %s (%d)"
+            format: "Noise option: %s (%d)"
             args: ["x.c_str()", "i"]
-            
+
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------            
+globals:
+  - id: g_noise
+    type: int
+    restore_value: no
+    initial_value: '0'
+    
+  - id: g_timer_noise
+    type: int
+    restore_value: no
+    initial_value: '0'
+    
 #-------------------------------------------
 # SCRIPT
 #-------------------------------------------
 script:
-  - id: action_motion
+  - id: action_noise
     mode: single
     then:
       - lambda: |-
-          if (id(illum).state) {
-            auto t_pir = id(g_pir);
-            switch(t_pir) {
+          if  (id(illum).state) {
+            uint8_t t_noise =  id(g_noise);
+            switch(t_noise) {
               case 0: ; break;
               case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
               case 2: id(light_dimmer1).turn_off().set_transition_length(1000).perform(); break;
@@ -207,17 +224,17 @@ script:
                 id(light_dimmer2).toggle().perform(); 
                 break;
               case 10: 
-                id(light_dimmer1).turn_on().set_brightness(0.5).perform(); 
-                id(binary_timer_pir).publish_state(true); 
+                id(light_dimmer1).turn_on().set_transition_length(1000).set_brightness(0.5).perform(); 
+                id(binary_timer_noise).publish_state(true);
                 break;
               case 11: 
                 id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-                id(binary_timer_pir).publish_state(true);
+                id(binary_timer_noise).publish_state(true);
                 break;
               case 12:
                 id(light_dimmer1).turn_on().set_brightness(0.5).perform();
                 id(light_dimmer2).turn_on().set_brightness(0.5).perform(); 
-                id(binary_timer_pir).publish_state(true);
+                id(binary_timer_noise).publish_state(true);
                 break;       
             }
           }

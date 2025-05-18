@@ -1,8 +1,8 @@
 #-------------------------------------------
-# Add yaml and copy file esphome/packages/sensor/
+# Add yaml and copy file esphome/packages/ujin/sensor/
 #packages:
 #  bme680_bsec: !include 
-#    file: packages/sensor/bme680_bsec2.yaml
+#    file: packages/ujin/sensor/bme680_bsec2.yaml
 #    vars:
 #      id_bme680_t: bme680_t
 #      id_bme680_h: bme680_h
