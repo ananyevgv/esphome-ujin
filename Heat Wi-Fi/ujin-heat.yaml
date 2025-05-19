@@ -38,7 +38,8 @@ packages:
       heat_pin: GPIO3
       heat_threshold: 0x40
   led: !include 
-    file: packages/ujin/led_heat.yaml
+#    file: packages/ujin/led_heat.yaml
+    file: packages/ujin/led_heat_2.yaml
     vars:
       led_heat_pin: GPIO2
       led_heat: 3
