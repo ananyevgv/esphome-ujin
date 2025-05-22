@@ -258,7 +258,7 @@ switch:
     icon: mdi:lightbulb-night-outline
 
   - platform: template
-    name: "Подсведка кнопок"
+    name: "Подсветка кнопок"
     icon: mdi:light-switch-off
     optimistic: True
     entity_category: config
