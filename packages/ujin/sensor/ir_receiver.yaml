@@ -386,7 +386,7 @@ select:
      - "rc5"
      - "rc6"
      - "roomba"
-     - "Samsung"
+     - "samsung"
      - "samsung36"
      - "sony"
      - "toshiba_ac"
