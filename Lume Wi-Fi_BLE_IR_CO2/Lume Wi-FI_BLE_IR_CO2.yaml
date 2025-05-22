@@ -137,7 +137,7 @@ packages:
       model_bme: bme688
       address_bme680: 0x76
 
-# Подсведка кнопок
+# Подсветка кнопок
   led: !include 
     file: packages/lume/led_lume.yaml
     vars:
