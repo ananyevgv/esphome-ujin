@@ -1,0 +1,207 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  dimm_uart: !include 
+#    file: packages/ujin/dimmer/dimm_uart.yaml
+#    vars:
+#      type_light1: monochromatic # binary
+#      type_light2: monochromatic # binary
+# and copy file esphome/packages/ujin/dimmer
+
+output:
+  - platform: template
+    id: dimmer1
+    type: float
+    min_power: 0.3
+    max_power: 1.00
+    write_action:
+      - lambda: |-
+          std::vector<uint8_t> message = {
+            0xC8,
+            0x07,
+            0x30,
+            0x02,
+            0x00,
+            static_cast<uint8_t>(state * 100),
+          };          
+          // Расчет XOR
+          uint8_t checksum = 0;
+          for (auto byte : message) {
+            checksum ^= byte;
+          }
+          message.push_back(checksum);          
+          id(uart_0).write_array(message.data(), message.size());
+
+
+  - platform: template
+    id: dimmer2
+    type: float
+    min_power: 0.3
+    max_power: 1.00
+    write_action:
+      - lambda: |-
+          std::vector<uint8_t> message = {
+            0xC8,
+            0x07,
+            0x32,
+            0x02,
+            0x00,
+            static_cast<uint8_t>(state * 100),
+          };          
+          // Расчет XOR
+          uint8_t checksum = 0;
+          for (auto byte : message) {
+            checksum ^= byte;
+          }
+          message.push_back(checksum);          
+          id(uart_0).write_array(message.data(), message.size());
+          
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: $type_light1
+    output: dimmer1
+    name: "${name} 1 лампа"
+    id: light_dimmer1
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-1-circle-outline
+    on_turn_on:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 3;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_1_device
+    on_turn_off:
+      - uart.write: !lambda
+          return {0xC8, 0x07, 0x30, 0x02, 0x00, 0x00, 0xFD};
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 3;
+          then:
+            - homeassistant.action:
+                action: light.turn_off
+                data:
+                  entity_id: $light_1_device
+    on_state:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 3;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_1_device
+                  brightness: !lambda return (id(light_dimmer1).remote_values.get_brightness());
+
+  - platform: $type_light2 
+    output: dimmer2
+    name: "${name} 2 лампа"
+    id: light_dimmer2
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-2-circle-outline
+    on_turn_on:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 2;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_2_device
+    on_turn_off:
+      - uart.write: !lambda
+          return {0xC8, 0x07, 0x32, 0x02, 0x00, 0x00, 0xFF};
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 2;
+          then:
+            - homeassistant.action:
+                action: light.turn_off
+                data:
+                  entity_id: $light_2_device
+    on_state:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 2;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_2_device
+                  brightness: !lambda return (id(light_dimmer2).remote_values.get_brightness());
+
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Тип выключателя"
+    entity_category: config
+    id: type_switch_id
+    icon: mdi:nintendo-switch
+    options:
+      - "Двойной"              
+      - "Одиночный"   # не реализовано
+      - "Локальный-удаленный"   
+      - "Удаленный-локальный"                      
+    initial_option: "Двойной"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            id(g_tipe) = (i);
+
+  - platform: template
+    name: "Каналы диммирования"
+    id: dimming_channels_id
+    icon: mdi:brightness-6
+    entity_category: config
+    options:
+      - "Диммировать 2 канала"              
+      - "Диммировать только 1 канал"  
+      - "Диммировать только 2 канал"
+      - "Диммирование каналов отключено"                                        
+    initial_option: "Диммировать 2 канала"
+    optimistic: true
+    on_value:
+      then:
+          #color_mode: BRIGHTNESS #ON_OFF
+        - lambda: |-
+            switch(i) {
+              case 0:  
+                id(binary_dimm1).publish_state(true); 
+                id(binary_dimm2).publish_state(true); 
+                break;
+              case 1:  
+                id(binary_dimm1).publish_state(true); 
+                id(binary_dimm2).publish_state(false); 
+                break;
+              case 2:  
+                id(binary_dimm1).publish_state(false); 
+                id(binary_dimm2).publish_state(true); 
+                break;
+              case 3:  
+                id(binary_dimm1).publish_state(false); 
+                id(binary_dimm2).publish_state(false); 
+                break;
+            }
+
+
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------            
+globals:
+  - id: g_tipe
+    type: int
+    restore_value: no
+    initial_value: '0'

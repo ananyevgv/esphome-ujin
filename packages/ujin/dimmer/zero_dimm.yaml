@@ -1,0 +1,222 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  zero_dimm: !include 
+#    file: packages/ujin/zero_dimm.yaml
+#    vars:
+#      dimmer1_zero: GPIO5 
+#      dimmer2_zero: GPIO5
+#      dimmer1_gate: GPIO19  
+#      dimmer2_gate: GPIO25  
+#      type_light1: monochromatic # binary
+#      type_light2: monochromatic # binary
+# and copy file esphome/packages/ujin
+
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------      
+output:
+  - platform: ac_dimmer
+    gate_pin: $dimmer1_gate 
+    id: dimmer1
+    zero_cross_pin:
+      number: $dimmer1_zero
+      mode:
+        input: true
+      inverted: yes
+      ignore_strapping_warning: true
+      allow_other_uses: true
+    min_power: 30%
+    init_with_half_cycle: true
+
+  - platform: ac_dimmer
+    id: dimmer2
+    gate_pin: $dimmer2_gate
+    zero_cross_pin:
+      number: $dimmer2_zero
+      mode:
+        input: true
+      inverted: yes
+      ignore_strapping_warning: true
+      allow_other_uses: true
+    min_power: 30%
+    init_with_half_cycle: true
+    
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: $type_light1
+    output: dimmer1
+    name: "${name} 1 лампа"
+    id: light_dimmer1
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-1-circle-outline
+    on_turn_on:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 3;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_1_device
+    on_turn_off:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 3;
+          then:
+            - homeassistant.action:
+                action: light.turn_off
+                data:
+                  entity_id: $light_1_device
+    on_state:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 3;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_1_device
+                  brightness: !lambda return (id(light_dimmer1).remote_values.get_brightness());
+
+  - platform: $type_light2 
+    output: dimmer2
+    name: "${name} 2 лампа"
+    id: light_dimmer2
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-2-circle-outline
+    on_turn_on:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 2;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_2_device
+    on_turn_off:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 2;
+          then:
+            - homeassistant.action:
+                action: light.turn_off
+                data:
+                  entity_id: $light_2_device
+    on_state:
+      - if:
+          condition:
+            lambda: |-
+              return id(g_tipe) == 2;
+          then:
+            - homeassistant.action:
+                action: light.turn_on
+                data:
+                  entity_id: $light_2_device
+                  brightness: !lambda return (id(light_dimmer2).remote_values.get_brightness());
+
+
+#-------------------------------------------
+# SCRIPT
+#-------------------------------------------
+script:
+  - id: my_script
+    then:
+      - delay: 1s
+      
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Тип выключателя"
+    entity_category: config
+    id: type_switch_id
+    icon: mdi:nintendo-switch
+    options:
+      - "Двойной"              
+      - "Одиночный"   # не реализовано
+      - "Локальный-удаленный"   
+      - "Удаленный-локальный"                      
+    initial_option: "Двойной"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            id(g_tipe) = (i);
+
+  - platform: template
+    name: "Каналы диммирования"
+    id: dimming_channels_id
+    icon: mdi:brightness-6
+    entity_category: config
+    options:
+      - "Диммировать 2 канала"              
+      - "Диммировать только 1 канал"  
+      - "Диммировать только 2 канал"
+      - "Диммирование каналов отключено"                                        
+    initial_option: "Диммировать 2 канала"
+    optimistic: true
+    on_value:
+      then:
+          #color_mode: BRIGHTNESS #ON_OFF
+        - lambda: |-
+            switch(i) {
+              case 0: 
+                id(binary_dimm1).publish_state(true); 
+                id(binary_dimm2).publish_state(true); 
+                break;
+              case 1:  
+                id(binary_dimm1).publish_state(true); 
+                id(binary_dimm2).publish_state(false); 
+                break;
+              case 2:  
+                id(binary_dimm1).publish_state(false); 
+                id(binary_dimm2).publish_state(true); 
+                break;
+              case 3:  
+                id(binary_dimm1).publish_state(false); 
+                id(binary_dimm2).publish_state(false); 
+                break;
+            }
+        - lambda: |-
+            switch(i) {
+              case 0: 
+                id(light_dimmer1).get_traits().set_supported_color_modes({light::ColorMode::BRIGHTNESS});
+                id(light_dimmer2).get_traits().set_supported_color_modes({light::ColorMode::BRIGHTNESS});
+                break;
+              case 1:  
+                id(light_dimmer1).get_traits().set_supported_color_modes({light::ColorMode::BRIGHTNESS});
+                id(light_dimmer2).get_traits().set_supported_color_modes({light::ColorMode::ON_OFF}); 
+                break;
+              case 2:  
+                id(light_dimmer1).get_traits().set_supported_color_modes({light::ColorMode::ON_OFF}); 
+                id(light_dimmer2).get_traits().set_supported_color_modes({light::ColorMode::BRIGHTNESS});
+                break;
+              case 3:  
+
+
+                id(light_dimmer1).get_traits().set_supported_color_modes({light::ColorMode::ON_OFF});
+                id(light_dimmer2)->get_traits().set_supported_color_modes({light::ColorMode::ON_OFF});
+                break;
+            }
+
+
+
+
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------            
+globals:
+  - id: g_tipe
+    type: int
+    restore_value: no
+    initial_value: '0'
+
