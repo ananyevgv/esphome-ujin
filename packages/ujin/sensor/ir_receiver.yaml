@@ -21,7 +21,7 @@
 #    file: packages/ujin/sensor/ir_receiver.yaml
 #    vars:
 #      pin_ir_receiver: GPIO4
-# and copy file esphome/packages/ujin/sensor
+# and copy file esphome/packages/ujin/sensor/
 
 #-------------------------------------------
 # SWITCH

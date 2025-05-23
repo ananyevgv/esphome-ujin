@@ -2,45 +2,45 @@
 # Add yaml 
 #packages:
 #  noise: !include 
-#    file: packages/ujin/sensor/noise.yaml
+#    file: packages/ujin/sensor/noise_05.2025.yaml
 #    vars:
 #      noise_bck: GPIO21
 #      noise_ws: GPIO20
 #      noise_din: GPIO22
-# and copy file esphome/packages/ujin/sensor/
+# and copy file esphome/ujin/sensor/
 
-#-------------------------------------------
-# EXTERNAL COMPONENTS
-#-------------------------------------------
-external_components:
-  - source: github://stas-sl/esphome-sound-level-meter
-    refresh: 0s
-    
 #-------------------------------------------
 # I2S
 #-------------------------------------------
-i2s:
-  bck_pin: $noise_bck
-  ws_pin: $noise_ws
-  din_pin: $noise_din
-  sample_rate: 16000 # 48000            # default: 48000
-  bits_per_sample: 16 #32           # default: 32
-  bits_shift: 8                 # default: 0
+i2s_audio:
+  i2s_lrclk_pin: $noise_ws
+  i2s_bclk_pin: $noise_bck
 
 #-------------------------------------------
-# SOUND LEVEL METER
+# MICROPHONE
 #-------------------------------------------
-sound_level_meter:
-  update_interval: 1s           # default: 60s
-  buffer_size: 1024             # default: 1024
-  mic_sensitivity: -26dB        # default: empty
-  mic_sensitivity_ref: 94dB     # default: empty
-  groups:
-    - sensors:
-        - type: eq
-          name: "${name} шум пиковый уровень"
-          id: Leq_id
-          icon: mdi:waveform
+microphone:
+  - platform: i2s_audio
+    id: external_mic
+    adc_type: external
+    i2s_din_pin: $noise_din
+    channel: left
+    pdm: true
+    bits_per_sample: 16bit
+    bits_per_channel: 8bit
+    sample_rate: 16000
+    
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: sound_level
+    passive: false
+    peak:
+      name: "${name} шум пиковый уровень"
+      id: Leq_id
+      icon: mdi:waveform
+
 #-------------------------------------------
 # BINARY SENSOR
 #-------------------------------------------
@@ -48,7 +48,7 @@ binary_sensor:
   - platform: analog_threshold
     name: "Датчик шума"
     id: noise
-    threshold: 60
+    threshold: -20
     sensor_id: Leq_id
     device_class: sound
     icon: mdi:speaker-wireless
@@ -128,24 +128,24 @@ select:
         - lambda: |-
             switch(i) {
               case 0:
-                 id(noise).set_lower_threshold(60.0); 
-                 id(noise).set_upper_threshold(60.0); 
+                 id(noise).set_lower_threshold(-50.0); 
+                 id(noise).set_upper_threshold(-50.0); 
                  break;
               case 1: 
-                id(noise).set_lower_threshold(70.0);
-                id(noise).set_upper_threshold(70.0); 
+                id(noise).set_lower_threshold(-40.0);
+                id(noise).set_upper_threshold(-40.0); 
                 break;
               case 2: 
-                id(noise).set_lower_threshold(80.0);
-                id(noise).set_upper_threshold(80.0); 
+                id(noise).set_lower_threshold(-30.0);
+                id(noise).set_upper_threshold(-30.0); 
                 break;
               case 3: 
-                id(noise).set_lower_threshold(90.0);
-                 id(noise).set_upper_threshold(90.0);
+                id(noise).set_lower_threshold(-20.0);
+                 id(noise).set_upper_threshold(-20.0);
                  break;
               case 4: 
-                id(noise).set_lower_threshold(100.0);
-                id(noise).set_upper_threshold(100.0); 
+                id(noise).set_lower_threshold(-10.0);
+                id(noise).set_upper_threshold(-10.0); 
                 break;
             }
 

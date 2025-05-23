@@ -25,8 +25,7 @@ sensor:
       icon: mdi:water-percent
     update_interval: 60s
     address: 0x44
-
-
+ 
   - platform: absolute_humidity
     name: "${name} Absolute Humidity"
     temperature: ${id_sht3x_t}

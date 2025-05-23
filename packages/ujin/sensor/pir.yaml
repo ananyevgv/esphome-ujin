@@ -6,7 +6,7 @@
 #    vars:
 #      pir_pin: GPIO35
 #      pir_addres: 0x2F
-# and copy file esphome/packages/ujin/sensor
+# and copy file esphome/packages/ujin/sensor/
 
 #-------------------------------------------
 # EXTERNAL COMPONENTS

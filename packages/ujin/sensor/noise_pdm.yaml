@@ -6,7 +6,7 @@
 #    vars:
 #      noise_ws: GPIO13
 #      noise_din: GPIO15
-# and copy file esphome/packages/ujin/sensor
+# and copy file esphome/packages/ujin/sensor/
 
 #-------------------------------------------
 # EXTERNAL COMPONENTS
@@ -21,8 +21,8 @@ external_components:
 i2s:
   ws_pin: $noise_ws
   din_pin: $noise_din
-  sample_rate: 16000 
-  bits_per_sample: 16
+  sample_rate: 8000 
+  bits_per_sample: 8
   dma_buf_count: 2
   dma_buf_len: 128
   bits_shift: 0
@@ -39,7 +39,7 @@ sound_level_meter:
   groups:
     - sensors:
         - type: eq
-          name: "${name} Leq_1s"
+          name: "${name} шум пиковый уровень"
           id: Leq_id
           icon: mdi:waveform
 #-------------------------------------------
@@ -49,7 +49,7 @@ binary_sensor:
   - platform: analog_threshold
     name: "Датчик шума"
     id: noise
-    threshold: 60
+    threshold: 80
     sensor_id: Leq_id
     device_class: sound
     icon: mdi:speaker-wireless

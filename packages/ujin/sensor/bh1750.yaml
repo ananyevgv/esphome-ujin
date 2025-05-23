@@ -1,5 +1,5 @@
 # -------------------------------------------
-#  Add yaml and copy file esphome/packages/ujin/sensor
+#  Add yaml and copy file esphome/packages/ujin/sensor/
 #packages:
 #  bh: !include 
 #    file: packages/ujin/sensor/bh1750.yaml
@@ -17,7 +17,7 @@ sensor:
     address: 0x23
     update_interval: 5s
     icon: mdi:brightness-5
-    
+
 #-------------------------------------------
 # BINARY SENSOR
 #-------------------------------------------

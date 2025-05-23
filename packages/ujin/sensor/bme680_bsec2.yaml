@@ -24,7 +24,7 @@ bme68x_bsec2_i2c:
   operating_age: 28d
   sample_rate: LP
   supply_voltage: 3.3V
-  
+
 #-------------------------------------------
 # TEXT SENSOR
 #-------------------------------------------

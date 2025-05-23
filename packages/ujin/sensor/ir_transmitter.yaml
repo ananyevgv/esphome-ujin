@@ -5,7 +5,7 @@
 #    file: packages/ujin/sensor/ir_transmitter.yaml
 #    vars:
 #      pin_ir_transmitter: GPIO13
-# and copy file esphome/packages/ujin/sensor
+# and copy file esphome/packages/ujin/sensor/
 
 #-------------------------------------------
 # REMOTE_RECEIVER
