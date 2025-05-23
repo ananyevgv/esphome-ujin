@@ -1,0 +1,102 @@
+# https://stuvel.eu/post/2022-06-05-esphome-touch-dimmer/
+
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  but: !include 
+#    file: packages/ujin/button/button_cap.yaml
+#    vars:
+#      touch_threshold: 1000 #1150
+#      delta_threshold: 5
+# and copy file esphome/packages/ujin/button
+
+esphome:
+  includes:
+    - packages/ujin/touch-dimming.h 
+  on_boot:
+    - priority: 500
+      then:
+        - lambda: new TouchDimmer("dimm1", light_dimmer1, left_touch, binary_dimm1);
+        - lambda: new TouchDimmer("dimm2", light_dimmer2, right_touch, binary_dimm2);   
+        
+        
+#-------------------------------------------
+# TOUCH CAP
+#-------------------------------------------        
+cap1188:
+  id: cap1188_component
+  address: 0x28
+  reset_pin: GPIO12
+  touch_threshold: 0x40
+  allow_multiple_touches: true
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: cap1188
+    channel: 0
+    name: "${name} левая кнопка"
+    id: left_touch
+    icon: mdi:gesture-tap-button
+    on_click: 
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+
+  - platform: cap1188
+    channel: 1
+    name: "${name} правая кнопка"
+    id: right_touch
+    icon: mdi:gesture-tap-button
+    on_click: 
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+
+  - platform: template
+    id: binary_dimm1
+
+  - platform: template
+    id: binary_dimm2              
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Чувствительность кнопок"
+    id: sensitivity_of_touch_id
+    entity_category: config
+    icon: mdi:gesture-tap-hold
+    options:
+      - "Низкая"              
+      - "Средняя"             
+      - "Высокая"          
+    initial_option: "Средняя"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: 
+                id(right_touch).set_threshold ($touch_threshold - $delta_threshold); 
+                id(left_touch).set_threshold ($touch_threshold - $delta_threshold); 
+                break;
+              case 1:  
+                id(right_touch).set_threshold ($touch_threshold); 
+                id(left_touch).set_threshold ($touch_threshold); 
+                break;
+              case 2:  
+                id(right_touch).set_threshold ($touch_threshold + $delta_threshold); 
+                id(left_touch).set_threshold ($touch_threshold + $delta_threshold); 
+                break;
+            }
+              
+              
+              
+              
