@@ -1,0 +1,185 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  led: !include 
+#    file: packages/ujin/led_heat.yaml
+#    vars:
+#      led_heat_pin: GPIO2
+#      led_heat: 3
+# and copy file esphome/packages/ujin
+
+#-------------------------------------------
+# WIFI
+#-------------------------------------------
+wifi:
+  id: wifi_id
+  
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: neopixelbus
+    type: GRB
+    variant: ws2812
+    pin: $led_heat_pin
+    num_leds: $led_heat
+    name: "NeoPixel Light"
+    id: led_ww
+
+#-------------------------------------------
+# DISPLAY
+#-------------------------------------------
+display:
+  - platform: addressable_light
+    id: lume_display
+    addressable_light_id: led_ww
+    width: 1
+    height: $led_heat
+    update_interval: 0.1s
+    lambda: |-
+      int i=(id(${room}_thermostat).target_temperature - 18) * 10;
+      Color color_therm;
+      switch(i) {
+        case 0 ... 9: color_therm = Color(0, 0, 128); break;
+        case 10 ... 19: color_therm = Color(0, 0, 255); break;
+        case 20 ... 29: color_therm = Color(0, 128, 255); break;
+        case 30 ... 39: color_therm = Color(0, 255, 255); break;
+        case 40 ... 49: color_therm = Color(128, 255, 255); break;
+        case 50 ... 59: color_therm = Color(128, 255, 128); break;
+        case 60 ... 69: color_therm = Color(0, 255, 0); break;
+        case 70 ... 79: color_therm = Color(128, 255, 0); break;
+        case 80 ... 89: color_therm = Color(192, 255, 0); break;
+        case 90 ... 99: color_therm = Color(255, 255, 0); break;
+        case 100 ... 109: color_therm = Color(255, 192, 0); break;
+        case 110 ... 119: color_therm = Color(255, 128, 0); break;
+        case 120 ... 129: color_therm = Color(255, 64, 0); break;
+        case 130 ... 139: color_therm = Color(255, 0, 0); break;
+        case 140 ... 149: color_therm = Color(255, 0, 128); break;   
+        case 150 ... 160: color_therm = Color(255, 0, 255); break;            
+      }
+
+      int current_brig =  id(brid).state;
+      static int set_brig = id(brid).state;
+      static bool increasing = true;
+      // Выключено
+      if (id(${room}_thermostat).mode == 0) 
+        it.rectangle(0, 0, 0, 1, Color(0, 0, 0));
+
+      // Обогрев
+      if (id(${room}_thermostat).mode == 3) {
+        set_brig = id(brid).state;
+        id(lume_display)->get_light()->set_correction(set_brig/100, set_brig/100, set_brig/100);
+        it.rectangle(0, 0, 0, 1, color_therm);
+      } else {
+        // Изменение яркости
+        if (increasing) {
+          set_brig += 10;
+          if (set_brig >= current_brig) {
+            set_brig = current_brig;
+            increasing = false;
+          } else {
+            set_brig -= 10;
+            if (set_brig <= 0) {
+              set_brig = 0;
+              increasing = true;
+            }
+          }
+        }
+        id(lume_display)->get_light()->set_correction(set_brig/100, set_brig/100, set_brig/100);
+        it.rectangle(0, 0, 0, 1, color_therm);
+      }
+
+
+      if (id(touch_key0).state)
+        it.rectangle(0, 1, 0, 1, id(color_press));
+      else
+        it.rectangle(0, 1, 0, 1, Color(0, 0, 0));
+      if (id(touch_key2).state)
+        it.rectangle(0, 2, 0, 2, id(color_press));
+      else
+        it.rectangle(0, 1, 0, 1, Color(0, 0, 0));
+
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Цвет индикации press"
+    entity_category: config
+    icon: mdi:palette
+    options:
+      - "Выкл"              # (0, 0, 0) 0
+      - "Белый"             # (255, 255, 255)1
+      - "Красный"           # (255, 0, 0)2
+      - "Синий"             # (0, 0, 255)3
+      - "Морская волна"     # (0, 255, 255)4
+      - "Фуксин"            # (255, 0, 255) 5
+      - "Серый"             # (128, 128, 128)6
+      - "Зеленый"           # (0, 128, 0)7
+      - "Ярко-зеленый"      # (0, 255, 0)8
+      - "Темно-бордовый"    # (128, 0, 0)9
+      - "Темно-синий"       # (0, 0, 128) 10
+      - "Оливковый"         # (128, 128, 0)11
+      - "Фиолетовый"        # (128, 0, 128)12
+      - "Серо-зеленый"      # (80, 100, 80)13
+      - "Желтый"            # (255, 255, 0)14
+    initial_option: "Красный"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: id(color_press) = Color(0, 0, 0); break;
+              case 1: id(color_press) = Color(255, 255, 255); break;
+              case 2: id(color_press) = Color(255, 0, 0); break;
+              case 3: id(color_press) = Color(0, 0, 255); break;
+              case 4: id(color_press) = Color(0, 255, 255); break;
+              case 5: id(color_press) = Color(255, 0, 255); break;
+              case 6: id(color_press) = Color(128, 128, 128); break;
+              case 7: id(color_press) = Color(0, 128, 0); break;
+              case 8: id(color_press) = Color(0, 255, 0); break;
+              case 9: id(color_press) = Color(128, 0, 0); break;
+              case 10: id(color_press) = Color(0, 0, 128); break;
+              case 11: id(color_press) = Color(128, 128, 0); break;
+              case 12: id(color_press) = Color(128, 0, 128); break;
+              case 13: id(color_press) = Color(80, 100, 80); break;
+              case 14: id(color_press) = Color(255, 255, 0); break;          
+            }
+            
+            
+#-------------------------------------------
+# Number
+#-------------------------------------------
+number:
+  - platform: template
+    name: "${name} Яркость"
+    icon: mdi:brightness-5
+    id: brid
+    min_value: 20
+    max_value: 100
+    step: 10
+    optimistic: true
+    initial_value: 100
+    mode: slider
+    entity_category: config
+    on_value:
+      then:
+        - lambda: |-
+            id(lume_display)->get_light()->set_correction(x/100, x/100, x/100);
+
+
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------            
+globals:
+  - id: color_wifi
+    type: Color 
+    restore_value: no
+    initial_value: 'Color(255, 255, 0)'
+
+  - id: color_press
+    type: Color 
+    restore_value: no
+    initial_value: 'Color(255, 255, 0)'
+            
+            

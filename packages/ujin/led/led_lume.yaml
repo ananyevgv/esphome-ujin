@@ -1,0 +1,316 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  led: !include 
+#    file: packages/lume/led_lume.yaml
+#    vars:
+#      led_lume_pin: GPIO26
+#      led_lume: 5
+# and copy file esphome/packages/lume
+
+#-------------------------------------------
+# WIFI
+#-------------------------------------------
+wifi:
+  id: wifi_id
+  
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: esp32_rmt_led_strip
+    rgb_order: GRB
+    pin: $led_lume_pin
+    num_leds: $led_lume
+    rmt_channel: 2
+    chipset: WS2812
+    id: led_ww
+
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Цвет индикации press"
+    entity_category: config
+    icon: mdi:palette
+    options:
+      - "Выкл"              # (0, 0, 0) 0
+      - "Белый"             # (255, 255, 255)1
+      - "Красный"           # (255, 0, 0)2
+      - "Синий"             # (0, 0, 255)3
+      - "Морская волна"     # (0, 255, 255)4
+      - "Фуксин"            # (255, 0, 255) 5
+      - "Серый"             # (128, 128, 128)6
+      - "Зеленый"           # (0, 128, 0)7
+      - "Ярко-зеленый"      # (0, 255, 0)8
+      - "Темно-бордовый"    # (128, 0, 0)9
+      - "Темно-синий"       # (0, 0, 128) 10
+      - "Оливковый"         # (128, 128, 0)11
+      - "Фиолетовый"        # (128, 0, 128)12
+      - "Серо-зеленый"      # (80, 100, 80)13
+      - "Желтый"            # (255, 255, 0)14
+    initial_option: "Красный"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: id(color_press) = Color(0, 0, 0); break;
+              case 1: id(color_press) = Color(255, 255, 255); break;
+              case 2: id(color_press) = Color(255, 0, 0); break;
+              case 3: id(color_press) = Color(0, 0, 255); break;
+              case 4: id(color_press) = Color(0, 255, 255); break;
+              case 5: id(color_press) = Color(255, 0, 255); break;
+              case 6: id(color_press) = Color(128, 128, 128); break;
+              case 7: id(color_press) = Color(0, 128, 0); break;
+              case 8: id(color_press) = Color(0, 255, 0); break;
+              case 9: id(color_press) = Color(128, 0, 0); break;
+              case 10: id(color_press) = Color(0, 0, 128); break;
+              case 11: id(color_press) = Color(128, 128, 0); break;
+              case 12: id(color_press) = Color(128, 0, 128); break;
+              case 13: id(color_press) = Color(80, 100, 80); break;
+              case 14: id(color_press) = Color(255, 255, 0); break;          
+            }
+
+  - platform: template
+    name: "Цвет индикации on"
+    entity_category: config
+    icon: mdi:palette
+    options:
+      - "Выкл"              # (0, 0, 0) 0
+      - "Белый"             # (255, 255, 255)1
+      - "Красный"           # (255, 0, 0)2
+      - "Синий"             # (0, 0, 255)3
+      - "Морская волна"     # (0, 255, 255)4
+      - "Фуксин"            # (255, 0, 255) 5
+      - "Серый"             # (128, 128, 128)6
+      - "Зеленый"           # (0, 128, 0)7
+      - "Ярко-зеленый"      # (0, 255, 0)8
+      - "Темно-бордовый"    # (128, 0, 0)9
+      - "Темно-синий"       # (0, 0, 128) 10
+      - "Оливковый"         # (128, 128, 0)11
+      - "Фиолетовый"        # (128, 0, 128)12
+      - "Серо-зеленый"      # (80, 100, 80)13
+      - "Желтый"            # (255, 255, 0)14
+    initial_option: "Синий"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: id(color_on) = Color(0, 0, 0); break;
+              case 1: id(color_on) = Color(255, 255, 255); break;
+              case 2: id(color_on) = Color(255, 0, 0); break;
+              case 3: id(color_on) = Color(0, 0, 255); break;
+              case 4: id(color_on) = Color(0, 255, 255); break;
+              case 5: id(color_on) = Color(255, 0, 255); break;
+              case 6: id(color_on) = Color(128, 128, 128); break;
+              case 7: id(color_on) = Color(0, 128, 0); break;
+              case 8: id(color_on) = Color(0, 255, 0); break;
+              case 9: id(color_on) = Color(128, 0, 0); break;
+              case 10: id(color_on) = Color(0, 0, 128); break;
+              case 11: id(color_on) = Color(128, 128, 0); break;
+              case 12: id(color_on) = Color(128, 0, 128); break;
+              case 13: id(color_on) = Color(80, 100, 80); break;
+              case 14: id(color_on) = Color(255, 255, 0); break;  
+            }
+
+  - platform: template
+    name: "Цвет индикации off"
+    entity_category: config
+    icon: mdi:palette
+    options:
+      - "Выкл"              # (0, 0, 0) 0
+      - "Белый"             # (255, 255, 255)1
+      - "Красный"           # (255, 0, 0)2
+      - "Синий"             # (0, 0, 255)3
+      - "Морская волна"     # (0, 255, 255)4
+      - "Фуксин"            # (255, 0, 255) 5
+      - "Серый"             # (128, 128, 128)6
+      - "Зеленый"           # (0, 128, 0)7
+      - "Ярко-зеленый"      # (0, 255, 0)8
+      - "Темно-бордовый"    # (128, 0, 0)9
+      - "Темно-синий"       # (0, 0, 128) 10
+      - "Оливковый"         # (128, 128, 0)11
+      - "Фиолетовый"        # (128, 0, 128)12
+      - "Серо-зеленый"      # (80, 100, 80)13
+      - "Желтый"            # (255, 255, 0)14
+    initial_option: "Зеленый"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: id(color_off) = Color(0, 0, 0); break;
+              case 1: id(color_off) = Color(255, 255, 255); break;
+              case 2: id(color_off) = Color(255, 0, 0); break;
+              case 3: id(color_off) = Color(0, 0, 255); break;
+              case 4: id(color_off) = Color(0, 255, 255); break;
+              case 5: id(color_off) = Color(255, 0, 255); break;
+              case 6: id(color_off) = Color(128, 128, 128); break;
+              case 7: id(color_off) = Color(0, 128, 0); break;
+              case 8: id(color_off) = Color(0, 255, 0); break;
+              case 9: id(color_off) = Color(128, 0, 0); break;
+              case 10: id(color_off) = Color(0, 0, 128); break;
+              case 11: id(color_off) = Color(128, 128, 0); break;
+              case 12: id(color_off) = Color(128, 0, 128); break;
+              case 13: id(color_off) = Color(80, 100, 80); break;
+              case 14: id(color_off) = Color(255, 255, 0); break;          
+            }
+
+  - platform: template
+    name: "Цвет индикации ночник"
+    entity_category: config
+    icon: mdi:palette
+    options:
+      - "Выкл"              # (0, 0, 0) 0
+      - "Белый"             # (255, 255, 255)1
+      - "Красный"           # (255, 0, 0)2
+      - "Синий"             # (0, 0, 255)3
+      - "Морская волна"     # (0, 255, 255)4
+      - "Фуксин"            # (255, 0, 255) 5
+      - "Серый"             # (128, 128, 128)6
+      - "Зеленый"           # (0, 128, 0)7
+      - "Ярко-зеленый"      # (0, 255, 0)8
+      - "Темно-бордовый"    # (128, 0, 0)9
+      - "Темно-синий"       # (0, 0, 128) 10
+      - "Оливковый"         # (128, 128, 0)11
+      - "Фиолетовый"        # (128, 0, 128)12
+      - "Серо-зеленый"      # (80, 100, 80)13
+      - "Желтый"            # (255, 255, 0)14
+    initial_option: "Зеленый"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: id(color_wifi) = Color(0, 0, 0); break;
+              case 1: id(color_wifi) = Color(255, 255, 255); break;
+              case 2: id(color_wifi) = Color(255, 0, 0); break;
+              case 3: id(color_wifi) = Color(0, 0, 255); break;
+              case 4: id(color_wifi) = Color(0, 255, 255); break;
+              case 5: id(color_wifi) = Color(255, 0, 255); break;
+              case 6: id(color_wifi) = Color(128, 128, 128); break;
+              case 7: id(color_wifi) = Color(0, 128, 0); break;
+              case 8: id(color_wifi) = Color(0, 255, 0); break;
+              case 9: id(color_wifi) = Color(128, 0, 0); break;
+              case 10: id(color_wifi) = Color(0, 0, 128); break;
+              case 11: id(color_wifi) = Color(128, 128, 0); break;
+              case 12: id(color_wifi) = Color(128, 0, 128); break;
+              case 13: id(color_wifi) = Color(80, 100, 80); break;
+              case 14: id(color_wifi) = Color(255, 255, 0); break;          
+            }
+
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------            
+globals:
+  - id: color_wifi
+    type: Color 
+    restore_value: no
+    initial_value: 'Color(255, 255, 0)'
+
+  - id: color_press
+    type: Color 
+    restore_value: no
+    initial_value: 'Color(255, 255, 0)'
+
+  - id: color_on
+    type: Color 
+    restore_value: no
+    initial_value: 'Color(0, 0, 255)'
+
+  - id: color_off
+    type: Color 
+    restore_value: no
+    initial_value: 'Color(0, 255, 255)'
+
+#-------------------------------------------
+# Number
+#-------------------------------------------
+number:
+  - platform: template
+    name: "${name} Яркость"
+    icon: mdi:brightness-5
+    id: brid
+    min_value: 20
+    max_value: 100
+    step: 10
+    optimistic: true
+    initial_value: 100
+    mode: slider
+    entity_category: config
+    on_value:
+      then:
+        - lambda: |-
+            id(lume_display)->get_light()->set_correction(x/100, x/100, x/100);
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Ночник"
+    optimistic: True
+    id: night
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: mdi:lightbulb-night-outline
+
+  - platform: template
+    name: "Подсветка кнопок"
+    icon: mdi:light-switch-off
+    optimistic: True
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    on_turn_on:
+      - lambda: |-
+          id(lume_display).set_enabled(true);
+    on_turn_off:
+      - lambda: |-
+          id(lume_display).set_enabled(false);
+          
+#-------------------------------------------
+# DISPLAY
+#-------------------------------------------
+display:
+  - platform: addressable_light
+    id: lume_display
+    addressable_light_id: led_ww
+    width: 1
+    height: 5
+    update_interval: 0.1s
+    lambda: |-
+      Color black = Color(0x000000);
+      if (id(left_touch).state)
+          it.rectangle(0, 3, 0, 3, id(color_press));
+      else {
+        if (id(light_dimmer1).remote_values.is_on())
+          it.rectangle(0, 3, 0, 3, id(color_on));
+        else
+          it.rectangle(0, 3, 0, 3, id(color_off));
+      }
+
+      if (id(right_touch).state)
+          it.rectangle(0, 4, 0, 4, id(color_press));
+      else {
+        if (id(light_dimmer2).remote_values.is_on())
+          it.rectangle(0, 4, 0, 4, id(color_on));
+        else
+          it.rectangle(0, 4, 0, 4, id(color_off));
+      }
+      if (id(night).state)
+        it.rectangle(0, 0, 0, 3, id(color_wifi));
+      else {
+        if (id(wifi_id).is_connected())
+          it.rectangle(0, 0, 0, 3, black);
+        else {
+          static int i = 0;
+          i++;
+          if ((i % 10) == 0) 
+            it.rectangle(0, 0, 0, 3, id(color_wifi));
+        }
+      }
+
+
+
