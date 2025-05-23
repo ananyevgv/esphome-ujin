@@ -1,8 +1,0 @@
-#-------------------------------------------
-# SENSOR ESP32 HALL
-#-------------------------------------------
-sensor:
-  - platform: esp32_hall
-    name: "${name} hall Sensor"
-    update_interval: 60s
-    icon: mdi:magnet
