@@ -22,7 +22,8 @@ i2s:
   ws_pin: $noise_ws
   din_pin: $noise_din
   sample_rate: 8000 
-  bits_per_sample: 8
+  bits_per_sample: 16bit
+  bits_per_channel: 8bit
   dma_buf_count: 2
   dma_buf_len: 128
   bits_shift: 0
