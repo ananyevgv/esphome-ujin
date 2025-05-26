@@ -1,58 +1,69 @@
+##########################################
+##              ESP8266                 ##
+##  |RS|          |#|     | 1|          ##
+##  |A0| Вход 2   |#|     | 3|          ##
+##  |16| led_2    |#|     | 5| Реле 1   ##
+##  |14| led_1    |#|     | 4| Реле 2   ##
+##  |12| Вход 1   |#|     | 0| Кнопка м ##
+##  |13| Кнопка 2 |#|     | 2| Кнопка 1 ##
+##  |15| led_s    |#|     |GN|          ## 
+##  |3V|          |#|     |5V|          ##
+##########################################
+
+#################
+# 3.3V  # 12V   #
+# Реле2 # Реле1 #
+# Вход2 # Вход1  ##
+# TX    # RX    #
+# Gnd   # GPIO0 #
+#################
+
 substitutions:
-  espname: "rele-ujin"
-
-
+  name: "rele-ujin"
+  device_description: "почти реле"
 esphome:
-  name: $espname
+  name: $name
   friendly_name: rele ujin
 
 esp8266:
   board: esp12e
 
-# Enable logging
-logger:
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+# обязательные пакеты
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
 
-# Enable Home Assistant API
-api:
-  encryption:
-    key: "7NXk2xcRiFi57xDn1lUAQ2nS5C+aZ2oLp6/gjqQL+Yc="
-
-ota:
-  - platform: esphome
-    password: "54bea113c3cd0aa64fc0750c7250b5fa"
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "Rele-Ujin Fallback Hotspot"
-    password: "3wWKhoZdznRo"
-
-captive_portal:
-
-mqtt:
-  broker: "192.168.1.11"
-  port: 1883
-  username: !secret mqtt_login
-  password: !secret mqtt_password
-
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
 switch:
   - platform: gpio
     name: "Реле 1"
     pin: GPIO4
     id: relay1
-    state_topic: "$espname/relay/relay1"
-    command_topic: "$espname/relay/relay1/set"
-
+    on_turn_on:
+      - light.turn_on:
+          id: led_channel1
+    on_turn_off:
+      - light.turn_off:
+          id: led_channel1
   - platform: gpio
     name: "Реле 2"
     pin: GPIO5
     id: relay2
-    state_topic: "$espname/relay/relay2"
-    command_topic: "$espname/relay/relay2/set"
-
+    on_turn_on:
+      - light.turn_on:
+          id: led_channel2
+    on_turn_off:
+      - light.turn_off:
+          id: led_channel2
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------
 output:
   - platform: gpio
     pin: GPIO15
@@ -66,100 +77,83 @@ output:
     pin: GPIO16
     id: gpio_16
 
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
 light:
   - platform: binary
-    name: "Настройка"
+    name: "${name} настройка"
     output: gpio_15   
     id: led_setting
-    state_topic: "$espname/led/setting"
-    command_topic: "$espname/led/setting/set"
 
   - platform: binary
     output: gpio_14
-    name: "Канал 1"
+    name: "${name} канал 1"
     id: led_channel1
-    state_topic: "$espname/led/channel1"
-    command_topic: "$espname/led/channel1/set"
 
   - platform: binary
     output: gpio_16
-    name: "Канал 2"
+    name: "${name} канал 2"
     id: led_channel2  
-    state_topic: "$espname/led/channel2"
-    command_topic: "$espname/led/channel2/set"
 
+#-------------------------------------------
+# BINARY_SENSOR
+#-------------------------------------------
 binary_sensor:
-
   - platform: gpio
     pin:
       number: GPIO0
       inverted: true
-    name: "Настройка"
+    name: "${name} настройка"
 #    device_class: window
-    id: setting
-    state_topic: "$espname/button/setting"
 
   - platform: gpio
     pin:
       number: GPIO2
       inverted: true
-    name: "Канал 1"
+    name: "${name} канал 1"
     id: channel1
-    state_topic: "$espname/button/channel1"
     on_press:    
       - switch.toggle: relay1
-      - light.toggle: led_channel1      
-
+   
   - platform: gpio
     pin:
       number: GPIO13
       inverted: true
-    name: "Канал 2"
+    name: "${name} канал 2"
     id: cannel2
-    state_topic: "$espname/button/channel2"
     on_press:    
       - switch.toggle: relay2
-      - light.toggle: led_channel2 
 
   - platform: gpio
     pin:
       number: GPIO12
       inverted: true
-    id: "input1"
-    name: "Вход 1"
-    state_topic: "$espname/input/input1"
+    id: input1
+    name: "${name} Вход 1"
     on_press:
       - switch.turn_on: relay1
-      - light.turn_on: led_channel1      
     on_release:
       - switch.turn_off: relay1
-      - light.turn_off: led_channel1
 
-  - platform: template
-    name: "Вход 2"
+  - platform: analog_threshold
+    name: "${name} Вход 2"
     id: input2
-    lambda: return (id(button_adc).state < .5);
-    state_topic: "$espname/input/input2"
+    threshold: 0.5
+    sensor_id: button_adc
+    device_class: motion
+    icon: mdi:motion-sensor
     on_press:
-      - switch.turn_on: relay2
-      - light.turn_on: led_channel2      
+      - switch.turn_on: relay2   
     on_release:
       - switch.turn_off: relay2
-      - light.turn_off: led_channel2
 
-
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
 sensor:
   - platform: adc
     id: button_adc
     pin: A0
     update_interval: .3s
 
-  - platform: uptime
-    name: "Uptime"
-    
-  - platform: wifi_signal
-    name: "WiFi Signal"
-    update_interval: 60s
-
-     
-  
