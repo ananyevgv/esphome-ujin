@@ -110,6 +110,13 @@ packages:
     file: packages/ujin/sensor/bh1750.yaml
     vars:
      id_bh: i_lume
+     
+# Датчик температуры и влажности 
+#  hts221: !include 
+#    file: packages/ujin/sensor/hts221.yaml
+#    vars:
+#      id_hts221_t: hts221_t
+#      id_hts221_h: hts221_h
 
 # Датчик температуры и влажности 
  # sht3x: !include 
