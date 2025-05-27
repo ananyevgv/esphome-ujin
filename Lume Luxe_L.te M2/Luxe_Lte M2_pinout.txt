@@ -16,9 +16,9 @@
 # GPIO14 – 
 # GPIO15 – touch sensor 1
 # GPIO19 – 
-# GPIO20 – I2S ws_pin
-# GPIO21 – I2S bck_pin
-# GPIO22 – I2S din_pin
+# GPIO20 – 
+# GPIO21 – 
+# GPIO22 – 
 # GPIO25 – 
 # GPIO26 – 
 # GPIO27 – 
