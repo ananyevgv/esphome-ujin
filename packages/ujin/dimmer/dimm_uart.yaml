@@ -85,8 +85,10 @@ light:
                 data:
                   entity_id: $light_1_device
     on_turn_off:
-      - uart.write: !lambda
-          return {0xC8, 0x07, 0x30, 0x02, 0x00, 0x00, 0xFD};
+      - uart.write:
+          id: uart_0
+          data: lambda
+            return {0xC8, 0x07, 0x30, 0x02, 0x00, 0x00, 0xFD};
       - if:
           condition:
             lambda: |-
@@ -125,8 +127,10 @@ light:
                 data:
                   entity_id: $light_2_device
     on_turn_off:
-      - uart.write: !lambda
-          return {0xC8, 0x07, 0x32, 0x02, 0x00, 0x00, 0xFF};
+      - uart.write: 
+          id: uart_0
+          data: lambda
+            return {0xC8, 0x07, 0x32, 0x02, 0x00, 0x00, 0xFF};
       - if:
           condition:
             lambda: |-
