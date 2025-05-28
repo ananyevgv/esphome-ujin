@@ -85,10 +85,10 @@ light:
                 data:
                   entity_id: $light_1_device
     on_turn_off:
-      - uart.write:
-          id: uart_0
-          data: lambda
-            return {0xC8, 0x07, 0x30, 0x02, 0x00, 0x00, 0xFD};
+      - lambda: |-
+          std::vector<uint8_t> message = {0xC8, 0x07, 0x30, 0x02, 0x00, 0x00, 0xFD};          
+          id(uart_0).write_array(message.data(), message.size());
+    
       - if:
           condition:
             lambda: |-
@@ -127,10 +127,10 @@ light:
                 data:
                   entity_id: $light_2_device
     on_turn_off:
-      - uart.write: 
-          id: uart_0
-          data: lambda
-            return {0xC8, 0x07, 0x32, 0x02, 0x00, 0x00, 0xFF};
+      - lambda: |-
+          std::vector<uint8_t> message = {0xC8, 0x07, 0x32, 0x02, 0x00, 0x00, 0xFF};          
+          id(uart_0).write_array(message.data(), message.size());
+    
       - if:
           condition:
             lambda: |-
@@ -151,6 +151,7 @@ light:
                 data:
                   entity_id: $light_2_device
                   brightness: !lambda return (id(light_dimmer2).remote_values.get_brightness());
+
 
 #-------------------------------------------
 # SELECT

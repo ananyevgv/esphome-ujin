@@ -1,0 +1,198 @@
+substitutions:
+  name: lume-m2
+  device_description: lume L.te M2
+  light_1_device: light.kithen1
+  light_2_device: light.kithen2
+  sda_i2c: GPIO7
+  scl_i2c: GPIO8
+
+esphome:
+  name: "${name}"
+  comment: "${device_description}"
+  platformio_options:
+    board_upload.maximum_size: 7864320
+  on_boot:
+    - priority: 250
+      then:    
+        - lambda: |-
+            std::vector<uint8_t> message = {0xC8, 0x29, 0x66, 0x24, 0xF0, 0xFF, 0xAC, 0x0D, 0x4C, 0x1D, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0xC5, 0xFF, 0xCA, 0x08, 0x4C, 0x1D, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0xC4, 0xFF, 0xF4, 0x01, 0x00, 0x00, 0x34, 0x12, 0x1D};
+            //                                |     |     |     |     ↑     |     ↑     ↑     ↑     ↑     |     |     |     |     ↑     ↑     |     |     ↑    |      ↑    ↑     ↑     ↑      |     |     |     |     ↑     ↑     |     |     ↑     |     |     |     |     |     |     |     |
+            //                                |     |     |     |     ↑     |     ↑     ↑     ↑     ↑     |     |     |     |    Таймер 1     |     |     ↑    |      ↑    ↑     ↑     ↑      |     |     |     |    Таймер 2     |     |     ↑     |     |     |     |     |     |     |     |
+            //                                |     |     |     |     ↑     |     ↑     ↑  граница мин 1  |     |     |     |     |     |     |     |     ↑    |      ↑    ↑    граница мин 2 |     |     |     |     |     |     |     |     ↑     |     |     |     |     |     |     |     |
+            //                                |     |     |     |     ↑     |  граница мax 1              |     |     |     |     |     |     |     |     ↑    |     граница мax 2            |     |     |     |     |     |     |     |     ↑     |     |     |     |     |     |     |     |
+            //                                |     |     |     |  Питание по фазе и нулю - F1, по фазе  - F0   |     |     |     |     |     |     |  Диммирование 1 канал C4-OFF C5-ON      |     |     |     |     |     |     |     | Диммирование 2 канал C4-OFF C5-ON
+            id(uart_0).write_array(message.data(), message.size());
+
+api:
+  reboot_timeout: 0s     
+  
+esp32:
+  board: pico32 #denky_d4
+  flash_size: 8MB
+  framework: 
+    type: arduino
+
+#-------------------------------------------
+# PSRAM
+#-------------------------------------------
+psram:
+  mode: quad
+  speed: 80MHz
+
+#-------------------------------------------
+# UART
+#-------------------------------------------
+uart:
+  - id: uart_0
+    baud_rate: 115200
+    rx_pin: 3
+    tx_pin: 1
+    data_bits: 8
+    stop_bits: 1
+
+#-------------------------------------------
+# I2c
+#-------------------------------------------
+i2c:
+  sda:
+    number: $sda_i2c
+    ignore_pin_validation_error: true
+  scl: 
+    number: $scl_i2c
+    ignore_pin_validation_error: true
+  scan: true
+  id: bus_a
+
+#-------------------------------------------
+# LOGGER
+#-------------------------------------------
+logger:
+  baud_rate: 0
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+# обязательные пакеты
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+  
+# Zigbee шлюз      
+  zigbee: !include 
+    file: packages/ujin/zigbee.yaml
+    vars:
+      TX_Z: 27
+      RX_Z: 14
+      
+# Сенсорные кнопки
+  but: !include 
+    file: packages/ujin/button/button_uart.yaml
+    vars:
+      one_butt: GPIO15
+      two_butt: GPIO2
+      touch_threshold: 1150 # 1000 
+      delta_threshold: 5
+      setup_threshold: false #true
+
+  dimm_uart: !include 
+    file: packages/ujin/dimmer/dimm_uart.yaml
+    vars:
+      type_light1: monochromatic # binary
+      type_light2: monochromatic # binary
+
+
+
+# Температура ESP32
+  esp32_temp: !include packages/ujin/sensor/esp32_temp.yaml
+
+# Датчик холла
+  esp32_hall: !include packages/ujin/sensor/esp32_hall.yaml
+  
+# Captive portal
+#  cap: !include 
+#    file: packages/ujin/captive.yaml
+#    vars:
+#      ssid_captive: "Lume"
+#      pass_captive: "12345678"
+
+
+# ИК приемник
+ # ir_receiver: !include 
+ #   file: packages/ujin/sensor/ir_receiver.yaml
+  #  vars:
+  #    pin_ir_receiver: GPIO4
+
+# ИК передатчик
+  ir_transmitter: !include 
+    file: packages/ujin/sensor/ir_transmitter.yaml
+    vars:
+      pin_ir_transmitter: GPIO13
+
+# Датчик освещености
+  bh1750: !include
+    file: packages/ujin/sensor/bh1750.yaml
+    vars:
+      id_bh: i_lume
+
+# Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
+  bme680_bsec: !include 
+    file: packages/ujin/sensor/bme680_bsec2.yaml
+    vars:
+      id_bme680_t: bme680_t
+      id_bme680_h: bme680_h
+      id_bme680_p: bme680_p
+      id_bme680_iaq: bme680_iaq
+      id_bme680_co2: bme680_co2
+      id_bme680_voc: bme680_voc
+      model_bme: bme688
+      address_bme680: 0x76
+
+# Подсведка кнопок
+  led: !include 
+    file: packages/ujin/led/led_lume.yaml
+    vars:
+      led_lume_pin: GPIO33
+      led_lume: 5
+
+
+# Входы
+  2in: !include 
+    file: packages/ujin/2in_uart.yaml
+
+# Датчик движения
+  pir: !include 
+    file: packages/ujin/sensor/pir.yaml
+    vars:
+      pir_pin: GPIO34
+      pir_addres: 0x2F
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: adc
+    name: ADC
+    pin: 35 
+    attenuation: 12dB
+    update_interval: 1s
+
+button:
+  - platform: restart
+    name: "${name} Restart"
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Звук нажатие клавиш"
+    optimistic: True
+    id: sound
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    icon: mdi:volume-off
+button:
+  - platform: restart
+    name: "${name} Restart"
+

@@ -1,0 +1,79 @@
+#-------------------------------------------
+# Add yaml and copy file esphome/packages/ujin/sensor/
+#packages:
+#  bme680_bsec: !include 
+#    file: packages/ujin/sensor/bme680.yaml
+#    vars:
+#      id_bme680_t: bme680_t
+#      id_bme680_h: bme680_h
+#      id_bme680_p: bme680_p
+#      id_bme680_iaq: bme680_iaq
+#      address_bme680: 0x76 # 0x77
+#-------------------------------------------
+
+
+#-------------------------------------------
+# TEXT SENSOR
+#-------------------------------------------
+text_sensor:
+ 
+  - platform: template
+    name: "${name} IAQ Classification"
+    icon: "mdi:checkbox-marked-circle-outline"
+    lambda: |-
+      uint16_t var = (id($id_bme680_iaq).state);
+      switch (var) {
+        case 0 ... 50: return std::string("Отлично");
+        case 51 ... 100: return std::string("Хорошо");
+        case 101 ... 150: return std::string("Слегка загрязненный");
+        case 151 ... 200: return std::string("Умеренно загрязненный");
+        case 201 ... 250: return std::string("Слегка загрязненный");
+        case 251 ... 300: return std::string("Загрязненный");
+        case 301 ... 350: return std::string("Сильно загрязненный");
+        case 351 ... 500: return std::string("Черезвычайно загрязненный"); 
+        default: return std::string("error");
+      }  
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: bme680
+    address: $address_bme680
+    temperature:
+      name: "${name} Temperature"
+      id: ${id_bme680_t}
+      oversampling: 16x
+      filters:
+      - calibrate_linear:
+        - 0.0 -> 0.0
+        - 26.7 -> 24.7
+    pressure:
+      name: "${name} Pressure"
+      id: ${id_bme680_p}
+    humidity:
+      name: "${name} Humidity"
+      id: ${id_bme680_h}
+      filters:
+      - calibrate_linear:
+        - 0.0 -> 0.0
+        - 52 -> 54.7
+    gas_resistance:
+      id: gas_resistance
+      filters:
+        - median
+        
+  - platform: template
+    name: ${name} Air Quality"
+    id: $id_bme680_iaq
+    icon: "mdi:gauge"
+    lambda: |-
+      return log(id(gas_resistance).state) + 0.04 *  id(${id_bme680_h}).state;
+    state_class: "measurement"   
+    
+  - platform: absolute_humidity
+    name: "${name} Absolute Humidity"
+    temperature: ${id_bme680_t}
+    humidity: ${id_bme680_h}      
+        
+        
