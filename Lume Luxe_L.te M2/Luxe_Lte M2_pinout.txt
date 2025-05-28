@@ -1,0 +1,32 @@
+# EN – RST (XS2)
+# GPIO0 – GPO (XS2)
+# GPIO1 – TXD dimmer
+# GPIO2 – touch sensor 2
+# GPIO3 – RXD dimmer
+# GPIO4 – infrared receiver
+# GPIO5 – 
+# GPIO6 – CLK PSRAM
+# GPIO7 – I2C SDA
+# GPIO8 – I2C SCL
+# GPIO9 – SD PSRAM
+# GPIO10 – SD PSRAM
+# GPIO11 – CMD PSRAM
+# GPIO12 – __________
+# GPIO13 – infrared transmitter
+# GPIO14 – 
+# GPIO15 – touch sensor 1
+# GPIO19 – 
+# GPIO20 – 
+# GPIO21 – 
+# GPIO22 – 
+# GPIO25 – 
+# GPIO26 – 
+# GPIO27 – 
+# GPIO32 – 
+# GPIO33 – 
+# GPI34 – датчик движения PIR612 
+# GPI35 – Питание?
+# GPI36 – __________  
+# GPI37 – __________  
+# GPI38 – __________  
+# GPI39 – __________  

@@ -1,0 +1,35 @@
+#-------------------------------------------
+# Add yaml and copy file esphome/packages/ujin/sensor/
+#packages:
+#  hts221: !include 
+#    file: packages/ujin/sensor/hts221.yaml
+#    vars:
+#      id_hts221_t: hts221_t
+#      id_hts221_h: hts221_h
+#-------------------------------------------
+
+external_components:
+  - source: github://ananyevgv/esphome-components/
+    refresh: 0s
+
+#-------------------------------------------
+# SENSOR HTS221
+#-------------------------------------------
+sensor:
+  - platform: hts221
+    temperature:
+      name: "${name} temperature"
+      id: ${id_hts221_t}
+      icon: mdi:thermometer
+    humidity:
+      name: "${name} humidity"
+      id: ${id_hts221_h}
+      icon: mdi:water-percent
+    update_interval: 10s
+    address: 0x5F
+
+  - platform: absolute_humidity
+    name: "${name} Absolute Humidity"
+    temperature: ${id_hts221_t}
+    humidity: ${id_hts221_h}   
+    icon: mdi:water-outline
