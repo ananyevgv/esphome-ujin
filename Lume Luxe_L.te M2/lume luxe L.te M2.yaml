@@ -30,7 +30,7 @@ esp32:
   board: pico32 #denky_d4
   flash_size: 8MB
   framework: 
-    type: arduino
+    type: esp-idf
 
 #-------------------------------------------
 # PSRAM
@@ -77,7 +77,13 @@ packages:
   wifi: !include packages/wifi.yaml
   web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
-  
+
+# BLE
+  ble: !include 
+    file: packages/ujin/ble/ble.yaml
+ #   file: packages/ujin/ble/ble1.yaml
+ #   file: packages/ujin/ble/ble2.yaml
+ 
 # Zigbee шлюз      
   zigbee: !include 
     file: packages/ujin/zigbee.yaml
@@ -98,8 +104,8 @@ packages:
   dimm_uart: !include 
     file: packages/ujin/dimmer/dimm_uart.yaml
     vars:
-      type_light1: monochromatic # binary
-      type_light2: monochromatic # binary
+      type_light1: monochromatic # binary # 
+      type_light2:  monochromatic # binary #
 
 
 
@@ -107,7 +113,7 @@ packages:
   esp32_temp: !include packages/ujin/sensor/esp32_temp.yaml
 
 # Датчик холла
-  esp32_hall: !include packages/ujin/sensor/esp32_hall.yaml
+#  esp32_hall: !include packages/ujin/sensor/esp32_hall.yaml
   
 # Captive portal
 #  cap: !include 
@@ -137,7 +143,7 @@ packages:
 
 # Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
   bme680_bsec: !include 
-    file: packages/ujin/sensor/bme680_bsec2.yaml
+    file: packages/ujin/sensor/bme680.yaml
     vars:
       id_bme680_t: bme680_t
       id_bme680_h: bme680_h
@@ -166,7 +172,12 @@ packages:
     vars:
       pir_pin: GPIO34
       pir_addres: 0x2F
-
+# Шумомер
+  noise: !include 
+    file: packages/ujin/sensor/noise_PDM_05.2025.yaml
+    vars:
+      noise_ws: GPIO19 # ? 
+      noise_din: GPIO21 # ?
 #-------------------------------------------
 # SENSOR
 #-------------------------------------------
@@ -192,7 +203,7 @@ switch:
     entity_category: config
     restore_mode: RESTORE_DEFAULT_ON
     icon: mdi:volume-off
-button:
-  - platform: restart
-    name: "${name} Restart"
+
+
+
 
