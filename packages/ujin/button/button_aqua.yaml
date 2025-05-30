@@ -1,0 +1,82 @@
+
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  but: !include 
+#    file: packages/ujin/button/button_aqua.yaml
+#    vars:
+#      one_butt: GPIO15
+#      two_butt: GPIO2
+#      touch_threshold: 1000 #1150
+#      delta_threshold: 5
+#      setup_threshold: false #true
+# and copy file esphome/packages/ujin/button
+
+ 
+#-------------------------------------------
+# TOUCH
+#-------------------------------------------
+esp32_touch:
+  setup_mode: $setup_threshold
+
+
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: esp32_touch
+    name: "${name} левая кнопка"
+    id: left_touch
+    pin: $one_butt
+    icon: mdi:gesture-tap-button
+    threshold: $touch_threshold
+    on_click: 
+      then:
+        - switch.turn_on: valve
+
+  - platform: esp32_touch
+    name: "${name} правая кнопка"
+    id: right_touch
+    pin: $two_butt
+    icon: mdi:gesture-tap-button
+    threshold: $touch_threshold
+    on_click: 
+      then:
+        - switch.turn_off: valve
+          
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Чувствительность кнопок"
+    id: sensitivity_of_touch_id
+    entity_category: config
+    icon: mdi:gesture-tap-hold
+    options:
+      - "Низкая"              
+      - "Средняя"             
+      - "Высокая"          
+    initial_option: "Средняя"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: 
+                id(right_touch).set_threshold ($touch_threshold - $delta_threshold); 
+                id(left_touch).set_threshold ($touch_threshold - $delta_threshold); 
+                break;
+              case 1:  
+                id(right_touch).set_threshold ($touch_threshold); 
+                id(left_touch).set_threshold ($touch_threshold); 
+                break;
+              case 2:  
+                id(right_touch).set_threshold ($touch_threshold + $delta_threshold); 
+                id(left_touch).set_threshold ($touch_threshold + $delta_threshold); 
+                break;
+            }
+              
+              
+              
+              
