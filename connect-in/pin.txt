@@ -7,6 +7,6 @@
 14   GPIO2   D4    Реле ?
 15   GPIO0   D3    Button ?
 16   GPIO4   D2
-24   GPIO5   D1
+24   GPIO5   D1    Вход ?
 25   GPIO3   RX
 26   GPIO1   TX
