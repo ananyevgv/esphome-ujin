@@ -1,7 +1,7 @@
 substitutions:
   name: ujin-aqua
   device_description: ujin-aqua
-  beeper_ledc: GPIO32
+  beeper_ledc: GPIO25
   leak_mac: '01:00:5E:00:1D:88'
   leak_mac2: '01:00:5E:00:38:C8'
 esphome:
@@ -50,7 +50,7 @@ packages:
     vars:
       one_butt: GPIO15
       two_butt: GPIO2
-      touch_threshold: 1150 # 1000 
+      touch_threshold: 1000 # 1150 
       delta_threshold: 5
       setup_threshold: false #true
 
@@ -153,13 +153,21 @@ switch:
 
   - platform: gpio
     name: "Реле 1"
-    pin: GPIO3
+    pin: 
+      number: 3
+      mode:
+        output: true
+        pulldown: true
     id: relay1    
     icon: mdi:water-pump-off
 
   - platform: gpio
     name: "Реле 2"
-    pin: GPIO19
+    pin: 
+      number: 19
+      mode:
+        output: true
+        pulldown: true
     id: relay2      
     icon: mdi:pipe-valve
     
@@ -305,3 +313,16 @@ binary_sensor:
     lambda: return (id(rf24_status_code2_).state == 2 || id(rf24_status_code2_).state == 4 || id(rf24_status_code2_).state == 6);
     device_class: MOISTURE    
 
+
+interval:
+  - interval: 2sec
+    then:
+      - if:
+          condition:   
+            or:
+              - binary_sensor.is_on: leak
+              - binary_sensor.is_on: leak2
+          then: 
+            - rtttl.play: 'short:d=20,o=5,b=100:e6' 
+            - delay: 500ms
+            - rtttl.play: 'short:d=20,o=5,b=100:e6' 
