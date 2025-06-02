@@ -1,14 +1,10 @@
 substitutions:
-  name: ujin-aqua
-  device_description: ujin-aqua
-  beeper_ledc: GPIO25
+  espname: "aqua"
   leak_mac: '01:00:5E:00:1D:88'
   leak_mac2: '01:00:5E:00:38:C8'
 esphome:
-  name: "${name}"
-  comment: "${device_description}"
-  platformio_options:
-    board_upload.maximum_size: 7864320
+  name: $espname
+  friendly_name: AQUA
   on_boot:
     - priority: 600
       then:
@@ -17,9 +13,16 @@ esphome:
         - lambda: |-
             id(rf24_status_code2_).publish_state(0);
 
-api:
-  reboot_timeout: 0s     
-  
+    - priority: 500
+      then:
+        - esp32_ble_tracker.stop_scan:
+    - priority: 100
+      then:
+        - delay: 10s
+        - esp32_ble_tracker.start_scan:
+            continuous: true     
+
+
 esp32:
   board: denky_d4
   flash_size: 8MB
@@ -35,143 +38,81 @@ psram:
 
 
 
-#-------------------------------------------
-# PACKAGES
-#-------------------------------------------
-packages:
-# обязательные пакеты
-  wifi: !include packages/wifi.yaml
-  web: !include included/web.yaml
-  device_base: !include packages/device_base.yaml
+# Enable logging
+logger:
 
-# Сенсорные кнопки
-  but: !include 
-    file: packages/ujin/button/button_aqua.yaml
-    vars:
-      one_butt: GPIO15
-      two_butt: GPIO2
-      touch_threshold: 1000 # 1150 
-      delta_threshold: 5
-      setup_threshold: false #true
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_key_aqua
+  actions:
+    - action: rtttl_play
+      variables:
+        song_str: string
+      then:
+        - rtttl.play:
+            rtttl: !lambda 'return song_str;'
+  reboot_timeout: 0s          
 
-# не обязательные пакеты
-# BLE
-  ble: !include 
-  #  file: packages/ujin/ble/ble.yaml
-  #  file: packages/ujin/ble/ble1.yaml
-    file: packages/ujin/ble/ble2.yaml
-    
-# Время NTP
- # time: !include included/time.yaml
 
-# Температура ESP32
-  esp32_temp: !include packages/ujin/sensor/esp32_temp.yaml
+ota:
+  - platform: esphome
+    password: !secret ota_pass_aqua
 
-# Датчик холла
-#  esp32_hall: !include packages/ujin/sensor/esp32_hall.yaml
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "Aqua"
+    password: "12345678"
+
+captive_portal:
+
+
   
-# Captive portal
-#  cap: !include 
-#    file: packages/ujin/captive.yaml
-#    vars:
-#      ssid_captive: "Lume"
-#      pass_captive: "12345678"
+
+web_server:
+  version: 3  
+  port: 80
+  local: true
+  auth:
+    username: !secret user_web
+    password: !secret pass_web       
+
+#-------------------------------------------
+# TOUCH
+#-------------------------------------------
+esp32_touch:
+#  setup_mode: true
 
 
-# Подсведка кнопок
-  led: !include 
-    file: packages/ujin/led/led_aqua.yaml
-    vars:
-      led_lume_pin: GPIO26
-      led_lume: 5
 
 #-------------------------------------------
 # OUTPUT
 #-------------------------------------------      
 output:
   - platform: ledc
-    pin: $beeper_ledc
+    pin: GPIO25
     id: rtttl_out
-
-#-------------------------------------------
-# RTTTL
-#-------------------------------------------
+    
 rtttl:
   output: rtttl_out
-  gain: 60%
 
-#-------------------------------------------
-# SWITCH
-#-------------------------------------------
-switch:
-  - platform: template
-    name: "Звук нажатие клавиш"
-    optimistic: True
-    id: sound
-    entity_category: config
-    restore_mode: RESTORE_DEFAULT_ON
-    icon: mdi:volume-off
 
-  - platform: template
-    optimistic: True
-    name: "Вода"
-    icon: mdi:pipe-valve
-    id: valve
-    on_turn_on:
-      then:
-        - if:
-            condition:   
-              and:
-                - binary_sensor.is_off: leak
-                - binary_sensor.is_off: leak2
-            then:
-              - if:
-                  condition:
-                      switch.is_on: valve_mode
-                  then:
-                    - switch.turn_off: relay1
-                    - switch.turn_on: relay2
-                  else:
-                    - switch.turn_on: relay1
-                    - switch.turn_on: relay2
-    on_turn_off:
-      then:
-        - if:
-            condition:
-                switch.is_on: valve_mode
-            then:
-              - switch.turn_on: relay1
-              - switch.turn_off: relay2
-            else:
-              - switch.turn_on: relay1
-              - switch.turn_off: relay2
 
-  - platform: template
-    name: "Реле 1 или 2"
-    optimistic: True
-    id: valve_mode
-
-  - platform: gpio
-    name: "Реле 1"
-    pin: 
-      number: 3
-      mode:
-        output: true
-        pulldown: true
-    id: relay1    
-    icon: mdi:water-pump-off
-
-  - platform: gpio
-    name: "Реле 2"
-    pin: 
-      number: 19
-      mode:
-        output: true
-        pulldown: true
-    id: relay2      
-    icon: mdi:pipe-valve
-    
 esp32_ble_tracker:
+  scan_parameters:
+    active: false
+    duration: 32s
+    interval: 320ms
+    window: 310ms     
+
+  on_ble_advertise:
+    - mac_address: $leak_mac
+      then:    
+    - mac_address: $leak_mac2
+      then:
+
   on_ble_manufacturer_data_advertise:
     - mac_address: $leak_mac
       manufacturer_id: 'ffff'
@@ -201,7 +142,27 @@ esp32_ble_tracker:
             id(rf24_battery_level2_).publish_state(myData2.battery_level);
             id(rf24_status_code2_).publish_state(myData2.status_code);
 
+
+text_sensor:
+  - platform: template
+    name: "Состояние крана"
+    id: valve_state_text
+
+                 
+switch:
+  - platform: gpio
+#    name: "Close"
+    id: aqua_reley1_id
+    pin: GPIO3
+   
+
+  - platform: gpio
+#    name: "Open"
+    id: aqua_reley2_id    
+    pin: GPIO19
+  
 sensor:
+
   - platform: template
     name: "leak_battery_level"
     id: rf24_battery_level_
@@ -209,10 +170,6 @@ sensor:
     accuracy_decimals: 0
     device_class: battery
 
-  - platform: template
-    name: "leak_status_code"
-    id: rf24_status_code_
-    accuracy_decimals: 0
 
   - platform: template
     name: "leak_battery_level2"
@@ -222,107 +179,682 @@ sensor:
     device_class: battery
 
   - platform: template
-    name: "leak_status_code2"
+#    name: "leak_status_code"
+    id: rf24_status_code_
+    accuracy_decimals: 0
+
+  - platform: template
+#    name: "leak_status_code2"
     id: rf24_status_code2_
     accuracy_decimals: 0
 
   - platform: uptime
     name: "Uptime"
+    
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    update_interval: 60s
+
 
 binary_sensor:
-  - platform: template
-    name: "very long press"
-    id: very_long_press_id
-    lambda: |-
-      int value = id(rf24_status_code_).state;
-      return (value >> 6) & 0x01;
 
   - platform: template
-    name: "very long press2"
-    id: very_long_press2_id
-    lambda: |-
-      int value = id(rf24_status_code2_).state;
-      return (value >> 6) & 0x01;
-
-  - platform: template
-    name: "long press"
-    id: long_press_id
-    lambda: |-
-      int value = id(rf24_status_code_).state;
-      return (value >> 5) & 0x01;
-
-  - platform: template
-    name: "long press2"
-    id: long_press2_id
-    lambda: |-
-      int value = id(rf24_status_code2_).state;
-      return (value >> 5) & 0x01;
-
-  - platform: template
-    name: "input"
+#    name: "input"
     id: input_id
     lambda: |-
       int value = id(rf24_status_code_).state;
       return (value >> 2) & 0x01;
 
   - platform: template
-    name: "input2"
+#    name: "input2"
     id: input2_id
     lambda: |-
       int value = id(rf24_status_code2_).state;
       return (value >> 2) & 0x01;
 
   - platform: template
-    name: "leak"
+#    name: "leak"
     id: leak_id
     lambda: |-
       int value = id(rf24_status_code_).state;
       return (value >> 1) & 0x01;
 
   - platform: template
-    name: "leak2"
+#    name: "leak2"
     id: leak2_id
     lambda: |-
       int value = id(rf24_status_code2_).state;
       return (value >> 1) & 0x01;
 
-  - platform: template
-    name: "press button"
-    id: press_button_id
-    lambda: |-
-      int value = id(rf24_status_code_).state;
-      return (value >> 0) & 0x01;
-
-  - platform: template
-    name: "press button2"
-    id: press_button2_id
-    lambda: |-
-      int value = id(rf24_status_code2_).state;
-      return (value >> 0) & 0x01;
+  - platform: gpio
+    pin:
+      number: GPIO33
+    id: "input"
+#    name: "Вход"
 
   - platform: template
     name: "Протечка"
     id: leak
-    lambda: return (id(rf24_status_code_).state == 2 || id(rf24_status_code_).state == 4 || id(rf24_status_code_).state == 6);
+    lambda: return (id(rf24_status_code_).state == 2 || id(rf24_status_code_).state == 4 || id(rf24_status_code_).state == 6 || id(rf24_status_code2_).state == 2 || id(rf24_status_code2_).state == 4 || id(rf24_status_code2_).state == 6 || id(input).state == true);
     device_class: MOISTURE
-  
+#    state_topic: "$espname/leak/status"
+    on_press:
+      then:
+        - globals.set:
+            id: script_toggle
+            value: "false"  
+        - script.stop: led_norm_id 
+        - script.execute: buzzer_id
+        - switch.turn_off: aqua_reley2_id
+        - switch.turn_off: aqua_reley1_id
+        - light.addressable_set:
+             id: led_ww
+             range_from: 0
+             range_to: 2
+             red: 100%
+             green: 0%
+             blue: 0%
+             color_brightness: 100%
+        - script.stop: close_aqua_reley1_id
+        - script.stop: open_aqua_reley2_id
+        - script.execute: close_aqua_reley1_id
+        - text_sensor.template.publish:
+            id: valve_state_text
+            state: "Закрыт"          
 
+  - platform: esp32_touch
+#    name: "Левая кнопка"
+    id: left_touch
+    pin: GPIO15
+    threshold: 1050
+    on_release:
+      then:
+        - script.stop: close_aqua_reley1_id
+        - script.stop: open_aqua_reley2_id        
+        - script.execute: left_button_led_id        
+        - script.stop: buzzer_id
+        - switch.turn_off: aqua_reley2_id
+        - switch.turn_off: aqua_reley1_id
+        - if:
+            condition:
+              lambda: 'return !id(script_toggle);'  # если false → запускаем  скрипт close_aqua_reley1_id
+            then:
+              - script.stop: led_norm_id 
+              - script.execute: close_aqua_reley1_id
+              - light.addressable_set:
+                   id: led_ww
+                   range_from: 0
+                   range_to: 2
+                   red: 0%
+                   green: 0%
+                   blue: 100%
+                   color_brightness: 100% 
+              - text_sensor.template.publish:
+                  id: valve_state_text
+                  state: "Закрыт"                    
+            else:
+              - script.execute: open_aqua_reley2_id
+              - script.execute: led_norm_id 
+              - text_sensor.template.publish:
+                  id: valve_state_text
+                  state: "Открыт"                            
+        - globals.set:
+            id: script_toggle
+            value: !lambda 'return !id(script_toggle);'  # инвертируем значение
+
+
+
+
+  - platform: esp32_touch
+#    name: "Правая кнопка"
+    id: right_touch
+    pin: GPIO2
+    threshold: 1100
+    on_release:
+      then:
+        - script.stop: close_aqua_reley1_id
+        - script.stop: open_aqua_reley2_id        
+        - script.execute: right_button_led_id
+        - script.stop: buzzer_id
+        - switch.turn_off: aqua_reley1_id
+        - switch.turn_off: aqua_reley2_id
+        - if:
+            condition:
+              lambda: 'return !id(script_toggle);'  # если false → запускаем  скрипт close_aqua_reley1_id
+            then:
+              - script.stop: led_norm_id               
+              - script.execute: close_aqua_reley1_id
+              - light.addressable_set:
+                   id: led_ww
+                   range_from: 0
+                   range_to: 2
+                   red: 0%
+                   green: 0%
+                   blue: 100%
+                   color_brightness: 100% 
+              - text_sensor.template.publish:
+                  id: valve_state_text
+                  state: "Закрыт"                                 
+            else:
+              - script.execute: open_aqua_reley2_id
+              - script.execute: led_norm_id
+              - text_sensor.template.publish:
+                  id: valve_state_text
+                  state: "Открыт"                
+        - globals.set:
+            id: script_toggle
+            value: !lambda 'return !id(script_toggle);'  # инвертируем значение
+
+
+number:
   - platform: template
-    name: "Протечка2"
-    id: leak2
-    lambda: return (id(rf24_status_code2_).state == 2 || id(rf24_status_code2_).state == 4 || id(rf24_status_code2_).state == 6);
-    device_class: MOISTURE    
+    name: "Drive activation time"
+    id: relay_delay_time
+    min_value: 1
+    max_value: 120
+    step: 1
+    initial_value: 22  # 22 секунды по умолчанию
+    optimistic: true
+    entity_category: config
 
+globals:
+  - id: script_toggle
+    type: bool
+    initial_value: "false"  # false = close_aqua_reley1_id, true = open_aqua_reley2_id
 
-interval:
-  - interval: 2sec
+script:
+
+  - id: close_aqua_reley1_id
     then:
-      - if:
-          condition:   
-            or:
-              - binary_sensor.is_on: leak
-              - binary_sensor.is_on: leak2
-          then: 
-            - rtttl.play: 'short:d=20,o=5,b=100:e6' 
-            - delay: 500ms
-            - rtttl.play: 'short:d=20,o=5,b=100:e6' 
+      - switch.turn_on: aqua_reley1_id
+      - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+      - switch.turn_off: aqua_reley1_id
+
+  - id: open_aqua_reley2_id
+    then:
+      - switch.turn_on: aqua_reley2_id
+      - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+      - switch.turn_off: aqua_reley2_id
+
+  - id: buzzer_id
+    mode: restart
+    then:
+      - rtttl.play: 'short:d=20,o=5,b=100:e6' 
+      - delay: 500ms
+      - rtttl.play: 'short:d=20,o=5,b=100:e6' 
+      - delay: 500ms
+      - script.execute: buzzer_id  # Вызовите скрипт снова 
+
+  - id: led_norm_id
+    mode: restart
+    then: 
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 0
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 20% 
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 0
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 40%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 0
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 60% 
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 0
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 80%  
+      - delay: 100ms            
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 0
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 100% 
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 1
+           range_to: 1
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 20%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 1
+           range_to: 1
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 40%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 1
+           range_to: 1
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 60% 
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 1
+           range_to: 1
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 80%  
+      - delay: 100ms            
+      - light.addressable_set:
+           id: led_ww
+           range_from: 1
+           range_to: 1
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 100%
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 2
+           range_to: 2
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 20%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 2
+           range_to: 2
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 40%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 2
+           range_to: 2
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 60% 
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 2
+           range_to: 2
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 80%  
+      - delay: 100ms            
+      - light.addressable_set:
+           id: led_ww
+           range_from: 2
+           range_to: 2
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 100%
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 0
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 80%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 0
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 60%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 0
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 40% 
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 0
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 20%  
+      - delay: 100ms            
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 0
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 0%
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 1
+           range_to: 1
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 80%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 1
+           range_to: 1
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 60%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 1
+           range_to: 1
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 40% 
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 1
+           range_to: 1
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 20%  
+      - delay: 100ms            
+      - light.addressable_set:
+           id: led_ww
+           range_from: 1
+           range_to: 1
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 0%
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 2
+           range_to: 2
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 80%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 2
+           range_to: 2
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 60%  
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 2
+           range_to: 2
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 40% 
+      - delay: 100ms                
+      - light.addressable_set:
+           id: led_ww
+           range_from: 2
+           range_to: 2
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 20%  
+      - delay: 100ms            
+      - light.addressable_set:
+           id: led_ww
+           range_from: 2
+           range_to: 2
+           red: 0%
+           green: 0%
+           blue: 100%
+           color_brightness: 0% 
+      - delay: 100ms                              
+      - script.execute: led_norm_id  # Вызовите скрипт снова 
+
+  - id: left_button_led_id
+    mode: restart
+    then:
+      - light.addressable_set:
+           id: led_ww
+           range_from: 3
+           range_to: 3
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 100% 
+      - delay: 100ms             
+      - light.addressable_set:
+           id: led_ww
+           range_from: 3
+           range_to: 3
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 90% 
+      - delay: 100ms  
+      - light.addressable_set:
+           id: led_ww
+           range_from: 3
+           range_to: 3
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 80% 
+      - delay: 100ms 
+      - light.addressable_set:
+           id: led_ww
+           range_from: 3
+           range_to: 3
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 70% 
+      - delay: 100ms             
+      - light.addressable_set:
+           id: led_ww
+           range_from: 3
+           range_to: 3
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 60% 
+      - delay: 100ms  
+      - light.addressable_set:
+           id: led_ww
+           range_from: 3
+           range_to: 3
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 50% 
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 3
+           range_to: 3
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 40% 
+      - delay: 100ms             
+      - light.addressable_set:
+           id: led_ww
+           range_from: 3
+           range_to: 3
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 30% 
+      - delay: 100ms  
+      - light.addressable_set:
+           id: led_ww
+           range_from: 3
+           range_to: 3
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 20% 
+      - delay: 100ms 
+      - light.addressable_set:
+           id: led_ww
+           range_from: 3
+           range_to: 3
+           red: 0%
+           green: 0%
+           blue: 0%
+
+
+  - id: right_button_led_id
+    mode: restart
+    then:
+      - light.addressable_set:
+           id: led_ww
+           range_from: 4
+           range_to: 4
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 100% 
+      - delay: 100ms             
+      - light.addressable_set:
+           id: led_ww
+           range_from: 4
+           range_to: 4
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 90% 
+      - delay: 100ms  
+      - light.addressable_set:
+           id: led_ww
+           range_from: 4
+           range_to: 4
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 80% 
+      - delay: 100ms 
+      - light.addressable_set:
+           id: led_ww
+           range_from: 4
+           range_to: 4
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 70% 
+      - delay: 100ms             
+      - light.addressable_set:
+           id: led_ww
+           range_from: 4
+           range_to: 4
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 60% 
+      - delay: 100ms  
+      - light.addressable_set:
+           id: led_ww
+           range_from: 4
+           range_to: 4
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 50% 
+      - delay: 100ms
+      - light.addressable_set:
+           id: led_ww
+           range_from: 4
+           range_to: 4
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 40% 
+      - delay: 100ms             
+      - light.addressable_set:
+           id: led_ww
+           range_from: 4
+           range_to: 4
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 30% 
+      - delay: 100ms  
+      - light.addressable_set:
+           id: led_ww
+           range_from: 4
+           range_to: 4
+           red: 0%
+           green: 100%
+           blue: 0%
+           color_brightness: 20% 
+      - delay: 100ms 
+      - light.addressable_set:
+           id: led_ww
+           range_from: 4
+           range_to: 4
+           red: 0%
+           green: 0%
+           blue: 0%
+
+
+
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: esp32_rmt_led_strip
+    rgb_order: GRB
+    pin: GPIO26
+    num_leds: 5
+    chipset: WS2812
+    id: led_ww
+
