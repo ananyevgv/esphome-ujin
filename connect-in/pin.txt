@@ -1,12 +1,12 @@
-6    ADC     A0    ?
-8    GPIO16  D0    HWL8012 SEL ?
-9    GPIO14  D5    HWL8012 CF1 ?
-10   GPIO12  D6    HWL8012 CF ?
-12   GPIO13  D7    оптопара ?
-13   GPIO15  D8    оптопара ?
-14   GPIO2   D4    Реле ?
-15   GPIO0   D3    Button ?
+6    ADC     A0   
+8    GPIO16  D0   LED
+9    GPIO14  D5   
+10   GPIO12  D6   
+12   GPIO13  D7   
+13   GPIO15  D8  
+14   GPIO2   D4    
+15   GPIO0   D3    Button
 16   GPIO4   D2
-24   GPIO5   D1    Вход ?
+24   GPIO5   D1    Реле
 25   GPIO3   RX
 26   GPIO1   TX
