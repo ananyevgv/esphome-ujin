@@ -1,0 +1,92 @@
+##########################################
+##              ESP8266                 ##
+##  |RS|          |#|     | 1|          ##
+##  |A0| ADC      |#|     | 3|          ##
+##  |16| LED      |#|     | 5|          ##
+##  |14|          |#|     | 4| Реле     ##
+##  |12|          |#|     | 0| Кнопка   ##
+##  |13|          |#|     | 2|          ##
+##  |15|          |#|     |GN|          ## 
+##  |3V|          |#|     |5V|          ##
+##########################################
+
+substitutions:
+  name: "connect-in"
+  device_description: "реле"
+esphome:
+  name: $name
+  friendly_name: connect in
+
+esp8266:
+  board: esp_wroom_02
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+# обязательные пакеты
+  wifi: !include packages/wifi.yaml
+  web: !include packages/web.yaml
+  device_base: !include packages/device_base.yaml
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: gpio
+    name: "Реле"
+    pin: GPIO4
+    id: relay
+    on_turn_on:
+      - light.turn_on:
+          id: led_relay
+    on_turn_off:
+      - light.turn_off:
+          id: led_relay
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------
+output:
+  - platform: gpio
+    pin:
+      number: GPIO16
+      inverted: true
+    id: gpio_16
+
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: binary
+    name: "${name} relay"
+    output: gpio_16   
+    id: led_relay
+
+#-------------------------------------------
+# BINARY_SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      inverted: true
+    name: "${name} button"
+    on_press:    
+      - switch.toggle: relay
+   
+
+
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+
+  - platform: adc
+    name: ADC
+    pin: A0
+    update_interval: 1s
+    
+
+
+
