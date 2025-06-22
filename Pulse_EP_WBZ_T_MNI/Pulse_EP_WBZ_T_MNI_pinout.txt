@@ -1,7 +1,7 @@
 EN –     RST (XS3)
 GPIO0 –  GPO (XS3)
 GPIO1 –  TXD (XS3)
-GPIO2 –  датчик движения (PIR612 ?)
+GPIO2 –  датчик движения (S16-L221D ?)
 GPIO3 –  RXD (XS3)
 GPIO4 –  IR приемник (отсутствует)
 GPIO5 –  адресные светодиоды WS2812 (35 штук)
