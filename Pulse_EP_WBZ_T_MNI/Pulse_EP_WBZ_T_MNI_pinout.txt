@@ -1,0 +1,40 @@
+EN –     RST (XS3)
+GPIO0 –  GPO (XS3)
+GPIO1 –  TXD (XS3)
+GPIO2 –  датчик движения (PIR612 ?)
+GPIO3 –  RXD (XS3)
+GPIO4 –  IR приемник (отсутствует)
+GPIO5 –  адресные светодиоды WS2812 (35 штук)
+GPIO6 –  CLK PSRAM
+GPIO7 –  ZIGBEE 2652 (DIO16) rx_pin
+GPIO8 –  ZIGBEE 2652 (DIO17) tx_pin
+GPIO9 –  SD PSRAM
+GPIO10 – SD PSRAM
+GPIO11 – CMD PSRAM
+GPIO12 – buzzer
+GPIO13 – I2C SDA
+GPIO14 – IR передатчик (отсутствует)
+GPIO15 – I2C SCL
+GPIO19 – I2S ws_pin
+GPIO20 – включение тач контроллера и к элементам U6,U7 (отсутствуют)
+GPIO21 – I2S din_pin
+GPIO22 – I2S bck_pin
+GPIO25 – на контакте 9 (J1)
+GPIO26 – на контакте 11 (J1)
+GPIO27 – на контакте 12 (J1)
+GPIO32 – на контакте 2 (J1)
+GPIO33 – на контакте 4 (J1)
+GPI34 – на контакте 7 (J1) 
+GPI35 – на контакте 1 (J1)
+GPI36 – __________  
+GPI37 – резистивный датчик температуры 
+GPI38 – на контакте 3 (J1)
+GPI39 – на контакте 5 (J1)
+
+5 вольт - на контакте 6 (J1)
+3,3 вольта - на контакте 8 (J1)
+GND - на контакте 10 (J1) 
+
+I2C адрес 29 - датчик освещенности LTR-329
+I2C адрес 2F - цифровой потенциометр 
+I2C адрес 12 - тач контроллер

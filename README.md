@@ -20,8 +20,8 @@
 | ![Connect din](https://github.com/ananyevgv/esphome-ujin/blob/main/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg) | ![Aqua Sense](https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg) | ![Heat Wi-Fi](https://github.com/Ananyevgv/esphome-ujin/blob/382708609ab669d9a017be2ed7dc692cb6605322/Heat%20Wi-Fi/images/heat_1.jpg) | ![Aqua Wi-Fi](https://github.com/ananyevgv/esphome-ujin/blob/c8646eea51e237678c43588dae4a290cfe0a1586/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_1.jpg) |
 
 
-|[Connect-in](https://github.com/ananyevgv/esphome-ujin/tree/main/connect-in)| 
-|-|
-|![Connect-in](https://github.com/ananyevgv/esphome-ujin/blob/5cd72d6650ee202e18c6a0cdab91f222ff5d17f2/connect-in/images/connect_in0.jpg) | 
+|[Connect-in](https://github.com/ananyevgv/esphome-ujin/tree/main/connect-in)| [Pulse_EP_WBZ_T_MNI]() | 
+|-|-|
+|![Connect-in](https://github.com/ananyevgv/esphome-ujin/blob/5cd72d6650ee202e18c6a0cdab91f222ff5d17f2/connect-in/images/connect_in0.jpg) | ![Pulse_EP_WBZ_T_MNI](/Pulse_EP_WBZ_T_MNI/images/Pulse_EP_WBZ_T_MNI_1.jpg) |
 
 
