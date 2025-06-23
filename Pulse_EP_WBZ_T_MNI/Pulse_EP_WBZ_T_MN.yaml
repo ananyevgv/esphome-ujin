@@ -1,0 +1,316 @@
+esphome:
+  name: pulse
+  friendly_name: Pulse
+ 
+esp32:
+  board: denky_d4
+  flash_size: 8MB
+  framework:
+    type: arduino
+
+
+web_server:
+  version: 3  
+  port: 80
+  local: true
+  auth:
+    username: !secret user_web
+    password: !secret pass_web       
+
+
+
+cap1293:
+  id: cap1293_component
+  address: 0x12
+  reset_pin: GPIO20
+  touch_threshold: 0x20
+  allow_multiple_touches: true
+
+
+
+
+#-------------------------------------------
+# PSRAM
+#-------------------------------------------
+psram:
+  mode: quad
+  speed: 80MHz
+
+
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret Pulse_Key
+  actions:
+    - action: rtttl_play
+      variables:
+        song_str: string
+      then:
+        - rtttl.play:
+            rtttl: !lambda 'return song_str;'
+  reboot_timeout: 0s    
+  
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+
+captive_portal:
+  
+
+#-------------------------------------------
+# RTTTL
+#-------------------------------------------
+rtttl:
+  output: rtttl_out
+  gain: 60%
+
+
+#-------------------------------------------
+# EXTERNAL COMPONENTS
+#-------------------------------------------
+
+external_components:
+  - source: github://stas-sl/esphome-sound-level-meter 
+    refresh: 0s
+  - source: github://ananyevgv/esphome-components/
+    refresh: 0s
+
+#-------------------------------------------
+# MCP453X
+#-------------------------------------------
+mcp453x:
+  id: my_mcp453x
+  address: 0x2F
+
+#-------------------------------------------
+# I2c
+#-------------------------------------------
+i2c:
+  sda:
+    number: GPIO13
+  scl: 
+    number: GPIO15
+  scan: true
+  id: bus_a
+  frequency:
+    10kHz
+output:
+  - platform: ledc
+    pin: GPIO12
+    id: rtttl_out
+
+# Create the MCP453X output
+  - platform: mcp453x
+    id: pir_output
+    mcp453x_id: my_mcp453x  
+
+
+light:
+  - platform: esp32_rmt_led_strip
+    rgb_order: GRB
+    pin: GPIO5
+    num_leds: 35
+    rmt_channel: 1
+    chipset: WS2812
+    id: led_ww
+#    name: "Светодиоды на мультисенсоре"
+
+
+
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO2
+    id: pir_id
+    name: pir  
+    icon: mdi:motion-sensor
+
+
+
+
+logger:
+  level: DEBUG  # для детальных логов
+
+select:
+  - platform: template
+    name: "Чувствительность датчика движения"
+    entity_category: config
+    icon: mdi:motion-sensor
+    options:
+     - "Очень высокая"      
+     - "Высокая"
+     - "Средняя"
+     - "Низкая"
+     - "Очень низкая"     
+    initial_option: "Очень высокая"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: id(pir_output).set_level(0); break;
+              case 1: id(pir_output).set_level(0.25); break;
+              case 2: id(pir_output).set_level(0.50); break;
+              case 3: id(pir_output).set_level(0.75); break;
+              case 4: id(pir_output).set_level(1.0); break;
+            }
+
+sensor:
+
+
+  - platform: adc
+    pin: 37
+    id: adc_37    
+#    name: "adc_37"
+    update_interval: 10s
+    attenuation: auto
+
+      
+  - platform: ntc
+    sensor: resistance_sensor
+    calibration:
+      b_constant: 3950
+      reference_temperature: 25°C
+      reference_resistance: 5 kOhm
+    name: NTC Temperature
+    icon: mdi:thermometer
+    id: NTC_Temperature
+
+  # Example source sensors:
+  - platform: resistance
+    id: resistance_sensor
+    sensor: adc_37
+    configuration: UPSTREAM
+    resistor: 5 kOhm
+#    name: Resistance Sensor  
+
+  - platform: ltr_als_ps
+    address: 0x29
+    id: Ambient_light_id
+    update_interval: 1 s
+    type: ALS_PS  
+    ambient_light: "Освещенность"
+    ps_cooldown: 5 s
+
+
+
+  
+#-------------------------------------------
+# I2S
+#-------------------------------------------
+i2s:
+  bck_pin: GPIO22
+  ws_pin: GPIO19
+  din_pin: GPIO21
+  sample_rate: 16000 # 48000            # default: 48000
+  bits_per_sample: 16 #32           # default: 32
+  bits_shift: 8                 # default: 0
+
+#-------------------------------------------
+# SOUND LEVEL METER
+#-------------------------------------------
+sound_level_meter:
+  update_interval: 1s           # default: 60s
+  buffer_size: 1024             # default: 1024
+  mic_sensitivity: -26dB        # default: empty
+  mic_sensitivity_ref: 94dB     # default: empty
+  groups:
+    - sensors:
+        - type: eq
+          name: "шум пиковый уровень"
+          id: Leq_id
+          icon: mdi:waveform
+
+    
+ 
+script:
+
+  - id: led_off_id
+    mode: restart
+    then: 
+      - light.addressable_set:
+           id: led_ww
+           range_from: 0
+           range_to: 34
+           red: 0%
+           green: 0%
+           blue: 0%
+           color_brightness: 100% 
+
+  - id: buzzer_id
+    mode: restart
+    then:
+      - rtttl.play: 'short:d=20,o=5,b=100:e6' 
+      - delay: 500ms
+      - rtttl.play: 'short:d=20,o=5,b=100:e6' 
+      - delay: 500ms
+      - script.execute: buzzer_id  # Вызовите скрипт снова 
+
+      
+
+switch:
+  - platform: template
+    name: "Звук"
+    id: sound_id
+    icon: mdi:light-switch-off
+    optimistic: True
+#    entity_category: config
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+          - script.execute: buzzer_id           
+    on_turn_off:
+          - script.stop: buzzer_id
+
+  - platform: template
+    name: "Дисплей"
+    id: display_id
+    icon: mdi:light-switch-off
+    optimistic: True
+#    entity_category: config
+    restore_mode: RESTORE_DEFAULT_OFF
+    
+display:
+  - platform: addressable_light
+    id: led_matrix_display
+    addressable_light_id: led_ww  # Указываем ID светодиодной матрицы
+    width: 7  # Ширина (количество столбцов)
+    height: 5  # Высота (количество строк)
+    rotation: 0°  # Поворот (0°, 90°, 180°, 270°)
+    update_interval: 16ms  # Частота обновления
+    # Кастомный pixel_mapper (Pulse таблица 5x7)
+    pixel_mapper: |-
+      static const uint8_t led_map[5][7] = {
+        {21, 20, 19,  0, 18, 17, 16},  // y=0
+        {22, 23, 24,  1, 13, 14, 15},  // y=1
+        {27, 26, 25,  2, 12, 11, 10},  // y=2
+        {28, 29, 30, 34,  7,  8,  9},  // y=3
+        { 3, 31, 32, 33,  6,  5,  4}   // y=4
+      };
+      return led_map[y][x];          
+    lambda: |-
+          Color red = Color(0xFF0000);
+          Color green = Color(0x00FF00);
+          Color blue = Color(0x0000FF);
+          Color white = Color(0x000000);              
+          if (id(display_id).state) {
+            it.rectangle(0, 0, 7, 5, red);
+            it.rectangle(1, 1, 5, 3, green);
+            it.rectangle(2, 2, 3, 1, blue);
+          }  
+          else {
+            it.rectangle(0, 0, 7, 5, white);
+         
+          }
+
+
+
+
+
