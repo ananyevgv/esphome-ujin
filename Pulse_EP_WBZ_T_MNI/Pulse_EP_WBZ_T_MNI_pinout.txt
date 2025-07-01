@@ -40,7 +40,7 @@ I2C адрес 2F - цифровой потенциометр
 I2C адрес 12 - тач контроллер
 
 
-ZIGBEE 2652 (DIO8)
-ZIGBEE 2652 (DIO9)
-ZIGBEE 2652 (DIO10)
-ZIGBEE 2652 (DIO21)
+ZIGBEE 2652 (DIO8) - внешняя память Q  Serial Data Output
+ZIGBEE 2652 (DIO9) - внешняя память D  Serial Data Input 
+ZIGBEE 2652 (DIO10) - внешняя память C  Serial clock
+ZIGBEE 2652 (DIO21) - внешняя память S  Chip Select
