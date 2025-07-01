@@ -10,7 +10,7 @@
 
 реле для подключения привода крана 220В до 5А, управляемого по схеме 
 
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/66e383af5b969e4cfe62fe7e007e17171bf59fb6/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_10.jpg">
+<img src="/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_10.jpg">
 
 # В прошивке реализовано
 
@@ -20,4 +20,4 @@
 
 #
 
-<img src="https://github.com/ananyevgv/esphome-ujin/blob/66e383af5b969e4cfe62fe7e007e17171bf59fb6/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_9.png">
+<img src="/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_9.png">
