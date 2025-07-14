@@ -25,7 +25,7 @@ sensor:
     update_interval: 1s
     
 #-------------------------------------------
-# MCP453X
+# MCP4017
 #-------------------------------------------
 mcp4017:
   id: my_mcp4017
@@ -56,9 +56,9 @@ binary_sensor:
 # OUTPUT
 #-------------------------------------------      
 output:
-  - platform: mcp453x
+  - platform: mcp4017
     id: pir_output
-    mcp453x_id: my_mcp453x
+    mcp4017_id: my_mcp4017
     
 #-------------------------------------------
 # GLOBALS
