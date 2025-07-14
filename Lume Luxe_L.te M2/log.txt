@@ -1,0 +1,50 @@
+I (59) boot: Partition Table:
+I (63) boot: ## Label            Usage          Type ST Offset   Length
+I (70) boot:  0 sec_cert         unknown          3f 00 0000d000 00003000
+I (77) boot:  1 nvs              WiFi data        01 02 00010000 00006000
+I (85) boot:  2 otadata          OTA data         01 00 00016000 00002000
+I (92) boot:  3 phy_init         RF data          01 01 00018000 00001000
+I (100) boot:  4 factory_nvs      WiFi data        01 02 00019000 00006000
+I (107) boot:  5 nvs_keys         NVS keys         01 04 0001f000 00001000
+I (115) boot:  6 ota_0            OTA app          00 10 00020000 00330000
+I (122) boot:  7 ota_1            OTA app          00 11 00350000 00330000
+I (130) boot:  8 keys             NVS keys         01 04 00680000 00100000
+I (138) boot:  9 events           NVS keys         01 04 00780000 00080000
+I (145) boot: End of partition table
+I (149) esp_image: segment 0: paddr=0x00020020 vaddr=0x3f400020 size=0x33b44 (211780) map
+I (221) esp_image: segment 1: paddr=0x00053b6c vaddr=0x3ffbdb60 size=0x04428 ( 17448) load
+I (227) esp_image: segment 2: paddr=0x00057f9c vaddr=0x40080000 size=0x00404 (  1028) load
+I (228) esp_image: segment 3: paddr=0x000583a8 vaddr=0x40080404 size=0x07c70 ( 31856) load
+I (248) esp_image: segment 4: paddr=0x00060020 vaddr=0x400d0020 size=0x1161dc (1139164) map
+I (583) esp_image: segment 5: paddr=0x00176204 vaddr=0x40088074 size=0x0f6cc ( 63180) load
+I (619) boot: Loaded app from partition at offset 0x20000
+I (619) boot: Disabling RNG early entropy source...
+I (619) psram: This chip is ESP32-PICO-V3-02
+I (624) spiram: Found 16MBit SPI RAM device
+I (629) spiram: SPI RAM mode: flash 80m sram 80m
+I (634) spiram: PSRAM initialized, cache is in low/high (2-core) mode.
+I (641) cpu_start: Pro cpu up.
+I (645) cpu_start: Application information:
+I (650) cpu_start: Project name:     ujin-solo-1
+I (655) cpu_start: App version:      development_full_dataset_cnn-17
+I (662) cpu_start: Compile time:     Aug 10 2022 11:44:19
+I (668) cpu_start: ELF file SHA256:  7a1ee90567ad1e39...
+I (674) cpu_start: ESP-IDF:          v4.2-rc-5-g511965b269-dirty
+I (681) cpu_start: Starting app cpu, entry point is 0x40081d64
+
+I (1086) BOARD: HW ver 4
+I (1087) gpio: GPIO[34]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 1| Intr:1 
+I (1088) I2C DRIVER: I2C start init, 7. 8
+I (1093) I2C DRIVER: I2C controller configured
+I (1098) I2C DRIVER: I2C driver installed
+-> found device with address 0x23 :: BH1750FVI - Ambient Light Sensor
+-> found device with address 0x2f :: MCP4017/MAX5395 - Digital Potentiometer, Motion Sensor Sensitivity Control
+-> found device with address 0x76 :: BME680 - Gas sensor measuring relative humidity, barometric pressure, ambient temperature and gas (VOC)
+I (1134) I2C DRIVER: I2C scanning done
+I (1169) MCP4017 DRIVER: I2C sensetivity motion 50 (1/2) installed MCP4017
+I (1353) BH1750FVI DRIVER: Read Light: 422 lux
+W (1353) IO PORT: CAP1293 not installed
+W (1371) IO PORT: SHT31 not installed
+I (1372) VBOARD: init bt
+I (1373) VBOARD: on bt
+I (1373) BTDM_INIT: BT controller compile version [4aa64a5]
