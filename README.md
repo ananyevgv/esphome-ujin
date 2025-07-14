@@ -6,6 +6,7 @@
 [esphome-release-shield]: https://img.shields.io/static/v1?label=ESPHome&message=2025.3&color=green&logo=esphome
 [esphome-release]: https://GitHub.com/esphome/esphome/releases/
 
+# Перед прошивкой на ESPHome рекомендуется посмотреть LOG устройства.
 
 # Интегрированные устройства UJIN в ESPHome
 
