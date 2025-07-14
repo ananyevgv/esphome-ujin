@@ -5,11 +5,11 @@ I (45) boot.esp32: SPI Mode       : QIO
 I (49) boot.esp32: SPI Flash Size : 8MB
 
 I (59) boot: Partition Table:
-I (63) boot: ## Label            Usage          Type ST Offset   Length
-I (70) boot:  0 sec_cert         unknown          3f 00 0000d000 00003000
-I (77) boot:  1 nvs              WiFi data        01 02 00010000 00006000
-I (85) boot:  2 otadata          OTA data         01 00 00016000 00002000
-I (92) boot:  3 phy_init         RF data          01 01 00018000 00001000
+I (63) boot: ## Label             Usage          Type ST Offset   Length
+I (70) boot:  0 sec_cert          unknown          3f 00 0000d000 00003000
+I (77) boot:  1 nvs               WiFi data        01 02 00010000 00006000
+I (85) boot:  2 otadata           OTA data         01 00 00016000 00002000
+I (92) boot:  3 phy_init          RF data          01 01 00018000 00001000
 I (100) boot:  4 factory_nvs      WiFi data        01 02 00019000 00006000
 I (107) boot:  5 nvs_keys         NVS keys         01 04 0001f000 00001000
 I (115) boot:  6 ota_0            OTA app          00 10 00020000 00330000
