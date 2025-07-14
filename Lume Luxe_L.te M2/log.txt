@@ -1,3 +1,9 @@
+I (31) boot: chip revision: 3
+I (35) qio_mode: Enabling default flash chip QIO
+I (40) boot.esp32: SPI Speed      : 80MHz
+I (45) boot.esp32: SPI Mode       : QIO
+I (49) boot.esp32: SPI Flash Size : 8MB
+
 I (59) boot: Partition Table:
 I (63) boot: ## Label            Usage          Type ST Offset   Length
 I (70) boot:  0 sec_cert         unknown          3f 00 0000d000 00003000
