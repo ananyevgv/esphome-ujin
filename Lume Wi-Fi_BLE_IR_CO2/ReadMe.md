@@ -1,3 +1,6 @@
+Модели Lume Wi-Fi_BLE_IR_CO2 Pulse Wi-Fi_BLE_IR_CO2
+
+
 Версия платы 2.2 с датчиками css811, hts221, bh1750
 
 Версия платы 2.3 с датчиками css811, sht30, bh1750
