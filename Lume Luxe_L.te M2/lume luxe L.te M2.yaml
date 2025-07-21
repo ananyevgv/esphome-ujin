@@ -176,8 +176,8 @@ packages:
   noise: !include 
     file: packages/ujin/sensor/noise_PDM_05.2025.yaml
     vars:
-      noise_ws: GPIO19 # ? 
-      noise_din: GPIO21 # ?
+      noise_ws: GPIO21
+      noise_din: GPIO22
 #-------------------------------------------
 # SENSOR
 #-------------------------------------------
@@ -187,10 +187,6 @@ sensor:
     pin: 35 
     attenuation: 12dB
     update_interval: 1s
-
-button:
-  - platform: restart
-    name: "${name} Restart"
 
 #-------------------------------------------
 # SWITCH
