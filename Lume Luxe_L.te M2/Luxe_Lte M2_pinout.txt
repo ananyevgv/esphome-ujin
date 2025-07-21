@@ -17,8 +17,8 @@
 # GPIO15 – touch sensor 1
 # GPIO19 – 
 # GPIO20 – 
-# GPIO21 – 
-# GPIO22 – 
+# GPIO21 – WS
+# GPIO22 – DIN
 # GPIO25 – 
 # GPIO26 – 
 # GPIO27 – 
