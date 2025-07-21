@@ -13,7 +13,7 @@
 
 | [Lume Luxe L.te M1](https://github.com/ananyevgv/esphome-ujin/tree/main/Lume%20Luxe_L.te%20M1)  |  [Lume Wi-Fi Z1](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1) | [Lume wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2) | [Lume Luxe L.te M2](https://github.com/ananyevgv/esphome-ujin/tree/main/Lume%20Luxe_L.te%20M2) | 
 |--------------------|---------------|----------------------|-------------------|
-| ![Lume Luxe L.te M1](/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg) | ![Lume Wi-Fi Z1](/Lume%20Wi-Fi_Z1/images/Lume%20WIFI%20Z1.jpg) | ![Lume wifi/BLE/IR/CO2](/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg) | ![Lume Luxe L.te M2](/Lume%20Luxe_L.te%20M2/images/Lume%20Luxe_L.te%20M2.jpg) |
+| ![Lume Luxe L.te M1](/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg) | ![Lume Wi-Fi Z1](/Lume%20Wi-Fi_Z1/images/Lume%20WIFI%20Z1.jpg) | ![wifi/BLE/IR/CO2](/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg) | ![Lume Luxe L.te M2](/Lume%20Luxe_L.te%20M2/images/Lume%20Luxe_L.te%20M2.jpg) |
 
 
 | [Connect din](https://github.com/ananyevgv/esphome-ujin/tree/main/Connect-din%20Wi-Fi)        | [Aqua Sense](https://github.com/ananyevgv/esphome-ujin/tree/main/Aqua-Sense%20BLE)    | [Heat Wi-Fi](https://github.com/ananyevgv/esphome-ujin/tree/main/Heat%20Wi-Fi)           |   [Aqua Wi-Fi](https://github.com/ananyevgv/esphome-ujin/tree/main/Aqua%20Wi-Fi_BLE_220В_СУ-02_R2)       | 
