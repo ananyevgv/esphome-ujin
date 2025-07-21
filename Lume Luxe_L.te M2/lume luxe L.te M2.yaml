@@ -112,8 +112,7 @@ packages:
 # Температура ESP32
   esp32_temp: !include packages/ujin/sensor/esp32_temp.yaml
 
-# Датчик холла
-#  esp32_hall: !include packages/ujin/sensor/esp32_hall.yaml
+
   
 # Captive portal
 #  cap: !include 
