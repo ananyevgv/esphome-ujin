@@ -9,6 +9,8 @@ substitutions:
 esphome:
   name: "${name}"
   comment: "${device_description}"
+  platformio_options:
+    board_build.f_flash: 80000000L
   on_boot:
     - priority: 600
       then:
@@ -30,16 +32,11 @@ api:
   reboot_timeout: 0s     
   
 esp32:
-  board: esp32dev
+  cpu_frequency: 240MHZ
+  board: freenove_esp32_wrover
   flash_size: 4MB
   framework:
-    type: arduino
-#-------------------------------------------
-# PSRAM
-#-------------------------------------------
-psram:
-  mode: quad
-  speed: 120MHz
+    type: esp-idf
 
 logger:
   baud_rate: 0
