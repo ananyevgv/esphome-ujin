@@ -1,0 +1,181 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  pir: !include 
+#    file: packages/ujin/sensor/pir.yaml
+#    vars:
+#      pir_pin: GPIO35
+#      pir_addres: 0x2F
+# and copy file esphome/packages/ujin/sensor/
+
+#-------------------------------------------
+# EXTERNAL COMPONENTS
+#-------------------------------------------
+external_components:
+  - source: github://ananyevgv/esphome-components/
+    refresh: 0s
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: adc
+    pin: $pir_pin
+    id: pir_adc    
+    update_interval: 1s
+    
+#-------------------------------------------
+# MCP453X
+#-------------------------------------------
+mcp453x:
+  id: my_mcp453x
+  address: $pir_addres    
+  
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: analog_threshold
+    name: "${name} движение"
+    id: pir
+    threshold: 0.5
+    sensor_id: pir_adc
+    device_class: motion
+    icon: mdi:motion-sensor
+    on_press: 
+      then:
+        - script.execute: action_motion
+        - script.stop: action_motion
+        - lambda: |-
+            id(g_timer_pir)=0;
+            
+  - platform: template
+    id: binary_timer_pir
+    
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------      
+output:
+  - platform: mcp453x
+    id: pir_output
+    mcp453x_id: my_mcp453x
+    
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------            
+globals:
+  - id: g_pir
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+  - id: g_timer_pir
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+#-------------------------------------------
+# INTERVAL
+#-------------------------------------------
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (id(binary_timer_pir).state == true) {
+            id(g_timer_pir)++;
+            if (id(g_timer_pir) >=  id(off_timeout_pir).state) {
+              id(binary_timer_pir).publish_state(false);
+              id(g_timer_pir) = 0;
+              auto t_pir = id(g_pir);
+              switch(t_pir) {
+                case 10: 
+                  id(light_dimmer1).turn_off().set_transition_length(1000).perform(); 
+                  break;
+              }
+            }
+          }
+
+#-------------------------------------------
+# Number
+#-------------------------------------------
+number:
+  - platform: template
+    name: OFF timeout PIR
+    optimistic: true
+    id: off_timeout_pir
+    unit_of_measurement: "s"
+    initial_value: 45
+    restore_value: true
+    min_value: 10
+    max_value: 600
+    step: 5
+    mode: box
+    entity_category: config
+    icon: mdi:timer-cog-outline
+
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Чувствительность датчика движения"
+    entity_category: config
+    icon: mdi:motion-sensor
+    options:
+     - "Очень высокая"      
+     - "Высокая"
+     - "Средняя"
+     - "Низкая"
+     - "Очень низкая"     
+    initial_option: "Очень высокая"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: id(pir_output).set_level(0); break;
+              case 1: id(pir_output).set_level(0.25); break;
+              case 2: id(pir_output).set_level(0.50); break;
+              case 3: id(pir_output).set_level(0.75); break;
+              case 4: id(pir_output).set_level(1.0); break;
+            }
+            
+  - platform: template
+    name: "Действия датчика движения"
+    id: triggered_pir
+    entity_category: config
+    icon: mdi:account-reactivate-outline
+    options:
+      - "Нет действия"              
+      - "Включить"  
+      - "Выключить"
+      - "Переключить" 
+                   
+    initial_option: "Нет действия"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            id(g_pir) = (i);
+        - logger.log:
+            format: "Pir option: %s (%d)"
+            args: ["x.c_str()", "i"]
+            
+#-------------------------------------------
+# SCRIPT
+#-------------------------------------------
+script:
+  - id: action_motion
+    mode: single
+    then:
+      - lambda: |-
+          if (id(illum).state) {
+            auto t_pir = id(g_pir);
+            switch(t_pir) {
+              case 0: ; break;
+              case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
+              case 2: id(light_dimmer1).turn_off().set_transition_length(1000).perform(); break;
+              case 3: id(light_dimmer1).toggle().perform(); break;
+     
+            }
+          }

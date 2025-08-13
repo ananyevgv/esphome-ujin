@@ -1,0 +1,196 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  noise: !include 
+#    file: packages/ujin/sensor/noise_pdm_05.2025.yaml
+#    vars:
+#      noise_ws: GPIO13
+#      noise_din: GPIO15
+# and copy file esphome/packages/ujin/sensor/
+
+#-------------------------------------------
+# I2S
+#-------------------------------------------
+i2s_audio:
+  i2s_lrclk_pin: $noise_ws
+
+
+#-------------------------------------------
+# MICROPHONE
+#-------------------------------------------
+microphone:
+  - platform: i2s_audio
+    id: external_mic
+    adc_type: external
+    i2s_din_pin: $noise_din
+    channel: left
+    pdm: true
+    bits_per_sample: 16bit
+    bits_per_channel: 8bit
+    sample_rate: 16000
+    
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: sound_level
+    passive: false
+    peak:
+      name: "${name} шум пиковый уровень"
+      id: Leq_id
+      icon: mdi:waveform
+
+          
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: analog_threshold
+    name: "Датчик шума"
+    id: noise
+    threshold: -20
+    sensor_id: Leq_id
+    device_class: sound
+    icon: mdi:speaker-wireless
+    on_press: 
+      then:
+        - script.execute: action_noise
+        - script.stop: action_noise
+        - lambda: |-
+            id(g_timer_noise)=0;
+            
+  - platform: template
+    id: binary_timer_noise
+    
+#-------------------------------------------
+# INTERVAL
+#-------------------------------------------
+interval:    
+  - interval: 1s
+    then:
+      - lambda: |-    
+          if (id(binary_timer_noise).state == true) {  
+            id(g_timer_noise)++;
+            if (id(g_timer_noise) >=  id(off_timeout_noise).state) {
+              id(binary_timer_noise).publish_state(false);
+              id(g_timer_noise) = 0;
+              auto t_n = id(g_noise);
+              switch(t_n) {
+                case 10: 
+                  id(light_dimmer1).turn_off().set_transition_length(1000).perform(); 
+                  break;
+   
+              }
+            }
+          }    
+#-------------------------------------------
+# Number
+#-------------------------------------------
+number:
+  - platform: template
+    name: OFF timeout noise
+    optimistic: true
+    id: off_timeout_noise
+    unit_of_measurement: "s"
+    initial_value: 45
+    restore_value: true
+    min_value: 10
+    max_value: 600
+    step: 5
+    mode: box
+    entity_category: config
+    icon: mdi:timer-cog-outline
+    
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Чувствительность датчика звука"
+    entity_category: config
+    options:
+     - "Очень высокая"      
+     - "Высокая"
+     - "Средняя"
+     - "Низкая"
+     - "Очень низкая"     
+    initial_option: "Очень высокая"
+    optimistic: true
+    icon: mdi:microphone-message
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0:
+                 id(noise).set_lower_threshold(-50.0); 
+                 id(noise).set_upper_threshold(-50.0); 
+                 break;
+              case 1: 
+                id(noise).set_lower_threshold(-40.0);
+                id(noise).set_upper_threshold(-40.0); 
+                break;
+              case 2: 
+                id(noise).set_lower_threshold(-30.0);
+                id(noise).set_upper_threshold(-30.0); 
+                break;
+              case 3: 
+                id(noise).set_lower_threshold(-20.0);
+                 id(noise).set_upper_threshold(-20.0);
+                 break;
+              case 4: 
+                id(noise).set_lower_threshold(-10.0);
+                id(noise).set_upper_threshold(-10.0); 
+                break;
+            }
+
+  - platform: template
+    name: "Шум действие"
+    id: triggered_noise
+    entity_category: config
+    icon: mdi:account-reactivate-outline
+    options:
+      - "Нет действия"              
+      - "Включить"  
+      - "Выключить"
+      - "Переключить" 
+    initial_option: "Нет действия"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            id(g_noise) = (i);
+        - logger.log:
+            format: "Noise option: %s (%d)"
+            args: ["x.c_str()", "i"]
+
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------            
+globals:
+  - id: g_noise
+    type: int
+    restore_value: no
+    initial_value: '0'
+    
+  - id: g_timer_noise
+    type: int
+    restore_value: no
+    initial_value: '0'
+    
+#-------------------------------------------
+# SCRIPT
+#-------------------------------------------
+script:
+  - id: action_noise
+    mode: single
+    then:
+      - lambda: |-
+          if  (id(illum).state) {
+            uint8_t t_noise =  id(g_noise);
+            switch(t_noise) {
+              case 0: ; break;
+              case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
+              case 2: id(light_dimmer1).turn_off().set_transition_length(1000).perform(); break;
+              case 3: id(light_dimmer1).toggle().perform(); break;
+            }
+          }
