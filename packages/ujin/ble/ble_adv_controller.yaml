@@ -1,51 +1,9 @@
 #-------------------------------------------
-# Add yaml 
-#packages:
-#  ble_adv: !include 
-#    file: packages/ujin/ble/ble_adv_controller.yaml
-#    vars:
-#      variant_light: v1
-#      encoding_light: lampsmart_pro
-#      dimmer1_zero: GPIO5 
-#      dimmer1_gate: GPIO19  
-#      type_light1: monochromatic # binary
-#      type_light2: monochromatic # binary
-# and copy file esphome/packages/ujin/ble
-
+# EXTERNAL COMPONENT
 #-------------------------------------------
-# OUTPUT
-#-------------------------------------------      
-output:
-  - platform: ac_dimmer
-    gate_pin: $dimmer1_gate 
-    id: dimmer1
-    zero_cross_pin:
-      number: $dimmer1_zero
-      mode:
-        input: true
-      inverted: yes
-      ignore_strapping_warning: true
-    #  allow_other_uses: true
-    min_power: 30%
-    init_with_half_cycle: true
-    
-#-------------------------------------------
-# LIGHT
-#-------------------------------------------
-light:
-  - platform: $type_light1
-    output: dimmer1
-    name: "${name} 1 лампа"
-    id: light_dimmer1
-    restore_mode: ALWAYS_OFF
-    icon: mdi:numeric-1-circle-outline
-
-  - platform: ble_adv_controller
-    ble_adv_controller_id: my_controller
-    id: light_dimmer2
-    name: "${name} 2 лампа"
-    min_brightness: 5%
-
+ # source: github://NicoIIT/esphome-ble_adv_proxy
+ # https://github.com/NicoIIT/ha-ble-adv
+ # https://github.com/NicoIIT/esphome-components
 
 #-------------------------------------------
 # EXTERNAL COMPONENT
@@ -54,14 +12,17 @@ external_components:
   - source: github://aronsky/esphome-components
     components: [ble_adv_controller]
     refresh: 0s
-    
+
+api:
+  custom_services: True
+  
 #-------------------------------------------
 # BLE ADV
 #-------------------------------------------
 ble_adv_controller:
   - id: my_controller
-    encoding: $encoding_light
-    variant: $variant_light
+    encoding: lampsmart_pro
+    variant: v1
     # max_duration (default 3000, range 300 -> 10000): the maximum duration in ms during which the command is advertized.
     # if a command is received before the 'max_duration' but after the 'duration', it is processed immediately 
     # Increasing this parameter will have no major consequences, the component will just keep advertize the command
@@ -76,10 +37,21 @@ ble_adv_controller:
     duration: 100
     
 #-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: ble_adv_controller
+    ble_adv_controller_id: my_controller
+    id: light_dimmer1
+    name: "Люстра"
+    min_brightness: 5%
+    
+#-------------------------------------------
 # BUTTON
 #-------------------------------------------
 button:
   - platform: ble_adv_controller
     ble_adv_controller_id: my_controller
-    name: "${name} Pair 2 light"
+    name: "Сопряжение люстры"
+    id: pair
     cmd: pair
