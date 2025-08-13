@@ -1,0 +1,116 @@
+substitutions:
+  name: bedroom-lume
+  device_description: Bedroom Lume Luxe wifi/BLE/IR/CO2
+  sda_i2c: GPIO21
+  scl_i2c: GPIO22
+
+esphome:
+  name: "${name}"
+  comment: "${device_description}"
+  platformio_options:
+    board_build.f_flash: 80000000L
+
+esp32:
+  board: freenove_esp32_wrover
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_FREERTOS_UNICORE: y
+
+#-------------------------------------------
+# UART
+#-------------------------------------------
+uart:
+  - id: uart_0
+    baud_rate: 115200
+    rx_pin: 3
+    tx_pin: 1
+    data_bits: 8
+    stop_bits: 1
+#-------------------------------------------
+# I2c
+#-------------------------------------------
+i2c:
+  sda: $sda_i2c
+  scl: $scl_i2c
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+# обязательные пакеты
+  wifi: !include packages/wifi.yaml
+  device_base: !include packages/device_base.yaml
+  esp32_temp: !include packages/ujin/sensor/esp32_temp.yaml
+  web: !include included/web.yaml
+  
+  ble: !include 
+    file: packages/ujin/ble/ble_adv_controller.yaml
+# Сенсорные кнопки
+  but: !include 
+    file: packages/ujin/button/button_ble.yaml
+    vars:
+      one_butt: GPIO2
+      two_butt: GPIO4
+      touch_threshold: 1000
+      delta_threshold: 5
+      setup_threshold: false
+      delta_brigh: 10%
+      delta_color: 16.6 # 8.3
+      
+# Подсведка кнопок
+  led: !include 
+    file: packages/ujin/led/led_lume_ble.yaml
+    vars:
+      led_lume_pin: GPIO26
+      led_lume: 5
+    
+# Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
+  bme680_bsec: !include 
+    file: packages/ujin/sensor/bme680_bsec2.yaml
+    vars:
+      id_bme680_t: bme680_t
+      id_bme680_h: bme680_h
+      id_bme680_p: bme680_p
+      id_bme680_iaq: bme680_iaq
+      id_bme680_co2: bme680_co2
+      id_bme680_voc: bme680_voc
+      model_bme: bme688
+      address_bme680: 0x76
+
+# Датчик освещености
+  bh1750: !include
+    file: packages/ujin/sensor/bh1750.yaml
+    vars:
+     id_bh: i_lume
+     
+# Шумомер
+  noise: !include 
+    file: packages/ujin/sensor/noise_PDM_05.2025_ble.yaml
+    vars:
+      noise_ws: GPIO13
+      noise_din: GPIO15
+
+# Датчик движения
+  pir: !include 
+    file: packages/ujin/sensor/pir_ble.yaml
+    vars:
+      pir_pin: GPIO34
+      pir_addres: 0x28
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Звук нажатие клавиш"
+    optimistic: True
+    id: sound
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    icon: mdi:volume-off
+
+
+
+    
