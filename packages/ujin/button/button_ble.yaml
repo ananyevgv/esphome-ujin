@@ -105,22 +105,7 @@ binary_sensor:
         then:
           button.press:
             id: pair
-      - timing:
-          - ON for at most 0.5s
-          - OFF for at most 0.5s
-          - ON for at most 0.5s
-          - OFF for at most 0.5s
-          - ON for at most 0.5s
-          - OFF for at least 0.5s
-          - ON for at most 0.5s
-          - OFF for at least 0.5s
-        then:
-          - lambda: |-
-              std::vector<uint8_t> message = {0xC8, 0x07, 0x30, 0x02, 0x00, 0x00, 0xFD};          
-              id(uart_0).write_array(message.data(), message.size());
-          - lambda: |-
-              std::vector<uint8_t> message = {0xC8, 0x07, 0x32, 0x02, 0x00, 0x00, 0xFF};          
-              id(uart_0).write_array(message.data(), message.size());
+
 
   - platform: esp32_touch
     name: "${name} правая кнопка"
@@ -194,7 +179,6 @@ binary_sensor:
                           color_temperature: !lambda |-
                             float temp = id(light_dimmer1)->current_values.get_color_temperature();
                             temp = (temp + $delta_color);
-                            ESP_LOGI("Collor", "Текущая температура: %0.2f", temp);
                             return temp;
                       - delay: 0.5s
       - timing:
@@ -203,9 +187,10 @@ binary_sensor:
           - ON for at most 0.5s
           - OFF for at least 0.5s
         then:
-          light.turn_on:
-            id: light_dimmer1
-            brightness: 1
+          - light.turn_on:
+              id: light_dimmer1
+              brightness: 1
+            
       - timing:
           - ON for at most 0.5s
           - OFF for at most 0.5s
@@ -214,30 +199,50 @@ binary_sensor:
           - ON for at most 0.5s
           - OFF for at least 0.5s
         then:
-          button.press:
-            id: pair
-      - timing:
-          - ON for at most 0.5s
-          - OFF for at most 0.5s
-          - ON for at most 0.5s
-          - OFF for at most 0.5s
-          - ON for at most 0.5s
-          - OFF for at least 0.5s
-          - ON for at most 0.5s
-          - OFF for at least 0.5s
-        then:
-          - lambda: |-
-              std::vector<uint8_t> message = {0xC8, 0x07, 0x30, 0x02, 0x00, 0x00, 0xFD};          
-              id(uart_0).write_array(message.data(), message.size());
-          - lambda: |-
-              std::vector<uint8_t> message = {0xC8, 0x07, 0x32, 0x02, 0x00, 0x00, 0xFF};          
-              id(uart_0).write_array(message.data(), message.size());
-
+          - switch.toggle: switch_dimmer1
+          - switch.toggle: switch_dimmer2
+          
   - platform: template
     id: binary_dimm1
 
   - platform: template
-    id: binary_dimm2              
+    id: binary_dimm2 
+    
+    
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "${name} 1 лампа"
+    id: switch_dimmer1
+    optimistic: True
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-1-circle-outline
+    turn_on_action:
+      - lambda: |-
+          std::vector<uint8_t> message = {0xC8, 0x07, 0x30, 0x02, 0x00, 0x64, 0x99};          
+          id(uart_0).write_array(message.data(), message.size());
+    turn_off_action:
+      - lambda: |-
+          std::vector<uint8_t> message = {0xC8, 0x07, 0x30, 0x02, 0x00, 0x00, 0xFD};          
+          id(uart_0).write_array(message.data(), message.size());
+
+
+  - platform: template
+    name: "${name} 2 лампа"
+    id: switch_dimmer2
+    optimistic: True
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-2-circle-outline
+    turn_on_action:
+      - lambda: |-
+          std::vector<uint8_t> message = {0xC8, 0x07, 0x32, 0x02, 0x00, 0x64, 0x9B};          
+          id(uart_0).write_array(message.data(), message.size());
+    turn_off_action:
+      - lambda: |-
+          std::vector<uint8_t> message = {0xC8, 0x07, 0x32, 0x02, 0x00, 0x00, 0xFF};          
+          id(uart_0).write_array(message.data(), message.size());
 #-------------------------------------------
 # SELECT
 #-------------------------------------------
