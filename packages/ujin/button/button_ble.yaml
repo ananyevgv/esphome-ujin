@@ -1,0 +1,277 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  but: !include 
+#    file: packages/ujin/button/button_ble.yaml
+#    vars:
+#      one_butt: GPIO2
+#      two_butt: GPIO4
+#      touch_threshold: 1000 #1150
+#      delta_threshold: 5
+#      setup_threshold: false #true
+#      delta_brigh: 10%
+#      delta_color: 8.3
+
+# and copy file esphome/packages/ujin/button
+
+#-------------------------------------------
+# TOUCH
+#-------------------------------------------
+esp32_touch:
+  setup_mode: $setup_threshold
+
+
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: esp32_touch
+    name: "${name} левая кнопка"
+    id: left_touch
+    pin: $one_butt
+    icon: mdi:gesture-tap-button
+    threshold: $touch_threshold
+    on_click:
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - lambda: |-
+                  std::vector<uint8_t> message = {0xC8, 0x07, 0x0B, 0x02, 0x00, 0xFA, 0x3C};          
+                  id(uart_0).write_array(message.data(), message.size());
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.toggle: light_dimmer1
+      - timing:
+          - ON for at least 1s
+        then:
+          if: 
+            condition:
+              light.is_off: light_dimmer1
+            then:   
+              - light.turn_on:
+                  id: light_dimmer1
+                  brightness: 0.1
+              - while:
+                  condition:
+                    binary_sensor.is_on: left_touch
+                  then:
+                    - light.dim_relative:
+                        id: light_dimmer1
+                        relative_brightness: $delta_brigh
+                    - delay: 0.01s
+            else: 
+              if: 
+                condition:
+                  lambda: return id(light_dimmer1)->current_values.get_brightness() > 0.5f;
+                then:
+                  while:
+                    condition:
+                      binary_sensor.is_on: left_touch
+                    then:
+                      - light.dim_relative:
+                          id: light_dimmer1
+                          relative_brightness: -$delta_brigh
+                      - delay: 0.5s
+                else: 
+                  while:
+                    condition:
+                      binary_sensor.is_on: left_touch
+                    then:
+                      - light.dim_relative:
+                          id: light_dimmer1
+                          relative_brightness: $delta_brigh
+                      - delay: 0.01s
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.turn_on:
+            id: light_dimmer1
+            brightness: 1
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          button.press:
+            id: pair
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          - lambda: |-
+              std::vector<uint8_t> message = {0xC8, 0x07, 0x30, 0x02, 0x00, 0x00, 0xFD};          
+              id(uart_0).write_array(message.data(), message.size());
+          - lambda: |-
+              std::vector<uint8_t> message = {0xC8, 0x07, 0x32, 0x02, 0x00, 0x00, 0xFF};          
+              id(uart_0).write_array(message.data(), message.size());
+
+  - platform: esp32_touch
+    name: "${name} правая кнопка"
+    id: right_touch
+    pin: $two_butt
+    icon: mdi:gesture-tap-button
+    threshold: $touch_threshold
+    on_click:
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - lambda: |-
+                  std::vector<uint8_t> message = {0xC8, 0x07, 0x0B, 0x02, 0x00, 0xFA, 0x3C};          
+                  id(uart_0).write_array(message.data(), message.size());
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.toggle: light_dimmer1
+      - timing:
+          - ON for at least 1s
+        then:
+          if: 
+            condition:
+              light.is_off: light_dimmer1
+            then:   
+              - light.turn_on:
+                  id: light_dimmer1
+                  color_mode: COLD_WARM_WHITE
+                  color_temperature: 333 mireds
+              - while:
+                  condition:
+                    binary_sensor.is_on: right_touch
+                  then:
+                    - light.turn_on:
+                        id: light_dimmer1
+                        color_mode: COLD_WARM_WHITE
+                        color_temperature: !lambda |-
+                          float temp = id(light_dimmer1)->current_values.get_color_temperature();
+                          temp = (temp + $delta_color, 167, 333);
+                          return temp;
+                    - delay: 0.5s
+            else: 
+              if: 
+                condition:
+                  lambda: return id(light_dimmer1)->current_values.get_color_temperature() > 200.0f;
+                then:
+                  while:
+                    condition:
+                      binary_sensor.is_on: right_touch
+                    then:
+                      - light.turn_on:
+                          id: light_dimmer1
+                          color_mode: COLD_WARM_WHITE
+                          color_temperature: !lambda |-
+                            float temp = id(light_dimmer1)->current_values.get_color_temperature();
+                            temp = (temp - $delta_color);
+                            return temp;
+                      - delay: 0.5s
+                else: 
+                  while:
+                    condition:
+                      binary_sensor.is_on: right_touch
+                    then:
+                      - light.turn_on:
+                          id: light_dimmer1
+                          color_mode: COLD_WARM_WHITE
+                          color_temperature: !lambda |-
+                            float temp = id(light_dimmer1)->current_values.get_color_temperature();
+                            temp = (temp + $delta_color);
+                            ESP_LOGI("Collor", "Текущая температура: %0.2f", temp);
+                            return temp;
+                      - delay: 0.5s
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.turn_on:
+            id: light_dimmer1
+            brightness: 1
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          button.press:
+            id: pair
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          - lambda: |-
+              std::vector<uint8_t> message = {0xC8, 0x07, 0x30, 0x02, 0x00, 0x00, 0xFD};          
+              id(uart_0).write_array(message.data(), message.size());
+          - lambda: |-
+              std::vector<uint8_t> message = {0xC8, 0x07, 0x32, 0x02, 0x00, 0x00, 0xFF};          
+              id(uart_0).write_array(message.data(), message.size());
+
+  - platform: template
+    id: binary_dimm1
+
+  - platform: template
+    id: binary_dimm2              
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Чувствительность кнопок"
+    id: sensitivity_of_touch_id
+    entity_category: config
+    icon: mdi:gesture-tap-hold
+    options:
+      - "Низкая"              
+      - "Средняя"             
+      - "Высокая"          
+    initial_option: "Средняя"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: 
+                id(right_touch).set_threshold ($touch_threshold - $delta_threshold); 
+                id(left_touch).set_threshold ($touch_threshold - $delta_threshold); 
+                break;
+              case 1:  
+                id(right_touch).set_threshold ($touch_threshold); 
+                id(left_touch).set_threshold ($touch_threshold); 
+                break;
+              case 2:  
+                id(right_touch).set_threshold ($touch_threshold + $delta_threshold); 
+                id(left_touch).set_threshold ($touch_threshold + $delta_threshold); 
+                break;
+            }
+              
+              
+     
+              
+              
