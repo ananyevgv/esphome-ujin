@@ -73,7 +73,14 @@ binary_sensor:
     name: "button"
     on_press:    
       - switch.toggle: relay
- 
+      
+  - platform: gpio
+    pin:
+      number: GPIO13
+      inverted: true
+    name: "external button" 
+    on_press:    
+      - switch.toggle: relay 
 #-------------------------------------------
 # SENSOR
 #-------------------------------------------
