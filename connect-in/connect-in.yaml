@@ -70,7 +70,7 @@ binary_sensor:
     pin:
       number: GPIO0
       inverted: true
-    name: "${name} button"
+    name: "button"
     on_press:    
       - switch.toggle: relay
  
@@ -93,16 +93,16 @@ sensor:
     cf_pin: GPIO12
     cf1_pin: GPIO14
     current:
-      name: "HLW8012 Current"
+      name: "Current"
       accuracy_decimals: 2
     voltage:
-      name: "HLW8012 Voltage"
+      name: "Voltage"
       accuracy_decimals: 1
     power:
-      name: "HLW8012 Power"
+      name: "Power"
       accuracy_decimals: 2
     energy:
-      name: "HLW8012 Energy"
+      name: "Energy"
       accuracy_decimals: 2
     update_interval: 5s
 
