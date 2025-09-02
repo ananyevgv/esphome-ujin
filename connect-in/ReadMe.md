@@ -6,6 +6,4 @@
 
 ![Connect-in](/connect-in/images/connect_in.jpg)
 
-![Connect-in](/connect-in/images/connect_in0.jpg)
-
 ![Connect-in](/connect-in/images/connect_in2.jpg)
