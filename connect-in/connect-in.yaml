@@ -2,11 +2,11 @@
 ##              ESP8266                 ##
 ##  |RS|          |#|     | 1|          ##
 ##  |A0| ADC      |#|     | 3|          ##
-##  |16| LED      |#|     | 5|          ##
-##  |14|          |#|     | 4| Реле     ##
-##  |12|          |#|     | 0| Кнопка   ##
+##  |16| LED      |#|     | 5| opto     ##
+##  |14| cf1 8012 |#|     | 4| Реле     ##
+##  |12| cf  8012 |#|     | 0| Кнопка   ##
 ##  |13|          |#|     | 2|          ##
-##  |15|          |#|     |GN|          ## 
+##  |15| SEL 8012 |#|     |GN|          ## 
 ##  |3V|          |#|     |5V|          ##
 ##########################################
 
@@ -26,7 +26,7 @@ esp8266:
 packages:
 # обязательные пакеты
   wifi: !include packages/wifi.yaml
-  web: !include packages/web.yaml
+  web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
 
 #-------------------------------------------
@@ -43,6 +43,7 @@ switch:
     on_turn_off:
       - light.turn_off:
           id: led_relay
+
 #-------------------------------------------
 # OUTPUT
 #-------------------------------------------
@@ -58,7 +59,6 @@ output:
 #-------------------------------------------
 light:
   - platform: binary
-    name: "${name} relay"
     output: gpio_16   
     id: led_relay
 
@@ -73,10 +73,7 @@ binary_sensor:
     name: "${name} button"
     on_press:    
       - switch.toggle: relay
-   
-
-
-
+ 
 #-------------------------------------------
 # SENSOR
 #-------------------------------------------
@@ -85,8 +82,39 @@ sensor:
   - platform: adc
     name: ADC
     pin: A0
-    update_interval: 1s
+    update_interval: 30s
     
+  - platform: hlw8012
+    current_resistor:  0.001
+    voltage_divider: 2520
+    model: hlw8012
+    sel_pin: 
+      number: GPIO15
+    cf_pin: GPIO12
+    cf1_pin: GPIO14
+    current:
+      name: "HLW8012 Current"
+      accuracy_decimals: 2
+    voltage:
+      name: "HLW8012 Voltage"
+      accuracy_decimals: 1
+    power:
+      name: "HLW8012 Power"
+      accuracy_decimals: 2
+    energy:
+      name: "HLW8012 Energy"
+      accuracy_decimals: 2
+    update_interval: 5s
 
-
-
+  - platform: pulse_counter
+    name: "Frequency"
+    icon: 'mdi:pulse'
+    pin: 
+      number: GPIO5
+      mode:
+        input: true
+    unit_of_measurement: 'Hz'
+    update_interval: 5s
+    accuracy_decimals: 0
+    filters:
+      - multiply: 0.0054
