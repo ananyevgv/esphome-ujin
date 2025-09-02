@@ -2,6 +2,10 @@
 
 Есть возможность управлять реле, внешним выключателем.
 
+![Connect-in](/connect-in/images/esp_connect.png)
+
 ![Connect-in](/connect-in/images/connect_in.jpg)
 
-![Connect-in](/connect-in/images/esp_connect.png)
+![Connect-in](/connect-in/images/connect_in0.jpg)
+
+![Connect-in](/connect-in/images/connect_in2.jpg)
