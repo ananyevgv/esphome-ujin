@@ -1,12 +1,12 @@
-6    ADC     A0   
+6    ADC     A0   ADC?
 8    GPIO16  D0   LED
-9    GPIO14  D5   
-10   GPIO12  D6   
-12   GPIO13  D7   
-13   GPIO15  D8  
+9    GPIO14  D5   cf1 8012
+10   GPIO12  D6   cf  8012
+12   GPIO13  D7   external button
+13   GPIO15  D8   SEL 8012
 14   GPIO2   D4    
-15   GPIO0   D3    Button
-16   GPIO4   D2    Реле
-24   GPIO5   D1    
+15   GPIO0   D3   Button
+16   GPIO4   D2   Реле
+24   GPIO5   D1   zero cross pin?
 25   GPIO3   RX
 26   GPIO1   TX
