@@ -30,6 +30,5 @@
 https://github.com/aronsky/esphome-components
 
 # to do: 
-      1. Компонент для управление диммером 
-      2. Компонент UJIN Dimmer
-      3. пульт для управления люстрами Yeelight
+      1. Компонент UJIN Dimmer
+      2. пульт для управления люстрами Yeelight
