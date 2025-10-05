@@ -11,7 +11,7 @@
 # Интегрированные устройства UJIN в ESPHome
 
 
-| [Lume Luxe L.te M1](https://github.com/ananyevgv/esphome-ujin/tree/main/Lume%20Luxe_L.te%20M1)  |  [Lume Wi-Fi Z1](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1) | [wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2) | [Lume Luxe L.te M2](https://github.com/ananyevgv/esphome-ujin/tree/main/Lume%20Luxe_L.te%20M2) | 
+| [Lume Luxe L.te M1](./Lume%20Luxe_L.te%20M1)  |  [Lume Wi-Fi Z1](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_Z1) | [wifi/BLE/IR/CO2](https://github.com/ananyevgv/esphome-ujin/blob/main/Lume%20Wi-Fi_BLE_IR_CO2) | [Lume Luxe L.te M2](https://github.com/ananyevgv/esphome-ujin/tree/main/Lume%20Luxe_L.te%20M2) | 
 |--------------------|---------------|----------------------|-------------------|
 | ![Lume Luxe L.te M1](/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg) | ![Lume Wi-Fi Z1](/Lume%20Wi-Fi_Z1/images/Lume%20WIFI%20Z1.jpg) | ![wifi/BLE/IR/CO2](/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg) | ![Lume Luxe L.te M2](/Lume%20Luxe_L.te%20M2/images/Lume%20Luxe_L.te%20M2.jpg) |
 
