@@ -1,0 +1,238 @@
+#GPIO36 I  Датчик Холла                             #GPIO23 I/O 
+#GPIO39 I                                           #GPIO22 I/O I2C SCL
+#GPIO34 I GPIO34 PIR                                #GPIO3  I/O U0RXD Dimmer
+#GPIO35 I                                           #GPIO1  I/O U0TXD Dimmer
+#GPIO32 I/O Вход 1                                  #GPIO21 I/O I2C SDA
+#GPIO33 I/O remote_receiver                         #GPIO19 I/O 
+#GPIO25 I/O ir transmitter                          #GPIO18 I/O
+#GPIO26 I/O LED                                     #GPIO5  I/O
+#GPIO27 I/O off all i2c                             #17
+#GPIO14 I/O CSS811 bh1750 ON LOW (HIGH OFF)         #16
+#GPIO12 I/O                                         #GPIO4  I/O touch2 (s2) 
+#GPIO13 I/O MP45DT02 I2S WS                         #GPIO2 ADC touch1(s1)
+                                                    #GPIO15 I/O MP45DT02 I2S DOUT 
+                                                    #GPIO0 Button
+
+#####################################################################################
+#9                                                  #8
+#10                                                 #7
+#11                                                 #6
+
+#GPIO37 I SENSOR_CAPP
+#GPIO38 I SENSOR_CAPN
+#GPIO39 I Датчик Холла
+
+#####################
+#Pic     # pic uart #
+#5в.     # Вх2      #
+#3.3в    # pic uart #
+#Gnd.    # Вх1      #
+#####################
+
+substitutions:
+  name: ujin-lume-co2
+  device_description: Lume Luxe wifi/BLE/IR/CO2
+  light_1_device: light.kithen1
+  light_2_device: light.gyverlamp
+  sda_i2c: GPIO21
+  scl_i2c: GPIO22
+  #id_hts221_t: hts221_t
+ # id_hts221_h: hts221_h
+
+esphome:
+  name: "${name}"
+  comment: "${device_description}"
+  platformio_options:
+    board_build.f_flash: 80000000L
+
+  #platformio_options:
+  #  board_build.flash_mode: qio # Standard uses a single line for data, Dual IO uses 2 lines for data (prevent reboot loop)
+
+
+  on_boot:
+    - priority: 250
+      then:    
+        - uart.write: 
+            id: uart_0
+            data: lambda
+              return {0xC8, 0x29, 0x66, 0x24, 0xF0, 0xFF, 0xAC, 0x0D, 0x4C, 0x1D, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0xC5, 0xFF, 0xCA, 0x08, 0x4C, 0x1D, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0xC4, 0xFF, 0xF4, 0x01, 0x00, 0x00, 0x34, 0x12, 0x1D};
+                    #   |     |     |     |     ↑     |     ↑     ↑     ↑     ↑     |     |     |     |     ↑     ↑     |     |     ↑    |      ↑    ↑     ↑     ↑      |     |     |     |     ↑     ↑     |     |     ↑     |     |     |     |     |     |     |     |
+                    #   |     |     |     |     ↑     |     ↑     ↑     ↑     ↑     |     |     |     |    Таймер 1     |     |     ↑    |      ↑    ↑     ↑     ↑      |     |     |     |    Таймер 2     |     |     ↑     |     |     |     |     |     |     |     |
+                    #   |     |     |     |     ↑     |     ↑     ↑  граница мин 1  |     |     |     |     |     |     |     |     ↑    |      ↑    ↑    граница мин 2 |     |     |     |     |     |     |     |     ↑     |     |     |     |     |     |     |     |
+                    #   |     |     |     |     ↑     |  граница мax 1              |     |     |     |     |     |     |     |     ↑    |     граница мax 2            |     |     |     |     |     |     |     |     ↑     |     |     |     |     |     |     |     |
+                    #   |     |     |     |  Питание по фазе и нулю - F1, по фазе  - F0   |     |     |     |     |     |     |  Диммирование 1 канал C4-OFF C5-ON      |     |     |     |     |     |     |     | Диммирование 2 канал C4-OFF C5-ON
+
+api:
+  reboot_timeout: 0s     
+
+wifi:
+  output_power: 8.5
+  
+esp32:
+  cpu_frequency: 240MHZ
+  board: freenove_esp32_wrover
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_FREERTOS_UNICORE: y
+   # arduino
+#-------------------------------------------
+# PSRAM
+#-------------------------------------------
+#psram:
+#  mode: quad
+#  speed: 120MHz
+
+logger:
+  baud_rate: 0
+
+uart:
+  - id: uart_0
+    baud_rate: 115200
+    rx_pin: 3
+    tx_pin: 1
+    data_bits: 8
+    stop_bits: 1
+
+#-------------------------------------------
+# I2c
+#-------------------------------------------
+i2c:
+  sda: $sda_i2c
+  scl: $scl_i2c
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+# обязательные пакеты
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+  esp32_temp: !include packages/ujin/sensor/esp32_temp.yaml
+
+  dimm_uart: !include 
+    file: packages/ujin/dimmer/dimm_uart.yaml
+    vars:
+      type_light1: monochromatic # binary
+      type_light2: monochromatic # binary
+
+# Сенсорные кнопки
+  but: !include 
+    file: packages/ujin/button/button_uart.yaml
+    vars:
+      one_butt: GPIO2
+      two_butt: GPIO4
+      touch_threshold: 1000 #1150
+      delta_threshold: 5
+      setup_threshold: false #true
+      delta_brigh: 10%
+      
+# Подсведка кнопок
+  led: !include 
+    file: packages/ujin/led/led_lume.yaml
+    vars:
+      led_lume_pin: GPIO26
+      led_lume: 5
+    
+  #ble: !include 
+   # file: packages/ble_adv_controller.yaml
+   # file: packages/ujin/ble/ble.yaml
+    #file: packages/ujin/ble/ble1.yaml
+    #file: packages/ujin/ble/ble2.yaml
+   # file: packages/ujin/ble/ble3.yaml
+  # file: packages/ujin/ble/ble_adv_proxy.yaml
+
+
+# Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
+  bme680_bsec: !include 
+    file: packages/ujin/sensor/bme680_bsec2.yaml
+    vars:
+      id_bme680_t: bme680_t
+      id_bme680_h: bme680_h
+      id_bme680_p: bme680_p
+      id_bme680_iaq: bme680_iaq
+      id_bme680_co2: bme680_co2
+      id_bme680_voc: bme680_voc
+      model_bme: bme688
+      address_bme680: 0x76
+
+# ИК приемник на версии платы 2.4 не работает (срабатывает сторожевой таймер)!!!!
+#  ir_receiver: !include 
+#    file: packages/ujin/sensor/ir_receiver.yaml
+#    vars:
+#      pin_ir_receiver: GPIO33
+
+# ИК передатчик
+  ir_transmitter: !include 
+    file: packages/ujin/sensor/ir_transmitter.yaml
+    vars:
+      pin_ir_transmitter: GPIO25
+
+# Датчик освещености
+  bh1750: !include
+    file: packages/ujin/sensor/bh1750.yaml
+    vars:
+     id_bh: i_lume
+     
+# Датчик температуры и влажности 
+#  hts221: !include 
+#    file: packages/ujin/sensor/hts221.yaml
+#    vars:
+#      id_hts221_t: hts221_t
+#      id_hts221_h: hts221_h
+
+# Датчик температуры и влажности 
+ # sht3x: !include 
+  #  file: packages/ujin/sensor/sht3x.yaml
+  # vars:
+   #   id_sht3x_t: sht3x_t
+   #   id_sht3x_h: sht3x_h
+
+# Датчик CO2
+#  ccs811: !include 
+#    file: packages/ujin/sensor/ccs811.yaml
+#    vars:
+#      id_ccs811_t: sht3x_t
+#      id_ccs811_h: sht3x_h
+#      id_ccs811_eco2: ccs811_eco2
+#      id_ccs811_tvoc: ccs811_tvoc
+
+# Входы
+#  1in: !include 
+#    file: packages/ujin/1in.yaml
+#    vars:
+#      one_pin: GPIO32
+# Входы
+  2in: !include 
+    file: packages/ujin/2in_uart.yaml
+
+
+# Шумомер
+  noise: !include 
+    file: packages/ujin/sensor/noise_PDM_05.2025.yaml
+    vars:
+      noise_ws: GPIO13
+      noise_din: GPIO15
+
+# Датчик движения
+  pir: !include 
+    file: packages/ujin/sensor/pir.yaml
+    vars:
+      pir_pin: GPIO34
+      pir_addres: 0x28
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Звук нажатие клавиш"
+    optimistic: True
+    id: sound
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    icon: mdi:volume-off
+
+
+
