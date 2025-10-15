@@ -20,7 +20,7 @@ i2c:
 sensor:
   - platform: ccs811
     eco2:
-      name: "$eCO2"
+      name: "eCO2"
       id: $id_ccs811_eco2
       filters:
       - delta: 5
