@@ -1,4 +1,3 @@
-
 #-------------------------------------------
 # Add yaml 
 #packages:
@@ -7,6 +6,8 @@
 #    vars:
 #      one_butt: GPIO15
 #      two_butt: GPIO2
+#      touch_threshold_right: 1000
+#      touch_threshold_left: 1000
 #      touch_threshold: 1000 #1150
 #      delta_threshold: 5
 #      setup_threshold: false #true
@@ -25,25 +26,35 @@ esp32_touch:
 #-------------------------------------------
 binary_sensor:
   - platform: esp32_touch
-    name: "${name} левая кнопка"
+    name: "левая кнопка"
     id: left_touch
     pin: $one_butt
     icon: mdi:gesture-tap-button
-    threshold: $touch_threshold
+    threshold: $touch_threshold_left
     on_click: 
       then:
-        - switch.turn_on: valve
+        - switch.toggle: valve
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+
 
   - platform: esp32_touch
-    name: "${name} правая кнопка"
+    name: "правая кнопка"
     id: right_touch
     pin: $two_butt
     icon: mdi:gesture-tap-button
-    threshold: $touch_threshold
+    threshold: $touch_threshold_right
     on_click: 
       then:
-        - switch.turn_off: valve
-          
+        - switch.toggle: valve
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'           
 #-------------------------------------------
 # SELECT
 #-------------------------------------------
@@ -64,16 +75,16 @@ select:
         - lambda: |-
             switch(i) {
               case 0: 
-                id(right_touch).set_threshold ($touch_threshold - $delta_threshold); 
-                id(left_touch).set_threshold ($touch_threshold - $delta_threshold); 
+                id(right_touch).set_threshold ($touch_threshold_right - $delta_threshold); 
+                id(left_touch).set_threshold ($touch_threshold_left - $delta_threshold); 
                 break;
               case 1:  
-                id(right_touch).set_threshold ($touch_threshold); 
-                id(left_touch).set_threshold ($touch_threshold); 
+                id(right_touch).set_threshold ($touch_threshold_right); 
+                id(left_touch).set_threshold ($touch_threshold_left); 
                 break;
               case 2:  
-                id(right_touch).set_threshold ($touch_threshold + $delta_threshold); 
-                id(left_touch).set_threshold ($touch_threshold + $delta_threshold); 
+                id(right_touch).set_threshold ($touch_threshold_right + $delta_threshold); 
+                id(left_touch).set_threshold ($touch_threshold_left + $delta_threshold); 
                 break;
             }
               

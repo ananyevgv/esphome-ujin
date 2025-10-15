@@ -10,28 +10,12 @@
 #      delta_threshold: 5
 #      setup_threshold: false #true
 # and copy file esphome/packages/ujin/button
-esphome:
-  includes:
-    - packages/ujin/touch-dimming.h 
-  on_boot:
-    - priority: 500
-      then:
-        - lambda: new TouchDimmer("dimm1", light_dimmer1, left_touch, binary_dimm1);
-        - lambda: new TouchDimmer("dimm2", light_dimmer2, right_touch, binary_dimm2);   
 
-#-------------------------------------------
-# SCRIPT
-#-------------------------------------------
-script:
-  - id: my_script
-    then:
-      - delay: 1s
 #-------------------------------------------
 # TOUCH
 #-------------------------------------------
 esp32_touch:
   setup_mode: $setup_threshold
-
 
 #-------------------------------------------
 # BINARY SENSOR
@@ -52,7 +36,12 @@ binary_sensor:
               - lambda: |-
                   std::vector<uint8_t> message = {0xC8, 0x07, 0x0B, 0x02, 0x00, 0xFA, 0x3C};          
                   id(uart_0).write_array(message.data(), message.size());
-            
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.toggle: light_dimmer1     
   - platform: esp32_touch
     name: "правая кнопка"
     id: right_touch
@@ -68,12 +57,13 @@ binary_sensor:
               - lambda: |-
                   std::vector<uint8_t> message = {0xC8, 0x07, 0x0B, 0x02, 0x00, 0xFA, 0x3C};          
                   id(uart_0).write_array(message.data(), message.size());
-
-  - platform: template
-    id: binary_dimm1
-
-  - platform: template
-    id: binary_dimm2              
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.toggle: light_dimmer2   
+         
 #-------------------------------------------
 # SELECT
 #-------------------------------------------

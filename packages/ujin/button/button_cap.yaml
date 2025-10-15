@@ -35,7 +35,7 @@ cap1188:
 binary_sensor:
   - platform: cap1188
     channel: 0
-    name: "${name} левая кнопка"
+    name: "левая кнопка"
     id: left_touch
     icon: mdi:gesture-tap-button
     on_click: 
@@ -48,7 +48,7 @@ binary_sensor:
 
   - platform: cap1188
     channel: 1
-    name: "${name} правая кнопка"
+    name: "правая кнопка"
     id: right_touch
     icon: mdi:gesture-tap-button
     on_click: 

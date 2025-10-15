@@ -26,7 +26,7 @@ esp32_touch:
 #-------------------------------------------
 binary_sensor:
   - platform: esp32_touch
-    name: "${name} левая кнопка"
+    name: "левая кнопка"
     id: left_touch
     pin: $one_butt
     icon: mdi:gesture-tap-button
@@ -108,7 +108,7 @@ binary_sensor:
 
 
   - platform: esp32_touch
-    name: "${name} правая кнопка"
+    name: "правая кнопка"
     id: right_touch
     pin: $two_butt
     icon: mdi:gesture-tap-button
@@ -148,7 +148,7 @@ binary_sensor:
                         color_mode: COLD_WARM_WHITE
                         color_temperature: !lambda |-
                           float temp = id(light_dimmer1)->current_values.get_color_temperature();
-                          temp = (temp + $delta_color, 167, 333);
+                          temp = (temp + $delta_color);
                           return temp;
                     - delay: 0.5s
             else: 
