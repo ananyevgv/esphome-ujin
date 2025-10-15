@@ -1,0 +1,159 @@
+##########################################
+##              ESP8266                 ##
+##  |RS|          |#|     | 1|          ##
+##  |A0| Вход 2   |#|     | 3|          ##
+##  |16| led_2    |#|     | 5| Реле 1   ##
+##  |14| led_1    |#|     | 4| Реле 2   ##
+##  |12| Вход 1   |#|     | 0| Кнопка м ##
+##  |13| Кнопка 2 |#|     | 2| Кнопка 1 ##
+##  |15| led_s    |#|     |GN|          ## 
+##  |3V|          |#|     |5V|          ##
+##########################################
+
+#################
+# 3.3V  # 12V   #
+# Реле2 # Реле1 #
+# Вход2 # Вход1  ##
+# TX    # RX    #
+# Gnd   # GPIO0 #
+#################
+
+substitutions:
+  name: "ujin-connect-din"
+  device_description: "почти реле"
+esphome:
+  name: $name
+  friendly_name: ujin-connect-din
+
+esp8266:
+  board: esp12e
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+# обязательные пакеты
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: gpio
+    name: "Реле 1"
+    pin: GPIO4
+    id: relay1
+    on_turn_on:
+      - light.turn_on:
+          id: led_channel1
+    on_turn_off:
+      - light.turn_off:
+          id: led_channel1
+  - platform: gpio
+    name: "Реле 2"
+    pin: GPIO5
+    id: relay2
+    on_turn_on:
+      - light.turn_on:
+          id: led_channel2
+    on_turn_off:
+      - light.turn_off:
+          id: led_channel2
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------
+output:
+  - platform: gpio
+    pin: GPIO15
+    id: gpio_15
+
+  - platform: gpio
+    pin: GPIO14
+    id: gpio_14
+
+  - platform: gpio
+    pin: GPIO16
+    id: gpio_16
+
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: binary
+    name: "${name} настройка"
+    output: gpio_15   
+    id: led_setting
+
+  - platform: binary
+    output: gpio_14
+    name: "${name} канал 1"
+    id: led_channel1
+
+  - platform: binary
+    output: gpio_16
+    name: "${name} канал 2"
+    id: led_channel2  
+
+#-------------------------------------------
+# BINARY_SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      inverted: true
+    name: "${name} настройка"
+#    device_class: window
+
+  - platform: gpio
+    pin:
+      number: GPIO2
+      inverted: true
+    name: "${name} канал 1"
+    id: channel1
+    on_press:    
+      - switch.toggle: relay1
+   
+  - platform: gpio
+    pin:
+      number: GPIO13
+      inverted: true
+    name: "${name} канал 2"
+    id: cannel2
+    on_press:    
+      - switch.toggle: relay2
+
+  - platform: gpio
+    pin:
+      number: GPIO12
+      inverted: true
+    id: input1
+    name: "${name} Вход 1"
+    on_press:
+      - switch.turn_on: relay1
+    on_release:
+      - switch.turn_off: relay1
+
+  - platform: analog_threshold
+    name: "${name} Вход 2"
+    id: input2
+    threshold: 0.5
+    sensor_id: button_adc
+    device_class: motion
+    icon: mdi:motion-sensor
+    on_press:
+      - switch.turn_on: relay2   
+    on_release:
+      - switch.turn_off: relay2
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: adc
+    id: button_adc
+    pin: A0
+    update_interval: .3s
+
