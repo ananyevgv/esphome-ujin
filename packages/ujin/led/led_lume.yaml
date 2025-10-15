@@ -2,11 +2,11 @@
 # Add yaml 
 #packages:
 #  led: !include 
-#    file: packages/ujin/led/led_lume.yaml
+#    file: packages/lume/led_lume.yaml
 #    vars:
 #      led_lume_pin: GPIO26
 #      led_lume: 5
-# and copy file esphome/packages/ujin/led
+# and copy file esphome/packages/lume
 
 #-------------------------------------------
 # WIFI
@@ -22,7 +22,7 @@ light:
     rgb_order: GRB
     pin: $led_lume_pin
     num_leds: $led_lume
-    rmt_channel: 2
+ #   rmt_channel: 2
     chipset: WS2812
     id: led_ww
 

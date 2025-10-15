@@ -132,22 +132,22 @@ display:
     lambda: |-
       Color black = Color(0x000000);
       if (id(left_touch).state)
-          it.rectangle(0, 3, 0, 3, id(color_press));
-      else {
-        if (id(valve).state)
-          it.rectangle(0, 3, 0, 3, Color(0x0000FF));
-        else
-          it.rectangle(0, 3, 0, 3, Color(0x000000));
-      }
+          it.rectangle(0, 2, 0, 2, id(color_press));
+      // else {
+      //  if (id(valve).state)
+      //    it.rectangle(0, 3, 0, 3, Color(0x0000FF));
+      //  else
+      //    it.rectangle(0, 3, 0, 3, Color(0x000000));
+      // }
 
       if (id(right_touch).state)
           it.rectangle(0, 4, 0, 4, id(color_press));
-      else {
-        if (!(id(valve).state))
-          it.rectangle(0, 4, 0, 4, Color(0xFF0000));
-        else
-          it.rectangle(0, 4, 0, 4, Color(0x000000));
-      }
+      // else {
+      //  if (!(id(valve).state))
+      //    it.rectangle(0, 4, 0, 4, Color(0xFF0000));
+      //  else
+      //    it.rectangle(0, 4, 0, 4, Color(0x000000));
+      //}
       static int i = 0;
       i++;
       if (i >= 40)
@@ -169,14 +169,14 @@ display:
               case 20 ... 29: it.rectangle(0, 0, 0, 2, Color(0x0000FF)); break;
               case 30 ... 39: it.rectangle(0, 0, 0, 3, Color(0x0000FF)); break;
             }
-          } else {
-            switch(i) {
-              case 0 ... 9: it.rectangle(0, 0, 0, 3, Color(0x000000)); break;
-              case 10 ... 19: it.rectangle(0, 0, 0, 1, Color(0xFF0000)); break;
-              case 20 ... 29: it.rectangle(0, 0, 0, 2, Color(0xFF0000)); break;
-              case 30 ... 39: it.rectangle(0, 0, 0, 3, Color(0xFF0000)); break;
-            }
-          }
+         // } else {
+         //   switch(i) {
+         //     case 0 ... 9: it.rectangle(0, 0, 0, 3, Color(0x000000)); break;
+         //     case 10 ... 19: it.rectangle(0, 0, 0, 1, Color(0xFF0000)); break;
+         //     case 20 ... 29: it.rectangle(0, 0, 0, 2, Color(0xFF0000)); break;
+         //     case 30 ... 39: it.rectangle(0, 0, 0, 3, Color(0xFF0000)); break;
+         //   }
+           }
         } 
       }
       
