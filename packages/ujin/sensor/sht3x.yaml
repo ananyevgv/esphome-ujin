@@ -14,20 +14,23 @@
 sensor:
   - platform: sht3xd
     temperature:
-      name: "${name} temperature"
+      name: "temperature"
       id: ${id_sht3x_t}
       icon: mdi:thermometer
       filters:
         - median:
+        - delta: 0.2
     humidity:
-      name: "${name} humidity"
+      name: "humidity"
       id: ${id_sht3x_h}
       icon: mdi:water-percent
+      filters:
+      - delta: 1
     update_interval: 60s
     address: 0x44
  
   - platform: absolute_humidity
-    name: "${name} Absolute Humidity"
+    name: "Absolute Humidity"
     temperature: ${id_sht3x_t}
     humidity: ${id_sht3x_h}   
     icon: mdi:water-outline

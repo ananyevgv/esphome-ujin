@@ -22,8 +22,7 @@ i2s:
   ws_pin: $noise_ws
   din_pin: $noise_din
   sample_rate: 8000 
-  bits_per_sample: 16bit
-  bits_per_channel: 8bit
+  bits_per_sample: 8
   dma_buf_count: 2
   dma_buf_len: 128
   bits_shift: 0
@@ -40,7 +39,7 @@ sound_level_meter:
   groups:
     - sensors:
         - type: eq
-          name: "${name} шум пиковый уровень"
+          name: "шум пиковый уровень"
           id: Leq_id
           icon: mdi:waveform
 #-------------------------------------------

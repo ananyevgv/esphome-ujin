@@ -31,7 +31,7 @@ bme68x_bsec2_i2c:
 text_sensor:
   - platform: bme68x_bsec2
     iaq_accuracy:
-      name: "${name} IAQ Accuracy"
+      name: "IAQ Accuracy"
   - platform: template
     name: "${name} IAQ Classification"
     icon: "mdi:checkbox-marked-circle-outline"
@@ -55,42 +55,55 @@ text_sensor:
 sensor:
   - platform: bme68x_bsec2
     temperature:
-      name: "${name} Temperature"
+      name: "Temperature"
       id: ${id_bme680_t}
       filters:
       - calibrate_linear:
         - 0.0 -> 0.0
         - 26.7 -> 24.7
+      - delta: 0.2
     pressure:
-      name: "${name} Pressure"
+      name: "Pressure"
       id: ${id_bme680_p}
+      filters:
+      - delta: 2
     humidity:
-      name: "${name} Humidity"
+      name: "Humidity"
       id: ${id_bme680_h}
       filters:
       - calibrate_linear:
         - 0.0 -> 0.0
         - 52 -> 54.7
+      - delta: 1
     iaq:
-      name: "${name} IAQ"
+      name: "IAQ"
       id: ${id_bme680_iaq}
-    iaq_accuracy:
-     name: "${name}  IAQ Accuracy"
-    co2_equivalent:
-      name: "${name} CO₂"
-      id: ${id_bme680_co2}
-    breath_voc_equivalent:
-      name: "${name} VOC"
-      id: ${id_bme680_voc}
-    gas_resistance:
-      #Gas resistance in Ω
-      name: "${name}  Gas Resistance"
       filters:
-        - median
+      - delta: 5
+    iaq_accuracy:
+      name: "IAQ Accuracy"
+      filters:
+      - delta: 5
+    co2_equivalent:
+      name: "CO₂"
+      id: ${id_bme680_co2}
+      filters:
+      - delta: 5
+    breath_voc_equivalent:
+      name: "VOC"
+      id: ${id_bme680_voc}
+      filters:
+      - delta: 5
+   # gas_resistance:
+      #Gas resistance in Ω
+    #  name: "${name}  Gas Resistance"
+    #  filters:
+    #    - median
         
   - platform: absolute_humidity
-    name: "${name} Absolute Humidity"
+    name: "Absolute Humidity"
     temperature: ${id_bme680_t}
     humidity: ${id_bme680_h}      
-        
+    filters:
+    - delta: 0.5   
         

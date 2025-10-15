@@ -20,13 +20,28 @@ i2c:
 sensor:
   - platform: ccs811
     eco2:
-      name: "${name}  eCO2"
+      name: "$eCO2"
       id: $id_ccs811_eco2
+      filters:
+      - delta: 5
     tvoc:
-      name: "${name}  Volatile Organic"
+      name: "Volatile Organic"
       id: $id_ccs811_tvoc
+      filters:
+      - delta: 5
     address: 0x5A
     update_interval: 60s
     temperature: $id_ccs811_t
     humidity: $id_ccs811_h
     baseline: 0xA483
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: gpio
+    id: css811_on
+    pin:
+      number: GPIO14
+      inverted: True 
+    restore_mode: ALWAYS_ON

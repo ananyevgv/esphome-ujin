@@ -37,10 +37,11 @@ sensor:
   - platform: sound_level
     passive: false
     peak:
-      name: "${name} шум пиковый уровень"
+      name: "шум пиковый уровень"
       id: Leq_id
       icon: mdi:waveform
-
+      filters:
+        - delta: 5
 #-------------------------------------------
 # BINARY SENSOR
 #-------------------------------------------
@@ -150,7 +151,7 @@ select:
             }
 
   - platform: template
-    name: "Действия датчика шума"
+    name: "Шум действие"
     id: triggered_noise
     entity_category: config
     icon: mdi:account-reactivate-outline

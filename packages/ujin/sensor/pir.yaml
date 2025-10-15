@@ -22,8 +22,9 @@ sensor:
   - platform: adc
     pin: $pir_pin
     id: pir_adc    
-    update_interval: 1s
-    
+    filters:
+      - delta: 0.01     
+      - throttle: 1s
 #-------------------------------------------
 # MCP453X
 #-------------------------------------------
@@ -36,7 +37,7 @@ mcp453x:
 #-------------------------------------------
 binary_sensor:
   - platform: analog_threshold
-    name: "${name} движение"
+    name: "движение"
     id: pir
     threshold: 0.5
     sensor_id: pir_adc
@@ -148,7 +149,7 @@ select:
             }
             
   - platform: template
-    name: "Действия датчика движения"
+    name: "Движение действие"
     id: triggered_pir
     entity_category: config
     icon: mdi:account-reactivate-outline

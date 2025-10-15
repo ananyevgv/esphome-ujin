@@ -12,12 +12,13 @@
 #-------------------------------------------
 sensor:
   - platform: bh1750
-    name: "${name} Illuminance"
+    name: "Illuminance"
     id: ${id_bh}
     address: 0x23
-    update_interval: 5s
     icon: mdi:brightness-5
-
+    filters:
+      - delta: 1 
+      - throttle: 1s
 #-------------------------------------------
 # BINARY SENSOR
 #-------------------------------------------

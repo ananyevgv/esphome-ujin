@@ -36,10 +36,11 @@ sensor:
   - platform: sound_level
     passive: false
     peak:
-      name: "${name} шум пиковый уровень"
+      name: "шум пиковый уровень"
       id: Leq_id
       icon: mdi:waveform
-
+      filters:
+        - delta: 5 
           
 #-------------------------------------------
 # BINARY SENSOR
