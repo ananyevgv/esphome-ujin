@@ -23,6 +23,6 @@
 
 | [Connect-in](./connect-in) | [Heat](./Heat) | [Connect din](./Connect-din%20Wi-Fi) |
 |--------------------|---------------|----------------------|
-|![Connect-in](/connect-in/images/connect_in0.jpg) | ![Heat](/Connect-din%20Wi-Fi/images/heat.jpg) |![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg) |
+|![Connect-in](/connect-in/images/connect_in0.jpg) | ![Heat](/heat/images/heat.jpg) |![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg) |
 
 
