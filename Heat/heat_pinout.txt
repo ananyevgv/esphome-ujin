@@ -1,0 +1,32 @@
+EN –     RST (XS3)
+GPIO0 –  GPO (XS3)
+GPIO1 –  TXD (XS3)
+GPIO2 –  
+GPIO3 –  RXD (XS3)
+GPIO4 –  
+GPIO5 –  
+
+GPIO7 –  
+GPIO8 –  
+
+GPIO12 – 
+GPIO13 – I2C SDA
+GPIO14 – 
+GPIO15 – I2C SCL
+GPIO19 – spi mosi
+GPIO20 – 
+GPIO21 – spi DC
+GPIO22 – spi clk
+GPIO25 – 
+GPIO26 – 
+GPIO27 – 
+GPIO32 – 
+GPIO33 – 
+GPI34 – 
+GPI35 – 
+GPI36 – 
+GPI37 –  
+GPI38 – 
+GPI39 – 
+
+
