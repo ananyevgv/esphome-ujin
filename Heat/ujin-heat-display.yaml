@@ -1,0 +1,106 @@
+esphome:
+  name: ujin-heat-display
+  friendly_name: ujin-heat-display
+
+esp32:
+  board: denky_d4
+  flash_size: 8MB
+  framework:
+    type: esp-idf
+
+#-------------------------------------------
+# PSRAM
+#-------------------------------------------
+psram:
+  mode: quad
+  speed: 80MHz
+
+#-------------------------------------------
+# I2c
+#-------------------------------------------
+i2c:
+  sda:
+    number: GPIO13
+  scl: 
+    number: GPIO15
+  scan: true
+  id: bus_a
+
+#-------------------------------------------
+# spi
+#-------------------------------------------
+spi:
+  mosi_pin:  #SDA
+    number: GPIO19
+  clk_pin:  #SCL
+    number: GPIO22
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+# обязательные пакеты
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+
+# Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
+  bme680_bsec: !include 
+    file: packages/ujin/sensor/bme680_bsec2.yaml
+    vars:
+      id_bme680_t: bme680_t
+      id_bme680_h: bme680_h
+      id_bme680_p: bme680_p
+      id_bme680_iaq: bme680_iaq
+      id_bme680_co2: bme680_co2
+      id_bme680_voc: bme680_voc
+      model_bme: bme680
+      address_bme680: 0x76
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO2
+    id: pir_id
+    name: pir  
+    icon: mdi:motion-sensor
+
+sensor:
+  - platform: adc
+    pin: 35
+    id: adc_35   
+    name: "adc_35"
+    update_interval: 10s
+    attenuation: auto
+
+  - platform: adc
+    pin: 36
+    id: adc_36    
+    name: "adc_36"
+    update_interval: 10s
+    attenuation: auto
+      
+  - platform: adc
+    pin: 39
+    id: adc_39    
+    name: "adc_39"
+    update_interval: 10s
+    attenuation: auto
+
+display:
+  - platform: ili9xxx
+    model: GC9A01A
+    id: my_display
+    dimensions:
+      height: 240
+      width: 240
+    invert_colors: true
+ #   reset_pin: GPIO4
+ #   cs_pin: GPIO17
+    dc_pin:
+      number: GPIO21
+    rotation: 0
+#    update_interval: never
+    color_palette: 8BIT
