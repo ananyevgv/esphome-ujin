@@ -26,3 +26,6 @@
 |![Connect-in](/connect-in/images/connect_in0.jpg) | ![Heat](/Heat/images/heat.jpg) |![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg) |
 
 
+|![Расшифровка моделей по датчикам](/datasheet/data.jpg)
+
+[Даташиты на компоненты](./datasheet)  
