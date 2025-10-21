@@ -12,6 +12,7 @@
 #      touch_threshold_2: 1000 #1150
 #      delta_threshold: 5
 #      setup_threshold: false #true
+#      delta_brigh: 10%
 # and copy file esphome/packages/ujin/button
 
 
