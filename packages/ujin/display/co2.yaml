@@ -1,0 +1,225 @@
+#############################################################################
+#----Страничка CO2 ----------------------------------------------------------
+#############################################################################
+# Add yaml and copy file esphome/packages/ujin/display
+#packages:
+#  co2: !include file: packages/ujin/display/co2.yaml
+# 
+#############################################################################
+
+
+substitutions:
+  co2_icon: "\U000F07E4" # mdi:molecule-co2
+font:
+  - file: 'font/materialdesignicons-webfont.ttf' # http://materialdesignicons.com/cdn/7.4.47/ 
+    id: icon_co2
+    size: 30
+    bpp: 4
+    glyphs: [
+      $co2_icon
+    ]  
+#-------------------------------------------
+# BINARY_SENSOR
+#-------------------------------------------            
+binary_sensor:
+  - id: !extend bin_vl
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: co2_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.previous:  
+
+  - id: !extend bin_nl
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: co2_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.next:    
+
+  - id: !extend bin_vp
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: co2_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.next:    
+
+  - id: !extend bin_np
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: co2_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.next:  
+
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  platform: bme68x_bsec2
+  co2_equivalent:
+    - id: !extend ${id_bme680_co2}
+      on_value:
+        - lvgl.indicator.update:
+            id: co2_meter
+            value: !lambda |- 
+              return x;
+#-------------------------------------------
+# LVGL
+#-------------------------------------------
+lvgl:
+  pages:
+# Вывод на экран 
+    - id: co2_page
+      #width: 100%
+      bg_color: 0x000000
+      #opa: cover
+      scrollbar_mode: "OFF"
+      scrollable: false
+      widgets:
+        # Зеленый
+        - line:
+            points:
+              - 142, 152
+              - -5, 250
+            line_width: 75
+            line_color: 0x00ff00
+            line_rounded: false 
+        - line:
+            points:
+              - 110, 100
+              - -15, 182
+            line_width: 50
+            line_color: 0x00ff00
+            line_rounded: false
+            
+        # Желтый
+        - line:
+            points:
+              - 110, 92
+              - -15, 135
+            line_width: 55
+            line_color: 0xe7c12c
+            line_rounded: false 
+            
+        # Оранжевый
+        - line:
+            points:
+              - 45, 110
+              - 60, 0
+            line_width: 125
+            line_color: 0xffa500
+            line_rounded: false    
+            
+        # Красный
+        - line:
+            points:
+              - 85, 55
+              - 240, -40
+            line_width: 150
+            line_color: 0xF50F34
+            line_rounded: false 
+            
+         # Фиолетовый
+        - line:
+            points:
+              - 155, 120
+              - 155, 0
+            line_width: 70
+            line_color: 0xA63DC2
+            line_rounded: false 
+            
+         # Фиолетовый
+        - line:
+            points:
+              - 165, 147
+              - 241, 0 #+5 -5
+            line_width: 110
+            line_color: 0xA63DC2
+            line_rounded: false 
+         # Фиолетовый
+        - line:
+            points:
+              - 180, 110
+              - 195, 240
+            line_color: 0xA63DC2
+            line_width: 120
+            line_rounded: false
+         # Белый
+        - line:
+            points:
+              - 52, 292
+              - 172, 172
+            align: TOP_left
+            line_width: 150
+            line_color: 0xFFFFFF
+            line_rounded: false 
+# Шкала
+        - meter:
+            bg_opa: 0%
+            opa: 100%
+#            border_color: color_green
+#            border_width: 15
+            width: 240
+            height: 240
+            align: center
+            scales:
+              - ticks: 
+                  count: 101
+                  width: 2
+                  length: 10
+                  color: 0x000000
+                  major:
+                    stride: 10
+                    width: 3
+                    length: 20
+                    color: 0x000000
+                    label_gap: 10
+                angle_range: 270
+                rotation: 135
+                range_from: 0
+                range_to: 100
+# Индикатор
+        - meter:
+            width: 180
+            height: 180
+            align: center
+            scales:
+              - indicators:
+                  - line:
+                      id: co2_meter
+                      width: 4
+                      color: 0xFF0000
+                      r_mod: -15
+                      value: 0
+                angle_range: 270
+                rotation: 135
+                range_from: 0
+                range_to: 5000
+                ticks: 
+                  count: 101
+                  width: 0
+                  length: 0
+                  color: 0x000000
+                  major:
+                    stride: 10
+                    width: 0
+                    length: 0
+                    color: 0x000000
+                    label_gap: 8
+
+        - label:
+            text: $co2_icon
+            text_color: color_black
+            text_font: icon_co2
+            align: center
+            y: 60
+            
+

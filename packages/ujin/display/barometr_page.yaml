@@ -1,0 +1,195 @@
+#############################################################################
+#----Страничка барометра-----------------------------------------------------
+#############################################################################
+# Add yaml and copy file esphome/packages/ujin/display
+#packages:
+#  barometr: !include file: packages/ujin/display/barometr_page.yaml 
+# 
+#############################################################################
+
+#-------------------------------------------
+# IMAGE
+#-------------------------------------------
+image:
+  - file: "picture/barometr.jpg"
+    id: barometr_image
+    resize: 240x240
+    type: RGB565
+
+
+#-------------------------------------------
+# BINARY_SENSOR
+#-------------------------------------------            
+binary_sensor:
+  - id: !extend bin_vl
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: barometr_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.previous:  
+
+  - id: !extend bin_nl
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: barometr_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.next:    
+
+  - id: !extend bin_vp
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: barometr_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.next:    
+
+  - id: !extend bin_np
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: barometr_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.next:  
+
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  platform: bme68x_bsec2
+  temperature:
+    - id: !extend ${id_bme680_t}
+      on_value:
+        - lvgl.indicator.update:
+            id: temperatura_hand
+            value: !lambda |- 
+              return x;
+  pressure:
+    - id: !extend ${id_bme680_p}
+      on_value:
+        - lvgl.indicator.update:
+            id: barometr_hand
+            value: !lambda |- 
+                return x;
+        - lvgl.indicator.update:
+            id: barometr_hand_z
+            value: !lambda |- 
+              return x;
+#-------------------------------------------
+# LVGL
+#-------------------------------------------
+lvgl:
+  pages:
+# Выводим на экран    
+    - id: barometr_page    
+      width: 100%
+      bg_color: 0x000000
+      bg_opa: cover
+      scrollbar_mode: "OFF"
+      widgets:
+        - image:
+            align: CENTER
+            src: barometr_image
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            width: 480
+            height: 480
+            align: CENTER
+            scrollbar_mode: "OFF"
+            scrollable: false
+            widgets:
+            #######################
+              - meter:
+                  border_side: none
+                  height: 240
+                  width: 240
+                  align: CENTER
+                  bg_opa: TRANSP
+                  text_color: 0xFFFFFF
+                  scales:
+                    - indicators:
+                        - line:
+                            id: barometr_hand_3h
+                            width: 3
+                            color: 0xE0E0E0 #white
+                            r_mod: -15
+                      rotation: 120
+                      angle_range: 300 # Угол между началом и концом
+                      range_from: 690 #920 # Минимальное значение 920
+                      range_to: 810 #1080  # Максимальное значение 1080
+                      ticks: 
+                        count: 0 
+                        
+                    - indicators:
+                        - line:
+                            id: barometr_hand_3hz
+                            width: 7
+                            color: 0xE0E0E0 #white
+                            r_mod: -150
+                      rotation: 300
+                      angle_range: 300 # Угол между началом и концом
+                      range_from: 690 # Минимальное значение
+                      range_to: 810    
+                      ticks: 
+                        count: 0
+
+                    - indicators:
+                        - line:
+                            id: barometr_hand
+                            width: 3
+                            color: 0xFF0000 # red 0xE0E0E0 #white
+                            r_mod: -15
+                      rotation: 120
+                      angle_range: 300 # Угол между началом и концом
+                      range_from: 690 # Минимальное значение
+                      range_to: 810  # Максимальное значение
+                      ticks: 
+                        count: 0 
+
+                    - indicators:
+                        - line:
+                            id: barometr_hand_z
+                            width: 7
+                            color: 0xFF0000 # red 0xE0E0E0 #white
+                            r_mod: -150
+                      rotation: 300
+                      angle_range: 300 # Угол между началом и концом
+                      range_from: 690 # Минимальное значение
+                      range_to: 810 
+                      ticks: 
+                        count: 0
+      
+              - meter:
+                  border_side: none
+                  height: 50
+                  width: 50
+                  y: 90
+                  align: CENTER
+                  bg_opa: TRANSP
+                  text_color: 0xFFFFFF
+                  scales:
+                    - indicators:
+                        - line:
+                            id: temperatura_hand
+                            width: 3
+                            color: 0xFF0000 # red 0xE0E0E0 #white
+                            r_mod: 30
+                      rotation: 180
+                      angle_range: 180 # Угол между началом и концом
+                      range_from: -10 # Минимальное значение
+                      range_to: 50  # Максимальное значение
+                      ticks: 
+                        count: 0 
+
+              - led:
+                  align: CENTER
+                  color: 0xFF0000
+                  width: 15
+                  height: 15

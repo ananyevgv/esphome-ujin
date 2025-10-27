@@ -1,1 +1,343 @@
+substitutions:
+  characters: " !#%'()+=,-_.:³°/μ0123456789АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧЩШЬЫЪЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщьыъэюяabcdefghijklmnopqrstuvwxyz"
+  ha:                 "\U0000e90b" # home assistant
+  wifi_25:            "\U0000e90e" # wifi signal from 25% to 1% F090E
+  wifi_50:            "\U0000e90f" # wifi signal from 50% to 25% F090F
+  wifi_75:            "\U0000e910" # wifi signal from 75% to 50% F0910
+  wifi_100:           "\U0000e911" # wifi signal from 100% to 75% or disable F0911
 
+esphome:
+  on_boot:
+    - light.turn_on: backlight
+# ----------------------------------------- 
+#  COLORS 
+# ----------------------------------------- 
+color:
+  - id: color_black
+    hex: 0d0d0d
+  - id: color_dark_gray
+    hex: 333333
+  - id: color_gray
+    hex: 777777
+  - id: color_white
+    hex: f2f0eb
+  - id: color_red
+    hex: ff0000
+  - id: color_crimson
+    hex: f5075c
+  - id: color_blue
+    hex: 2fc0ff
+  - id: color_yellow
+    hex: e7c12c
+  - id: color_amber
+    hex: f4a900
+  - id: color_mint
+    hex: 39d19c
+  - id: color_green
+    hex: 00ff00
+  - id: color_orange
+    hex: f07c40
+  - id: color_deep_orange
+    hex: ff6600
+  - id: color_violet
+    hex: 9670d6
+  - id: color_dark_blue
+    hex: 4867aa
+
+#-------------------------------------------
+# FONT
+#-------------------------------------------
+font:   
+  - file: "gfonts://Roboto"
+    id: roboto36
+    glyphs: ${characters}
+    size: 36
+    bpp: 4     
+
+  - file: "gfonts://Roboto"
+    id: roboto24
+    glyphs: ${characters}
+    size: 24
+    bpp: 4  
+  - file: "font/Icons.ttf"
+    id: icons_24
+    size: 24
+    bpp: 4
+    ignore_missing_glyphs: true
+    glyphs: [
+      $ha,
+      $wifi_25,
+      $wifi_50,
+      $wifi_75,
+      $wifi_100
+      ]
+      
+#-------------------------------------------
+# PSRAM
+#-------------------------------------------
+psram:
+  mode: quad
+  speed: 80MHz
+
+#-------------------------------------------
+# SPI
+#-------------------------------------------
+spi:
+  mosi_pin:  #SDA
+    number: 2 # GPIO19
+  clk_pin:  #SCL
+    number: 1 # GPIO22
+    
+#-------------------------------------------
+# API
+#-------------------------------------------    
+api:
+  on_client_connected:
+    - if:
+        condition:
+          lambda: 'return (0 == client_info.find("Home Assistant "));'
+        then:
+          - lvgl.label.update: 
+              id: ha_status
+              text_color: color_blue
+         # - script.execute: time_sync_barometr
+          
+  on_client_disconnected:
+    - if:
+        condition:
+          lambda: 'return (0 == client_info.find("Home Assistant "));'
+        then:
+          - lvgl.label.update: 
+              id: ha_status
+              text_color: color_dark_gray    
+              
+#-------------------------------------------
+# BUTTON
+#-------------------------------------------  
+button:
+  - platform: template
+    name: "Next page"
+    id: next_page
+    on_press:
+      then:
+        - lvgl.page.next:
+  - platform: template
+    name: "Previous page"
+    id: previous_page
+    on_press:
+      then:
+        - lvgl.page.previous:
+        
+#-------------------------------------------
+# GLOBALS
+#-------------------------------------------          
+globals:
+  - id: lv_timeout
+    type: float
+    restore_value: yes
+    initial_value: '30000'
+    
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Rotate Screen"
+    id: rotate
+    entity_category: config
+    options:
+     - "0°"      
+     - "90°"
+     - "180°"
+     - "270°"
+    initial_option: "0°"
+    optimistic: true
+    icon: mdi:phone-rotate-landscape
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0:  id(my_display).set_rotation(DISPLAY_ROTATION_0_DEGREES); break;
+              case 1:  id(my_display).set_rotation(DISPLAY_ROTATION_90_DEGREES); break;
+              case 2:  id(my_display).set_rotation(DISPLAY_ROTATION_180_DEGREES); break;
+              case 3:  id(my_display).set_rotation(DISPLAY_ROTATION_270_DEGREES); break;
+            }
+              //id(my_display).update(); 
+        - lvgl.widget.redraw:
+        
+  - platform: template
+    name: "Screen timeout"
+    id: timeout
+    entity_category: config
+    options:
+     - "30"    
+     - "45"   
+     - "60"
+     - "90"
+     - "120"
+     - "180"
+     - "300"
+     - "600"
+    initial_option: "30"
+    optimistic: true
+    icon: mdi:archive-clock-outline
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: id(lv_timeout) = (30000); break;
+              case 1: id(lv_timeout) = (45000); break;
+              case 2: id(lv_timeout) = (60000); break;
+              case 3: id(lv_timeout) = (90000); break;
+              case 4: id(lv_timeout) = (120000); break;
+              case 5: id(lv_timeout) = (180000); break;
+              case 6: id(lv_timeout) = (300000); break;
+              case 7: id(lv_timeout) = (600000); break;
+            }
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: Antiburn
+    id: switch_antiburn
+    icon: mdi:television-shimmer
+    optimistic: true
+    entity_category: "config"
+    turn_on_action:
+      - logger.log: "Starting Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+            - delay: 1s
+      - lvgl.pause:
+          show_snow: true
+    turn_off_action:
+      - logger.log: "Stoping Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+            - delay: 1s
+            - lvgl.pause:
+
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - id: !extend wifi_signal_percent
+    on_value: 
+      then:
+        - lvgl.label.update:
+            id: wifi_status
+            text_color: !lambda |-
+              uint8_t wifi_color = (id(wifi_signal_percent).state);
+              switch (wifi_color) {
+                case 0 ... 25: return lv_color_hex(0xFF0000);
+                case 26 ... 50: return lv_color_hex(0xFF8000);
+                case 51 ... 75: return lv_color_hex(0xFFFF00);
+                case 76 ... 100: return lv_color_hex(0x00FF00);
+                default: return lv_color_hex(0x333333);
+              }
+            text: !lambda |-
+              uint8_t wifi_var = (id(wifi_signal_percent).state);
+              switch (wifi_var) {
+                case 0 ... 25: return std::string("${wifi_25}");
+                case 26 ... 50: return std::string("${wifi_50}");
+                case 51 ... 75: return std::string("${wifi_75}");
+                case 76 ... 100: return std::string("${wifi_100}");
+                default: return std::string("${wifi_100}");
+              }
+  
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------
+output:
+  - platform: ledc
+    pin:
+      number: 6 # GPIO0
+    #  inverted: true
+    id: GPIO0
+    frequency: 100Hz
+
+#-------------------------------------------
+# LIGHTS
+# -------------------------------------------
+light:
+  - platform: monochromatic
+    output: GPIO0
+    name: Backlight
+    id: backlight
+    icon: mdi:television-ambient-light
+
+#-------------------------------------------
+# DISPLAY
+#-------------------------------------------  
+display:
+  - platform: ili9xxx
+    model: GC9A01A
+    id: my_display
+    invert_colors: true
+    data_rate: 80 MHz
+    dc_pin: 4 # GPIO21
+    reset_pin: 3 #GPIO5
+    auto_clear_enabled: false
+    rotation: 180
+   # show_test_card: true
+   
+#-------------------------------------------   
+# LVGL
+#-------------------------------------------    
+lvgl:
+  displays:
+    -  my_display
+  on_idle:
+    timeout: !lambda "return id(lv_timeout);"
+    then:
+      - logger.log: "LVGL is idle"
+      - light.turn_off: backlight
+      - lvgl.pause:
+  gradients:
+    - id: hue_gradient
+      direction: ver
+      dither: none
+      stops:
+        - color: 0xFF0000
+          position: 0
+        - color: 0xFF00FF
+          position: 42
+        - color: 0x0000FF
+          position: 84
+        - color: 0x00FFFF
+          position: 127
+        - color: 0x00FF00
+          position: 169
+        - color: 0xFFFF00
+          position: 212
+        - color: 0xFF0000
+          position: 255     
+          
+  top_layer:
+      widgets:  
+        - label:
+            id: wifi_status
+            align: BOTTOM_MID #TOP_MID
+            x: 20
+            y: -10
+            text: "${wifi_100}"
+            text_color: color_dark_gray
+            text_font: icons_24
+
+        - label:
+            id: ha_status
+            align: BOTTOM_MID #TOP_MID
+            x: -20
+            y: -10
+            text: "${ha}"
+            text_color: color_dark_gray
+            text_font: icons_24

@@ -1,0 +1,216 @@
+#############################################################################
+#----Страничка барометра-----------------------------------------------------
+#############################################################################
+# Add yaml and copy file esphome/packages/ujin/display
+#packages:
+#  barometr: !include file: packages/ujin/display/barometr.yaml 
+# 
+#############################################################################
+substitutions:
+  cloudy:             "\U000F0590"
+  rainy:              "\U000F0597"
+  sunny:              "\U000F0599" 
+  gauge:              "\U000F029A"
+#-------------------------------------------
+# FONT
+#-------------------------------------------
+font:
+  - file: 'font/materialdesignicons-webfont.ttf' # http://materialdesignicons.com/cdn/7.4.47/ 
+    id: barometr_icons
+    size: 30
+    bpp: 4
+    glyphs: [
+      $cloudy,
+      $rainy,
+      $sunny,
+      $gauge
+      ]
+        
+        
+#-------------------------------------------
+# BINARY_SENSOR
+#-------------------------------------------            
+binary_sensor:
+  - id: !extend bin_vl
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: barometr_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.previous:  
+
+  - id: !extend bin_nl
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: barometr_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.next:    
+
+  - id: !extend bin_vp
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: barometr_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.next:    
+
+  - id: !extend bin_np
+    on_press:
+    - if:
+        condition:
+          lvgl.page.is_showing: barometr_page
+        then:
+          - light.turn_on: backlight
+          - lvgl.page.next:  
+
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  platform: bme68x_bsec2
+  pressure:
+    - id: !extend ${id_bme680_p}
+      on_value:
+        - lvgl.indicator.update:
+            id: barometr_meter
+            value: !lambda |- 
+              return x;      
+#-------------------------------------------
+# LVGL
+#-------------------------------------------
+lvgl:
+  pages:
+# Вывод на экран 
+    - id: barometr_page
+      #width: 100%
+      bg_color: 0x000000
+      #opa: cover
+      scrollbar_mode: "OFF"
+      scrollable: false
+      width: 240
+      height: 240
+      widgets:
+        # Красный
+        - line:
+            points:
+              - 85, 85
+              - -35, 205
+            line_width: 100
+            line_color: 0xF50F34
+            line_rounded: false 
+        # Желтый
+        - line:
+            points:
+              - 45, 110
+              - 60, 0
+            line_width: 125
+            line_color:  0xe7c12c
+            line_rounded: false  
+        # Зеленый
+        - line:
+            points:
+              - 85, 55
+              - 240, -40
+            line_width: 150
+            line_color: 0x00ff00 
+            line_rounded: false 
+        # Желтый
+        - line:
+            points:
+              - 165, 148
+              - 241, 0 #+5 -5
+            line_width: 110
+            line_color: 0xe7c12c
+            line_rounded: false 
+        # Красный
+        - line:
+            points:
+              - 180 , 110
+              - 195, 240
+            line_color: 0xF50F34
+            line_width: 120
+            line_rounded: false
+         # Белый
+        - line:
+            points:
+              - 52, 292
+              - 172, 172
+            align: TOP_left
+            line_width: 150
+            line_color: 0xFFFFFF
+            line_rounded: false 
+# Шкала
+        - meter:
+            bg_opa: 0%
+            opa: 100%
+            width: 240
+            height: 240
+            align: center
+            scales:
+              - ticks: 
+                  count: 101
+                  width: 1
+                  length: 10
+                  color: 0x000000
+                  major:
+                    stride: 10
+                    width: 3
+                    length: 20
+                    color: 0x000000
+                    label_gap: 10
+                angle_range: 270
+                rotation: 135
+                range_from: 0
+                range_to: 5
+# Индикатор
+        - meter:
+            width: 180
+            height: 180
+            align: center
+            scales:
+              - indicators:
+                 - line:
+                     id: barometr_meter
+                     width: 4
+                     color: 0xFF0000
+                     r_mod: -15
+                     #value: 0
+                angle_range: 270
+                rotation: 135
+                range_from: 700
+                range_to: 800
+                ticks: 
+                  count: 101
+                  width: 0
+                  length: 0
+                  color: 0x000000
+                  major:
+                    stride: 10
+                    width: 0
+                    length: 0
+                    color: 0x000000
+                    label_gap: 8
+        - label:
+            text: $rainy
+            text_color: 0x2fc0ff
+            text_font: barometr_icons
+            align: CENTER
+            x: -30
+        - label:
+            text:  $cloudy
+            text_color: 0x777777
+            text_font: barometr_icons
+            align: CENTER  
+            y: -30
+        - label:
+            x: 30
+            text: $sunny
+            text_color: 0xe7c12c
+            text_font: barometr_icons
+            align: CENTER
+
