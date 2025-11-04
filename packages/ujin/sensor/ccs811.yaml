@@ -34,3 +34,14 @@ sensor:
     temperature: $id_ccs811_t
     humidity: $id_ccs811_h
     baseline: 0xA483
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: gpio
+    id: css811_on
+    pin:
+      number: GPIO14
+      inverted: True 
+    restore_mode: ALWAYS_ON
