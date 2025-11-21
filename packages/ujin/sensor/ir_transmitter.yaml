@@ -39,12 +39,12 @@ api:
         - remote_transmitter.transmit_samsung:
             data: !lambda 'return strtoull(command.c_str(), nullptr, 16);'
             nbits: 48
-    - service: send_raw_command
-      variables:
-        command: int[]
-      then:
-        - remote_transmitter.transmit_raw:
-            code: !lambda 'return command;'
+  # - service: send_raw_command
+  #    variables:
+   #     command: int[]
+   #   then:
+    #    - remote_transmitter.transmit_raw:
+    #        code: !lambda 'return command;' 
     - service: send_lg_command
       variables:
         command: string
