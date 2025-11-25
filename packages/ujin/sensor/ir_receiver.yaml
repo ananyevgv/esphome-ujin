@@ -26,6 +26,16 @@
 #-------------------------------------------
 # SWITCH
 #-------------------------------------------
+#packages:
+#  ir_receiver: !include 
+#    file: packages/ujin/sensor/ir_receiver.yaml
+#    vars:
+#      pin_ir_receiver: GPIO4
+# and copy file esphome/packages/ujin/sensor/
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
 switch:
   - platform: template
     name: "Ретранслятор ИК"
@@ -48,7 +58,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "abbwelcome";
+              return id(ir_mode).current_option() == "abbwelcome";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -58,7 +68,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "aeha";
+              return id(ir_mode).current_option() == "aeha";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -69,7 +79,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "byronsx";
+              return id(ir_mode).current_option() == "byronsx";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -80,7 +90,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "canalsat";
+              return id(ir_mode).current_option() == "canalsat";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -91,7 +101,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "coolix";
+              return id(ir_mode).current_option() == "coolix";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -102,7 +112,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "dish";
+              return id(ir_mode).current_option() == "dish";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -112,7 +122,8 @@ remote_receiver:
     then:
       - if:
           condition:
-            lambda: return id(ir_mode).state == "dooya";
+            lambda: |-
+              return id(ir_mode).current_option() == "dooya";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -123,7 +134,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "drayton";
+              return id(ir_mode).current_option() == "drayton";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -134,7 +145,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "jvc";
+              return id(ir_mode).current_option() == "jvc";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -145,7 +156,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "keeloq";
+              return id(ir_mode).current_option() == "keeloq";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -156,7 +167,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "haier";
+              return id(ir_mode).current_option() == "haier";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -167,7 +178,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "lg";
+              return id(ir_mode).current_option() == "lg";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -178,7 +189,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "magiquest";
+              return id(ir_mode).current_option() == "magiquest";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -189,7 +200,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "midea";
+              return id(ir_mode).current_option() == "midea";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -200,7 +211,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "nec";
+              return id(ir_mode).current_option() == "nec";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -211,19 +222,18 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "nexa";
+              return id(ir_mode).current_option() == "nexa";
           then:
             - text_sensor.template.publish:
                 id: ir_code
                 state: !lambda 'return str_sprintf("Nexa: Устройство %lu Группа %u Состояние %u Канал %u Уровень %u", long(x.device), x.group, x.state, x.channel, x.level);' 
-
 
   on_panasonic:
     then:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "panasonic";
+              return id(ir_mode).current_option() == "panasonic";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -234,7 +244,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "pioneer";
+              return id(ir_mode).current_option() == "pioneer";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -245,7 +255,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "rc5";
+              return id(ir_mode).current_option() == "rc5";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -256,7 +266,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "rc6";
+              return id(ir_mode).current_option() == "rc6";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -267,7 +277,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "rc_switch";
+              return id(ir_mode).current_option() == "rc_switch";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -278,7 +288,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "samsung";
+              return id(ir_mode).current_option() == "samsung";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -290,7 +300,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "samsung36";
+              return id(ir_mode).current_option() == "samsung36";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -301,7 +311,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "sony";
+              return id(ir_mode).current_option() == "sony";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -312,7 +322,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "toshiba_ac";
+              return id(ir_mode).current_option() == "toshiba_ac";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -323,7 +333,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "mirage";
+              return id(ir_mode).current_option() == "mirage";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -334,7 +344,7 @@ remote_receiver:
       - if:
           condition:
             lambda: |-
-              return id(ir_mode).state == "toto";
+              return id(ir_mode).current_option() == "toto";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -403,6 +413,3 @@ text_sensor:
     name: "IR code"
     id: ir_code
     icon: mdi:remote-tv
-
-    
-    
