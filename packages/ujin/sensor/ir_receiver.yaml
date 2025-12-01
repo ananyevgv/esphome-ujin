@@ -26,16 +26,6 @@
 #-------------------------------------------
 # SWITCH
 #-------------------------------------------
-#packages:
-#  ir_receiver: !include 
-#    file: packages/ujin/sensor/ir_receiver.yaml
-#    vars:
-#      pin_ir_receiver: GPIO4
-# and copy file esphome/packages/ujin/sensor/
-
-#-------------------------------------------
-# SWITCH
-#-------------------------------------------
 switch:
   - platform: template
     name: "Ретранслятор ИК"
@@ -122,8 +112,7 @@ remote_receiver:
     then:
       - if:
           condition:
-            lambda: |-
-              return id(ir_mode).current_option() == "dooya";
+            lambda: return id(ir_mode).current_option() == "dooya";
           then:
             - text_sensor.template.publish:
                 id: ir_code
@@ -227,6 +216,7 @@ remote_receiver:
             - text_sensor.template.publish:
                 id: ir_code
                 state: !lambda 'return str_sprintf("Nexa: Устройство %lu Группа %u Состояние %u Канал %u Уровень %u", long(x.device), x.group, x.state, x.channel, x.level);' 
+
 
   on_panasonic:
     then:
@@ -413,3 +403,6 @@ text_sensor:
     name: "IR code"
     id: ir_code
     icon: mdi:remote-tv
+
+    
+    
