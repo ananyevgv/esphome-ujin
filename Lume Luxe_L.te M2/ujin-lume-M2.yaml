@@ -187,7 +187,7 @@ packages:
       id_bme680_voc: bme680_voc
       model_bme: bme688
       address_bme680: 0x76
-
+      t_offset: 0  
 # Подсведка кнопок
   led: !include 
     file: packages/ujin/led/led_lume.yaml
