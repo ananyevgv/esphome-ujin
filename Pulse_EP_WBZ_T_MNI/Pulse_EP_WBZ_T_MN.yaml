@@ -1,33 +1,12 @@
 esphome:
-  name: pulse
-  friendly_name: Pulse
+  name: ujin-pulse
+  friendly_name: ujin-pulse
  
 esp32:
   board: denky_d4
   flash_size: 8MB
   framework:
-    type: arduino
-
-
-web_server:
-  version: 3  
-  port: 80
-  local: true
-  auth:
-    username: !secret user_web
-    password: !secret pass_web       
-
-
-
-cap1293:
-  id: cap1293_component
-  address: 0x12
-  reset_pin: GPIO20
-  touch_threshold: 0x20
-  allow_multiple_touches: true
-
-
-
+    type: esp-idf
 
 #-------------------------------------------
 # PSRAM
@@ -35,56 +14,12 @@ cap1293:
 psram:
   mode: quad
   speed: 80MHz
-
-
-
-# Enable Home Assistant API
-api:
-  encryption:
-    key: !secret Pulse_Key
-  actions:
-    - action: rtttl_play
-      variables:
-        song_str: string
-      then:
-        - rtttl.play:
-            rtttl: !lambda 'return song_str;'
-  reboot_timeout: 0s    
-  
-
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-
-
-captive_portal:
-  
-
-#-------------------------------------------
-# RTTTL
-#-------------------------------------------
-rtttl:
-  output: rtttl_out
-  gain: 60%
-
-
 #-------------------------------------------
 # EXTERNAL COMPONENTS
 #-------------------------------------------
-
 external_components:
-  - source: github://stas-sl/esphome-sound-level-meter 
-    refresh: 0s
   - source: github://ananyevgv/esphome-components/
     refresh: 0s
-
-#-------------------------------------------
-# MCP453X
-#-------------------------------------------
-mcp453x:
-  id: my_mcp453x
-  address: 0x2F
 
 #-------------------------------------------
 # I2c
@@ -98,15 +33,98 @@ i2c:
   id: bus_a
   frequency:
     10kHz
+
 output:
   - platform: ledc
     pin: GPIO12
     id: rtttl_out
-
 # Create the MCP453X output
   - platform: mcp453x
     id: pir_output
     mcp453x_id: my_mcp453x  
+    
+cap1293:
+  id: cap1293_component
+  address: 0x12
+  reset_pin: GPIO20
+  touch_threshold: 0x20
+  allow_multiple_touches: true
+#-------------------------------------------
+# MCP453X
+#-------------------------------------------
+mcp453x:
+  id: my_mcp453x
+  address: 0x2F
+
+
+packages:
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+# Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
+  bme680_bsec: !include 
+    file: packages/ujin/sensor/bme680_bsec2.yaml
+    vars:
+      id_bme680_t: bme680_t
+      id_bme680_h: bme680_h
+      id_bme680_p: bme680_p
+      id_bme680_iaq: bme680_iaq
+      id_bme680_co2: bme680_co2
+      id_bme680_voc: bme680_voc
+      model_bme: bme688
+      address_bme680: 0x76
+      t_offset: 0
+
+#-------------------------------------------
+# I2S
+#-------------------------------------------
+i2s_audio:
+  i2s_lrclk_pin: 19
+  i2s_bclk_pin: 22
+
+#-------------------------------------------
+# MICROPHONE
+#-------------------------------------------
+microphone:
+  - platform: i2s_audio
+    id: external_mic
+    adc_type: external
+    i2s_din_pin: 21
+    channel: left
+    pdm: true
+    bits_per_sample: 16bit
+    bits_per_channel: 8bit
+    sample_rate: 16000
+    
+
+
+
+
+# Enable Home Assistant API
+api:
+
+  actions:
+    - action: rtttl_play
+      variables:
+        song_str: string
+      then:
+        - rtttl.play:
+            rtttl: !lambda 'return song_str;'
+  reboot_timeout: 0s    
+  
+
+
+#-------------------------------------------
+# RTTTL
+#-------------------------------------------
+rtttl:
+  output: rtttl_out
+  gain: 60%
+
+
+
+
+
 
 
 light:
@@ -114,7 +132,7 @@ light:
     rgb_order: GRB
     pin: GPIO5
     num_leds: 35
-    rmt_channel: 1
+  #  rmt_channel: 1
     chipset: WS2812
     id: led_ww
 #    name: "Светодиоды на мультисенсоре"
@@ -124,7 +142,6 @@ light:
 #-------------------------------------------
 # BINARY SENSOR
 #-------------------------------------------
-
 binary_sensor:
   - platform: gpio
     pin:
@@ -133,6 +150,14 @@ binary_sensor:
     name: pir  
     icon: mdi:motion-sensor
 
+
+  - platform: analog_threshold
+    name: "Датчик шума"
+    id: noise
+    threshold: -20
+    sensor_id: Leq_id
+    device_class: sound
+    icon: mdi:speaker-wireless
 
 
 
@@ -164,8 +189,6 @@ select:
             }
 
 sensor:
-
-
   - platform: adc
     pin: 37
     id: adc_37    
@@ -200,39 +223,16 @@ sensor:
     ambient_light: "Освещенность"
     ps_cooldown: 5 s
 
+  - platform: sound_level
+    passive: false
+    peak:
+      name: "шум пиковый уровень"
+      id: Leq_id
+      icon: mdi:waveform
+      filters:
+        - delta: 5
 
-
-  
-#-------------------------------------------
-# I2S
-#-------------------------------------------
-i2s:
-  bck_pin: GPIO22
-  ws_pin: GPIO19
-  din_pin: GPIO21
-  sample_rate: 16000 # 48000            # default: 48000
-  bits_per_sample: 16 #32           # default: 32
-  bits_shift: 8                 # default: 0
-
-#-------------------------------------------
-# SOUND LEVEL METER
-#-------------------------------------------
-sound_level_meter:
-  update_interval: 1s           # default: 60s
-  buffer_size: 1024             # default: 1024
-  mic_sensitivity: -26dB        # default: empty
-  mic_sensitivity_ref: 94dB     # default: empty
-  groups:
-    - sensors:
-        - type: eq
-          name: "шум пиковый уровень"
-          id: Leq_id
-          icon: mdi:waveform
-
-    
- 
 script:
-
   - id: led_off_id
     mode: restart
     then: 
@@ -309,8 +309,3 @@ display:
             it.rectangle(0, 0, 7, 5, white);
          
           }
-
-
-
-
-
