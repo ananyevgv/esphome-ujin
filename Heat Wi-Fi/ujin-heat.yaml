@@ -1,3 +1,17 @@
+#GPIO0 - Кнопка "Настройка" на плате сверху
+#GPIO1 - идет на выпаянный резистор R13 на силовой плате (TX)
+#GPIO2 - Адресные светодиоды (5 штук)
+#GPIO3 - Реле (RX)
+#GPIO4 - i2c  SDA
+#GPIO5 - i2c  SCL
+#GPIO12- идет на чип управления Тач кнопками
+#GPIO15 - Буззер
+#GPIO16 - идет на выпаянный резистор R17 на силовой плате
+#A0 - Вход для подключения резистивного датчика температуры, при полном замыкании 0,7 вольта
+
+#44 адрес i2c - SHT30
+#28 адрес i2c - CAP1293
+
 substitutions:
   room: kitchen
   name: ujin-heat
@@ -38,8 +52,7 @@ packages:
       heat_pin: GPIO3
       heat_threshold: 0x40
   led: !include 
-#    file: packages/ujin/led_heat.yaml
-    file: packages/ujin/led_heat_2.yaml
+    file: packages/ujin/led/led_heat.yaml
     vars:
       led_heat_pin: GPIO2
       led_heat: 3
