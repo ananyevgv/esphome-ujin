@@ -28,6 +28,16 @@ packages:
   web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
 
+
+#-------------------------------------------
+# GLOBAL 
+#-----------------------------------------
+globals:
+  - id: cicle 
+    type: int
+    restore_value: no
+    initial_value: '0'
+
 #-------------------------------------------
 # SWITCH
 #-------------------------------------------
@@ -51,16 +61,30 @@ switch:
               condition:
                 binary_sensor.is_on: zero
               then:
-                - delay: 0.01s
+                - delay: 0.0005s
+                - lambda: |-
+                    id(cicle) =  id(cicle)+1;
           - switch.turn_on: relay
+          - logger.log:
+              format: "Задержка вкл: (%d)"
+              args: "id(cicle)"
+          - lambda: |- 
+              id(cicle) = 0;
     on_turn_off:
        then:
           - while:
               condition:
                 binary_sensor.is_on: zero
               then:
-                - delay: 0.01s
+                - delay: 0.0005s
+                - lambda: |-
+                    id(cicle) =  id(cicle)+1;
           - switch.turn_off: relay
+          - logger.log:
+              format: "Задержка выкл: (%d)"
+              args: "id(cicle)"
+          - lambda: |- 
+              id(cicle) = 0;
 #-------------------------------------------
 # OUTPUT
 #-------------------------------------------
@@ -86,8 +110,9 @@ binary_sensor:
   - platform: gpio
     pin:
       number: GPIO5
-     # inverted: true
+      inverted: true
       allow_other_uses: true
+    update_interval: 0.0005s
     id: zero
   - platform: gpio
     pin:
@@ -147,3 +172,4 @@ sensor:
     accuracy_decimals: 0
     filters:
       - multiply: 0.0054
+
