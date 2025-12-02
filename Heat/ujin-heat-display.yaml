@@ -1,6 +1,58 @@
-esphome:
+# EN –     RST (XS3)
+# GPIO0 –  backlight GPO (XS3)
+# GPIO1 –  TXD (XS3)
+# GPIO2 –  
+# GPIO3 –  ZIGBEE 2652 (DIO17) tx_pin RXD (XS3)
+# GPIO4 –  
+# GPIO5 –  reset display
+# GPIO7 –  i2s
+# GPIO8 –  i2s 
+# GPIO12 – Buzzer
+# GPIO13 – I2C SDA
+# GPIO14 – ZIGBEE 2652 (DIO16) rx_pin
+# GPIO15 – I2C SCL
+# GPIO19 – spi mosi
+# GPIO20 – i2s
+# GPIO21 – DC mosi
+# GPIO22 – spi clk
+# GPIO25 – J1
+# GPIO26 – ES
+# GPIO27 – Relay J1
+# GPIO32 – 
+# GPIO33 – J1
+#########################
+# GPIO34 – ES
+# GPIO35 – NTC внешнний adc J1
+# GPIO36 – кнопки (4шт) adc
+# GPIO37 – ES 
+# GPIO38 – ES
+# GPIO39 – NTC внутренний adc
+
+###### J1 #########
+# GPIO25 # GPIO27 #
+###################
+#  GND   #        #
+###################
+# 3.3 V  # GPIO39 #
+###################
+#   5V   # GPIO38 # 
+###################
+# GPIO33 # GPIO36 #
+###################
+# GPIO27 # GPIO35 #
+###################
+
+substitutions:
   name: ujin-heat-display
+  device_description: Ujin heat display
+  room: kithen
+
+esphome:
+  name: "${name}"
   friendly_name: ujin-heat-display
+  comment: "${device_description}"
+  on_boot:
+    - rtttl.play: 'short:d=20,o=5,b=100:e6' 
 
 esp32:
   board: denky_d4
@@ -9,32 +61,43 @@ esp32:
     type: esp-idf
 
 #-------------------------------------------
-# PSRAM
+# Logger #32 356 байт
 #-------------------------------------------
-psram:
-  mode: quad
-  speed: 80MHz
-
+#logger: 
+#  hardware_uart: UART0
+  
 #-------------------------------------------
 # I2c
 #-------------------------------------------
 i2c:
-  sda:
-    number: GPIO13
-  scl: 
-    number: GPIO15
+  sda: GPIO13 #15
+  scl: GPIO15 # 13
   scan: true
-  id: bus_a
 
 #-------------------------------------------
-# spi
+# I2S
 #-------------------------------------------
-spi:
-  mosi_pin:  #SDA
-    number: GPIO19
-  clk_pin:  #SCL
-    number: GPIO22
-
+i2s_audio:
+  i2s_lrclk_pin: 
+    number: 7
+    ignore_pin_validation_error: true
+  i2s_bclk_pin:  
+    number: 8
+    ignore_pin_validation_error: true
+#-------------------------------------------
+# MICROPHONE
+#-------------------------------------------
+microphone:
+  - platform: i2s_audio
+    id: external_mic
+    adc_type: external
+    i2s_din_pin: 20 
+    channel: stereo
+    pdm: false
+    bits_per_sample: 16bit
+    bits_per_channel: 8bit
+    sample_rate: 16000
+    
 #-------------------------------------------
 # PACKAGES
 #-------------------------------------------
@@ -43,6 +106,14 @@ packages:
   wifi: !include packages/wifi.yaml
   web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
+  
+  button: !include packages/ujin/button/button_adc.yaml
+# Zigbee шлюз      
+#  zigbee: !include 
+#    file: packages/ujin/zigbee.yaml
+#    vars:
+#      TX_Z: GPIO14
+ #     RX_Z: GPIO3 
 
 # Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
   bme680_bsec: !include 
@@ -56,51 +127,150 @@ packages:
       id_bme680_voc: bme680_voc
       model_bme: bme680
       address_bme680: 0x76
-#-------------------------------------------
-# BINARY SENSOR
-#-------------------------------------------
-binary_sensor:
-  - platform: gpio
-    pin:
-      number: GPIO2
-    id: pir_id
-    name: pir  
-    icon: mdi:motion-sensor
+      t_offset: 0
+  display: !include packages/ujin/display/display.yaml
 
+  thermostat: !include  packages/ujin/display/thermostat.yaml
+  humm: !include packages/ujin/display/humm.yaml
+  barometr: !include  packages/ujin/display/barometr_page.yaml
+  #barometr: !include  packages/ujin/display/barometr.yaml
+  co2: !include packages/ujin/display/co2.yaml
+  iaq: !include packages/ujin/display/iaq.yaml
+  voc: !include packages/ujin/display/voc.yaml
+  clock: !include packages/ujin/display/clock_page.yaml
+  dishwasher: !include 
+    file: packages/ujin/display/dishwasher.yaml
+    vars:
+      sensor_dishwasher_percent: sensor.siemens_dishwasher_program_progress
+      sensor_dishwasher_time: sensor.siemens_dishwasher_remaining_program_time  
+      sensor_dishwasher_program_phase: sensor.siemens_dishwasher_program_phase
+      binary_sensor_dishwasher_door: binary_sensor.siemens_dishwasher_door
+      switch_dishwasher_power: switch.siemens_dishwasher_power
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Звук нажатие клавиш"
+    optimistic: True
+    id: sound
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    icon: mdi:volume-off
+
+#-------------------------------------------
+# Outputs
+#-------------------------------------------
+output:
+  - platform: ledc
+    pin: GPIO12
+    id: rtttl_out
+
+#-------------------------------------------
+# RTTTL
+#-------------------------------------------
+rtttl:
+  output: rtttl_out
+  gain: 60%
+
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
 sensor:
-  - platform: adc
-    pin: 35
-    id: adc_35   
-    name: "adc_35"
-    update_interval: 10s
-    attenuation: auto
-
-  - platform: adc
-    pin: 36
-    id: adc_36    
-    name: "adc_36"
-    update_interval: 10s
-    attenuation: auto
-      
+# sensor_internal
   - platform: adc
     pin: 39
     id: adc_39    
-    name: "adc_39"
-    update_interval: 10s
+    update_interval: 1s
     attenuation: auto
 
-display:
-  - platform: ili9xxx
-    model: GC9A01A
-    id: my_display
-    dimensions:
-      height: 240
-      width: 240
-    invert_colors: true
- #   reset_pin: GPIO4
- #   cs_pin: GPIO17
-    dc_pin:
-      number: GPIO21
-    rotation: 0
-#    update_interval: never
-    color_palette: 8BIT
+  - platform: resistance
+    id: ntc_sensor_internal
+    sensor: adc_39
+    configuration: UPSTREAM
+    resistor: 20 kOhm
+    
+  - platform: ntc
+    sensor: ntc_sensor_internal
+    calibration:
+      b_constant: 3980
+      reference_temperature: 25°C
+      reference_resistance: 10 kOhm
+    name: NTC internal
+    icon: mdi:thermometer
+    id: NTC_temperature_internal
+
+# sensor_external
+  - platform: adc
+    pin: 35
+    id: adc_35    
+    update_interval: 1s
+    attenuation: auto
+    name: adc_35 
+
+  - platform: resistance
+    id: ntc_sensor_external
+    sensor: adc_35
+    configuration: UPSTREAM
+    resistor: 1 kOhm
+
+  - platform: ntc
+    sensor: ntc_sensor_external
+    calibration:
+      b_constant: 3980
+      reference_temperature: 25°C
+      reference_resistance: 10 kOhm
+    name: NTC external
+    icon: mdi:thermometer
+    id: NTC_temperature_external
+    filters:
+      - lambda: |-
+          if (x < -60 || x > 60) {
+            return id(bme680_t).state;
+            // return id(sht3x_t).state;
+            ESP_LOGW("Termostat", "Error connect NTC resistace");
+          } else
+            return x;
+
+# sensor__adc_34
+  - platform: adc
+    pin: 34
+    id: adc_34    
+    update_interval: 1s
+    attenuation: auto
+    name: adc_34 
+
+# sensor_adc_37
+  - platform: adc
+    pin: 37
+    id: adc_37   
+    update_interval: 1s
+    attenuation: auto
+    name: adc_37 
+
+# sensor_adc_38
+  - platform: adc
+    pin: 38
+    id: adc_38  
+    update_interval: 1s
+    attenuation: auto
+    name: adc_38 
+
+
+
+# sensor sound_leve
+  - platform: sound_level
+    passive: false
+    peak:
+      name: "шум пиковый уровень"
+      id: Leq_id
+      icon: mdi:waveform
+      filters:
+        - delta: 5
+
+
+
+
+
