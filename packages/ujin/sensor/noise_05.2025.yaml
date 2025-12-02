@@ -25,7 +25,7 @@ microphone:
     adc_type: external
     i2s_din_pin: $noise_din
     channel: left
-    pdm: true
+    pdm: false
     bits_per_sample: 16bit
     bits_per_channel: 8bit
     sample_rate: 16000
