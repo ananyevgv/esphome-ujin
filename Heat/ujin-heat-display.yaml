@@ -5,16 +5,16 @@
 # GPIO3 –  ZIGBEE 2652 (DIO17) tx_pin RXD (XS3)
 # GPIO4 –  
 # GPIO5 –  reset display
-# GPIO7 –  i2s
-# GPIO8 –  i2s 
+# GPIO7 –  i2s din
+# GPIO8 –  i2s lrclk
 # GPIO12 – Buzzer
 # GPIO13 – I2C SDA
 # GPIO14 – ZIGBEE 2652 (DIO16) rx_pin
 # GPIO15 – I2C SCL
 # GPIO19 – spi mosi
-# GPIO20 – i2s
+# GPIO20 – i2s bclk
 # GPIO21 – DC mosi
-# GPIO22 – spi clk
+# GPIO22 – spi spi
 # GPIO25 – J1
 # GPIO26 – ES
 # GPIO27 – Relay J1
@@ -79,11 +79,11 @@ i2c:
 #-------------------------------------------
 i2s_audio:
   i2s_lrclk_pin: 
-    number: 7
+    number: 8 
     ignore_pin_validation_error: true
   i2s_bclk_pin:  
-    number: 8
-    ignore_pin_validation_error: true
+    number: 20
+   # ignore_pin_validation_error: true
 #-------------------------------------------
 # MICROPHONE
 #-------------------------------------------
@@ -91,8 +91,10 @@ microphone:
   - platform: i2s_audio
     id: external_mic
     adc_type: external
-    i2s_din_pin: 20 
-    channel: stereo
+    i2s_din_pin: 
+      number: 7
+      ignore_pin_validation_error: true
+    channel: left
     pdm: false
     bits_per_sample: 16bit
     bits_per_channel: 8bit
