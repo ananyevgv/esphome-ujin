@@ -23,7 +23,7 @@
 
 | [lume-in](./lume-in) | [Connect-in](./connect-in) | [Heat](./Heat) | [Connect din](./Connect-din%20Wi-Fi) |
 |--------------------|---------------|----------------------|----------------------|
-|![lume-in](/lume-in/images/lume_in.jpg) ||![Connect-in](/connect-in/images/connect_in0.jpg) | ![Heat](/Heat/images/heat.jpg) |![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg) |
+|![lume-in](/lume-in/images/lume_in.jpg) |![Connect-in](/connect-in/images/connect_in0.jpg) | ![Heat](/Heat/images/heat.jpg) |![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg) |
 
 
 [Расшифровка моделей по датчикам](/datasheet/data.jpg)
