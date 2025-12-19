@@ -1,0 +1,235 @@
+# EN –     
+# GPIO0 - button
+# GPIO1 - 
+# GPIO2 –  
+# GPIO3 –  
+# GPIO4 – led
+# GPIO5 – 
+# GPIO7 –  
+# GPIO8 –  
+# GPIO12 – 
+# GPIO13 – 
+# GPIO14 – 
+# GPIO15 – 
+# GPIO19 – dimm
+# GPIO20 – 
+# GPIO21 – 
+# GPIO22 – dimm
+# GPIO25 – external button 1
+# GPIO26 – external button 2
+# GPIO27 – 
+# GPIO32 – &| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 1| Intr:1 
+# GPIO33 – &| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 1| Intr:1 
+#########################
+# GPI34 – &
+# GPI35 – &
+# GPI36 – 
+# GPI37 – 
+# GPI38 – 
+# GPI39 – 
+
+substitutions:
+  name: ujin-lume-in
+  device_description: ujin-lume-in
+  delta_brigh: 10%
+  
+esphome:
+  name: "${name}"
+  friendly_name: ujin-lume-in
+  comment: "${device_description}"
+
+esp32:
+  board: denky_d4
+  flash_size: 8MB
+  framework:
+    type: esp-idf
+    
+external_components:
+  - source: github://pr#7072
+    components: [ac_dimmer]
+    refresh: 1h
+    
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+# обязательные пакеты
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+
+# Диммер
+  zero_dimm: !include 
+    file: packages/ujin/dimmer/zero_dimm_in.yaml
+    vars:
+      dimmer1_zero: GPIO32
+      dimmer2_zero: GPIO33
+      dimmer1_gate: GPIO19  
+      dimmer2_gate: GPIO22 
+      type_light1: monochromatic #binary # 
+      type_light2: monochromatic # binary
+
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      inverted: true
+    name: "button" 
+    on_click:
+      then:
+        - light.toggle: light_dimmer1
+        - light.toggle: light_dimmer2
+
+  - platform: gpio
+    pin:
+      number: GPIO25
+      inverted: true
+    name: "external button 1" 
+    id: button_1
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.toggle: light_dimmer1
+      - timing:
+          - ON for at least 1s
+        then:
+          if: 
+            condition:
+              light.is_off: light_dimmer1
+            then:   
+              - light.turn_on:
+                  id: light_dimmer1
+                  brightness: 0.1
+              - while:
+                  condition:
+                    binary_sensor.is_on: button_1
+                  then:
+                    - light.dim_relative:
+                        id: light_dimmer1
+                        relative_brightness: $delta_brigh
+                    - delay: 0.01s
+            else: 
+              if: 
+                condition:
+                  lambda: return id(light_dimmer1)->current_values.get_brightness() > 0.5f;
+                then:
+                  while:
+                    condition:
+                      binary_sensor.is_on: button_1
+                    then:
+                      - light.dim_relative:
+                          id: light_dimmer1
+                          relative_brightness: -$delta_brigh
+                      - delay: 0.5s
+                else: 
+                  while:
+                    condition:
+                      binary_sensor.is_on: button_1
+                    then:
+                      - light.dim_relative:
+                          id: light_dimmer1
+                          relative_brightness: $delta_brigh
+                      - delay: 0.01s
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.turn_on:
+            id: light_dimmer1
+            brightness: 1
+
+  - platform: gpio
+    pin:
+      number: GPIO26
+      inverted: true
+    name: "external button 2" 
+    id: button_2
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.toggle: light_dimmer2
+      - timing:
+          - ON for at least 1s
+        then:
+          if: 
+            condition:
+              light.is_off: light_dimmer2
+            then:   
+              - light.turn_on:
+                  id: light_dimmer2
+                  brightness: 0.1
+              - while:
+                  condition:
+                    binary_sensor.is_on: button_2
+                  then:
+                    - light.dim_relative:
+                        id: light_dimmer2
+                        relative_brightness: $delta_brigh
+                    - delay: 0.01s
+            else: 
+              if: 
+                condition:
+                  lambda: return id(light_dimmer2)->current_values.get_brightness() > 0.5f;
+                then:
+                  while:
+                    condition:
+                      binary_sensor.is_on: button_2
+                    then:
+                      - light.dim_relative:
+                          id: light_dimmer2
+                          relative_brightness: -$delta_brigh
+                      - delay: 0.5s
+                else: 
+                  while:
+                    condition:
+                      binary_sensor.is_on: button_2
+                    then:
+                      - light.dim_relative:
+                          id: light_dimmer2
+                          relative_brightness: $delta_brigh
+                      - delay: 0.01s
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.5s
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.turn_on:
+            id: light_dimmer2
+            brightness: 1
+
+  - platform: gpio
+    pin:
+      number: GPIO34
+      inverted: true
+    name: "GPIO34"   
+
+  - platform: gpio
+    pin:
+      number: GPIO35
+      inverted: true
+    name: "GPIO35"   
+
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------
+output:
+  - platform: gpio
+    pin: GPIO4
+    id: gpio_4
+
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: binary
+    output: gpio_4  
+    id: led_relay
+    name:  light gpio4 
