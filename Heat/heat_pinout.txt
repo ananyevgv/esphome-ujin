@@ -1,32 +1,43 @@
-EN –     RST (XS3)
-GPIO0 –  GPO (XS3)
-GPIO1 –  TXD (XS3)
-GPIO2 –  
-GPIO3 –  RXD (XS3)
-GPIO4 –  
-GPIO5 –  
+# EN –     RST (XS3)
+# GPIO0 –  backlight GPO (XS3)
+# GPIO1 –  TXD (XS3)
+# GPIO2 –  &
+# GPIO3 –  ZIGBEE 2652 (DIO17) tx_pin RXD (XS3)
+# GPIO4 –  &
+# GPIO5 –  reset display
+# GPIO7 –  i2s din
+# GPIO8 –  i2s lrclk
+# GPIO12 – Buzzer
+# GPIO13 – I2C SDA
+# GPIO14 – ZIGBEE 2652 (DIO16) rx_pin
+# GPIO15 – I2C SCL
+# GPIO19 – spi mosi
+# GPIO20 – i2s bclk
+# GPIO21 – DC mosi
+# GPIO22 – spi clk
+# GPIO25 – J1 &
+# GPIO26 – ES &
+# GPIO27 – Relay J1
+# GPIO32 – 
+# GPIO33 – J1 &
+#########################
+# GPI34 – ES
+# GPI35 – NTC внешнний adc J1
+# GPI36 – кнопки (4шт) adc
+# GPI37 – ES 
+# GPI38 – ES
+# GPI39 – NTC внутренний adc
 
-GPIO7 –  
-GPIO8 –  
-
-GPIO12 – 
-GPIO13 – I2C SDA
-GPIO14 – 
-GPIO15 – I2C SCL
-GPIO19 – spi mosi
-GPIO20 – 
-GPIO21 – spi DC
-GPIO22 – spi clk
-GPIO25 – 
-GPIO26 – 
-GPIO27 – 
-GPIO32 – 
-GPIO33 – 
-GPI34 – 
-GPI35 – 
-GPI36 – 
-GPI37 –  
-GPI38 – 
-GPI39 – 
-
-
+###### J1 #########
+# GPIO25 # GPIO27 #
+###################
+#  GND   #        #
+###################
+# 3.3 V  # GPIO39 #
+###################
+#   5V   # GPIO38 # 
+###################
+# GPIO33 # GPIO36 #
+###################
+# GPIO27 # GPIO35 #
+###################
