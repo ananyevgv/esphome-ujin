@@ -18,70 +18,6 @@ image:
 
 
 #-------------------------------------------
-# BINARY_SENSOR
-#-------------------------------------------            
-binary_sensor:
-  - id: !extend bin_vl
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: barometr_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.previous:  
-
-  - id: !extend bin_nl
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: barometr_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.next:    
-
-  - id: !extend bin_vp
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: barometr_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.next:    
-
-  - id: !extend bin_np
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: barometr_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.next:  
-
-
-#-------------------------------------------
-# SENSOR
-#-------------------------------------------
-sensor:
-  platform: bme68x_bsec2
-  temperature:
-    - id: !extend ${id_bme680_t}
-      on_value:
-        - lvgl.indicator.update:
-            id: temperatura_hand
-            value: !lambda |- 
-              return x;
-  pressure:
-    - id: !extend ${id_bme680_p}
-      on_value:
-        - lvgl.indicator.update:
-            id: barometr_hand
-            value: !lambda |- 
-                return x;
-        - lvgl.indicator.update:
-            id: barometr_hand_z
-            value: !lambda |- 
-              return x;
-#-------------------------------------------
 # LVGL
 #-------------------------------------------
 lvgl:
@@ -122,8 +58,8 @@ lvgl:
                             r_mod: -15
                       rotation: 120
                       angle_range: 300 # Угол между началом и концом
-                      range_from: 690 #920 # Минимальное значение 920
-                      range_to: 810 #1080  # Максимальное значение 1080
+                      range_from: 920 # Минимальное значение 920
+                      range_to: 1080  # Максимальное значение 1080
                       ticks: 
                         count: 0 
                         
@@ -135,8 +71,8 @@ lvgl:
                             r_mod: -150
                       rotation: 300
                       angle_range: 300 # Угол между началом и концом
-                      range_from: 690 # Минимальное значение
-                      range_to: 810    
+                      range_from: 920 # 690 # Минимальное значение
+                      range_to: 1080 #810    
                       ticks: 
                         count: 0
 
@@ -148,8 +84,8 @@ lvgl:
                             r_mod: -15
                       rotation: 120
                       angle_range: 300 # Угол между началом и концом
-                      range_from: 690 # Минимальное значение
-                      range_to: 810  # Максимальное значение
+                      range_from: 920 #690 # Минимальное значение
+                      range_to: 1080 #810  # Максимальное значение
                       ticks: 
                         count: 0 
 
@@ -161,8 +97,8 @@ lvgl:
                             r_mod: -150
                       rotation: 300
                       angle_range: 300 # Угол между началом и концом
-                      range_from: 690 # Минимальное значение
-                      range_to: 810 
+                      range_from: 920 #690 # Минимальное значение
+                      range_to: 1080 #810 
                       ticks: 
                         count: 0
       

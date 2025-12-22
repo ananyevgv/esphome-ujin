@@ -9,6 +9,7 @@ substitutions:
 esphome:
   on_boot:
     - light.turn_on: backlight
+    
 # ----------------------------------------- 
 #  COLORS 
 # ----------------------------------------- 
@@ -84,9 +85,9 @@ psram:
 #-------------------------------------------
 spi:
   mosi_pin:  #SDA
-    number: 2 # GPIO19
+    number:  GPIO19 # 2 #
   clk_pin:  #SCL
-    number: 1 # GPIO22
+    number:  GPIO22 # 1 #
     
 #-------------------------------------------
 # API
@@ -150,7 +151,7 @@ select:
      - "90°"
      - "180°"
      - "270°"
-    initial_option: "0°"
+    initial_option: "180°"
     optimistic: true
     icon: mdi:phone-rotate-landscape
     on_value:
@@ -260,8 +261,8 @@ sensor:
 output:
   - platform: ledc
     pin:
-      number: 6 # GPIO0
-    #  inverted: true
+      number:  GPIO0 # 6 #
+      inverted: true
     id: GPIO0
     frequency: 100Hz
 
@@ -275,6 +276,7 @@ light:
     id: backlight
     icon: mdi:television-ambient-light
 
+
 #-------------------------------------------
 # DISPLAY
 #-------------------------------------------  
@@ -284,10 +286,10 @@ display:
     id: my_display
     invert_colors: true
     data_rate: 80 MHz
-    dc_pin: 4 # GPIO21
-    reset_pin: 3 #GPIO5
+    dc_pin: GPIO21 # 4 # 
+    reset_pin: GPIO5 # 3 #
     auto_clear_enabled: false
-    rotation: 180
+   # rotation: 180
    # show_test_card: true
    
 #-------------------------------------------   
@@ -296,12 +298,12 @@ display:
 lvgl:
   displays:
     -  my_display
-  on_idle:
-    timeout: !lambda "return id(lv_timeout);"
-    then:
-      - logger.log: "LVGL is idle"
-      - light.turn_off: backlight
-      - lvgl.pause:
+  #on_idle:
+  #  timeout: !lambda "return id(lv_timeout);"
+  #  then:
+   #   - logger.log: "LVGL is idle"
+  #    - light.turn_off: backlight
+   #  - lvgl.pause:
   gradients:
     - id: hue_gradient
       direction: ver

@@ -18,45 +18,6 @@ font:
     glyphs: [
       $co2_icon
     ]  
-#-------------------------------------------
-# BINARY_SENSOR
-#-------------------------------------------            
-binary_sensor:
-  - id: !extend bin_vl
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: co2_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.previous:  
-
-  - id: !extend bin_nl
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: co2_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.next:    
-
-  - id: !extend bin_vp
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: co2_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.next:    
-
-  - id: !extend bin_np
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: co2_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.next:  
 
 
 #-------------------------------------------
@@ -65,7 +26,7 @@ binary_sensor:
 sensor:
   platform: bme68x_bsec2
   co2_equivalent:
-    - id: !extend ${id_bme680_co2}
+    - id: !extend bme680_co2
       on_value:
         - lvgl.indicator.update:
             id: co2_meter

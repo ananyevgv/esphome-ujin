@@ -1,0 +1,111 @@
+#############################################################################
+#----Страничка  кнопока-----------------------------------------------------
+#############################################################################
+#  button: !include
+#    file: packages/ujin/display/button.yaml
+#    vars:
+#      button_icon_0_0: "\U000F116A" # gate-open
+#      button_entity_0_0: switch.sonoff_1000fd870d_1
+#      button_action_0_0: "script.vorota"
+#      button_checkable_0_0: "true"
+
+
+#############
+#           #         
+#           #  
+#   0_0     #   
+#           #      
+#############
+
+
+font:
+  - file: 'font/materialdesignicons-webfont.ttf' # http://materialdesignicons.com/cdn/7.4.47/ 
+    id: button_65
+    size: 65
+    bpp: 4
+    glyphs: [
+      $button_icon_0_0
+      ]   
+      
+#-------------------------------------------
+# Binary sensor
+#-------------------------------------------
+binary_sensor:
+#-------------------------------------------
+# 0 Ряд
+#-------------------------------------------
+#action:
+ # - service: homeassistant.update_entity
+ #   target:
+ #     entity_id: switch.sonoff_1000xxxxxx
+
+  - platform: homeassistant
+    name: bin_button_icon_0_0
+    entity_id: $button_entity_0_0
+    trigger_on_initial_state: true
+    #internal: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: b_button_0_0
+          state:
+            checked: !lambda return x;
+    on_press:
+      lvgl.widget.update:
+        id: w_button_0_0
+        text_color: 0xFFFF00
+    on_release:
+      lvgl.widget.update:
+        id: w_button_0_0
+        text_color: 0xB6B6B6
+        
+#-------------------------------------------
+# LVGL
+#-------------------------------------------
+lvgl:
+  pages:
+    - id: button_page     
+      width: 100%
+      bg_color: 0x000000
+      bg_opa: cover
+      widgets:
+
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            width: 240
+            height: 240
+            align: TOP_LEFT
+            x: 0
+            y: 0
+            layout:
+              pad_row: 10
+              pad_column: 10
+              type: GRID
+              grid_columns: [FR(1)]
+              grid_rows: [FR(1)]
+            widgets:
+            ########################
+              - button:
+                  checkable: $button_checkable_0_0
+                  id: b_button_0_0
+                  grid_cell_row_pos: 0 #Позиция ряд
+                  grid_cell_column_pos: 0 #Позиция колонка
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_row_span: 1 #Занять ячеек в ряде
+                  grid_cell_column_span: 1 #Занять ячеек в колонке
+                  bg_opa: 35%
+                  widgets:
+                    - label:
+                        text_font: button_65
+                        align: center
+                        text: $button_icon_0_0
+                        id: w_button_0_0
+                  on_click:
+                    - homeassistant.action:
+                        action: $button_action_0_0
+                        data:
+                          entity_id: $button_entity_0_0
+
+  

@@ -73,47 +73,6 @@ script:
             return day_names[id(sntp_time).now().day_of_week-1];
 
 
-
-#-------------------------------------------
-# BINARY_SENSOR
-#-------------------------------------------            
-binary_sensor:
-  - id: !extend bin_vl
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: clock_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.previous:     
-
-  - id: !extend bin_nl
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: clock_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.next:    
-
-  - id: !extend bin_vp
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: clock_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.next:    
-
-  - id: !extend bin_np
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: clock_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.next:     
-            
 #-------------------------------------------
 # TIME
 #-------------------------------------------
