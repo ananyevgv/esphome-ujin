@@ -58,45 +58,47 @@ font:
 #-------------------------------------------            
 binary_sensor:
   - id: !extend bin_vl
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: thermostat_page
-        then:
-          - light.turn_on: backlight
-          - climate.control:
-              id:  ${room}_thermostat
-              target_temperature: !lambda "return id(${room}_thermostat).target_temperature - 0.5;"
+    on_click:
+      then:
+        if:
+          condition:
+            lvgl.page.is_showing: thermostat_page
+          then:
+            - light.turn_on: backlight
+            - climate.control:
+                id:  ${room}_thermostat
+                target_temperature: !lambda "return id(${room}_thermostat).target_temperature + 0.5;"
+    on_double_click:
+      then:
+        if:
+          condition:
+            lvgl.page.is_showing: thermostat_page
+          then:
+            - light.turn_on: backlight
+            - switch.toggle:
+                id: climate_toggle
+
   - id: !extend bin_nl
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: thermostat_page
-        then:
-          - light.turn_on: backlight
-          - switch.toggle:
-              id: climate_toggle
+    on_click:
+      then:
+        if:
+          condition:
+            lvgl.page.is_showing: thermostat_page
+          then:
+            - light.turn_on: backlight
+            - climate.control:
+                id:  ${room}_thermostat
+                target_temperature: !lambda "return id(${room}_thermostat).target_temperature - 0.5;"
+    on_double_click:
+      then:
+        if:
+          condition:
+            lvgl.page.is_showing: thermostat_page
+          then:
+            - light.turn_on: backlight
+            - switch.toggle:
+                id: climate_toggle
 
-  - id: !extend bin_vp
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: thermostat_page
-        then:
-          - light.turn_on: backlight
-          - climate.control:
-              id:  ${room}_thermostat
-              target_temperature: !lambda "return id(${room}_thermostat).target_temperature + 0.5;"
-
-  - id: !extend bin_np
-    on_press:
-    - if:
-        condition:
-          lvgl.page.is_showing: thermostat_page
-        then:
-          - light.turn_on: backlight
-          - lvgl.page.next:  
-          
 #-------------------------------------------
 # SENSOR
 #-------------------------------------------
@@ -202,7 +204,7 @@ number:
 switch:
   - platform: gpio
     pin:
-      number: 14 # GPIO27
+      number: GPIO27 # 14 #
     id: relay
     
   - platform: template
