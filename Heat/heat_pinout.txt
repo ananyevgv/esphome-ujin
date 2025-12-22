@@ -5,8 +5,8 @@
 # GPIO3 –  ZIGBEE 2652 (DIO17) tx_pin RXD (XS3)
 # GPIO4 –  &
 # GPIO5 –  reset display
-# GPIO7 –  i2s din
-# GPIO8 –  i2s lrclk
+# GPIO7 –  i2s lrclk
+# GPIO8 –  i2s din
 # GPIO12 – Buzzer
 # GPIO13 – I2C SDA
 # GPIO14 – ZIGBEE 2652 (DIO16) rx_pin
