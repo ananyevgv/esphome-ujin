@@ -1,47 +1,3 @@
-# EN –     RST (XS3)
-# GPIO0 –  backlight GPO (XS3)
-# GPIO1 –  TXD (XS3)
-# GPIO2 –  
-# GPIO3 –  ZIGBEE 2652 (DIO17) tx_pin RXD (XS3)
-# GPIO4 –  
-# GPIO5 –  reset display
-# GPIO7 –  i2s din
-# GPIO8 –  i2s lrclk
-# GPIO12 – Buzzer
-# GPIO13 – I2C SDA
-# GPIO14 – ZIGBEE 2652 (DIO16) rx_pin
-# GPIO15 – I2C SCL
-# GPIO19 – spi mosi
-# GPIO20 – i2s bclk
-# GPIO21 – DC mosi
-# GPIO22 – spi spi
-# GPIO25 – J1
-# GPIO26 – ES
-# GPIO27 – Relay J1
-# GPIO32 – 
-# GPIO33 – J1
-#########################
-# GPIO34 – ES
-# GPIO35 – NTC внешнний adc J1
-# GPIO36 – кнопки (4шт) adc
-# GPIO37 – ES 
-# GPIO38 – ES
-# GPIO39 – NTC внутренний adc
-
-###### J1 #########
-# GPIO25 # GPIO27 #
-###################
-#  GND   #        #
-###################
-# 3.3 V  # GPIO39 #
-###################
-#   5V   # GPIO38 # 
-###################
-# GPIO33 # GPIO36 #
-###################
-# GPIO27 # GPIO35 #
-###################
-
 substitutions:
   name: ujin-heat-display
   device_description: Ujin heat display
@@ -75,32 +31,6 @@ i2c:
   scan: true
 
 #-------------------------------------------
-# I2S
-#-------------------------------------------
-i2s_audio:
-  i2s_lrclk_pin: 
-    number: 8 
-    ignore_pin_validation_error: true
-  i2s_bclk_pin:  
-    number: 20
-   # ignore_pin_validation_error: true
-#-------------------------------------------
-# MICROPHONE
-#-------------------------------------------
-microphone:
-  - platform: i2s_audio
-    id: external_mic
-    adc_type: external
-    i2s_din_pin: 
-      number: 7
-      ignore_pin_validation_error: true
-    channel: left
-    pdm: false
-    bits_per_sample: 16bit
-    bits_per_channel: 8bit
-    sample_rate: 16000
-    
-#-------------------------------------------
 # PACKAGES
 #-------------------------------------------
 packages:
@@ -108,18 +38,38 @@ packages:
   wifi: !include packages/wifi.yaml
   web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
-  
+
+# Кнопки
   button: !include packages/ujin/button/button_adc.yaml
+
 # Zigbee шлюз      
-#  zigbee: !include 
-#    file: packages/ujin/zigbee.yaml
-#    vars:
-#      TX_Z: GPIO14
- #     RX_Z: GPIO3 
+  zigbee: !include 
+    file: packages/ujin/zigbee.yaml
+    vars:
+      TX_Z: GPIO14
+      RX_Z: GPIO3 
+
+# Датчики  
+# Датчик освещености
+  ltr: !include 
+    file: packages/ujin/sensor/LTR329.yaml
+
+# Датчик температуры встроенный NTC
+  ntc_i: !include 
+    file: packages/ujin/sensor/ntc_internal.yaml
+    vars:
+      ntc_internal_pin: 39
+
+# Датчик температуры внешний NTC
+  ntc_e: !include 
+    file: packages/ujin/sensor/ntc_external.yaml
+    vars:
+      ntc_external_pin: 35
+      rezerv_temp: bme680_t
 
 # Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
   bme680_bsec: !include 
-    file: packages/ujin/sensor/bme680_bsec2.yaml
+    file: packages/ujin/sensor/bme680_bsec2_disp.yaml
     vars:
       id_bme680_t: bme680_t
       id_bme680_h: bme680_h
@@ -127,18 +77,21 @@ packages:
       id_bme680_iaq: bme680_iaq
       id_bme680_co2: bme680_co2
       id_bme680_voc: bme680_voc
-      model_bme: bme680
+      model_bme: bme688
       address_bme680: 0x76
       t_offset: 0
+
+# Дисплей
   display: !include packages/ujin/display/display.yaml
 
   thermostat: !include  packages/ujin/display/thermostat.yaml
   humm: !include packages/ujin/display/humm.yaml
-  barometr: !include  packages/ujin/display/barometr_page.yaml
-  #barometr: !include  packages/ujin/display/barometr.yaml
+  barometr: !include packages/ujin/display/barometr_page.yaml
+ # barometr: !include  packages/ujin/display/barometr.yaml
   co2: !include packages/ujin/display/co2.yaml
   iaq: !include packages/ujin/display/iaq.yaml
   voc: !include packages/ujin/display/voc.yaml
+
   clock: !include packages/ujin/display/clock_page.yaml
   dishwasher: !include 
     file: packages/ujin/display/dishwasher.yaml
@@ -176,92 +129,10 @@ rtttl:
   output: rtttl_out
   gain: 60%
 
-
 #-------------------------------------------
 # SENSOR
 #-------------------------------------------
 sensor:
-# sensor_internal
-  - platform: adc
-    pin: 39
-    id: adc_39    
-    update_interval: 1s
-    attenuation: auto
-
-  - platform: resistance
-    id: ntc_sensor_internal
-    sensor: adc_39
-    configuration: UPSTREAM
-    resistor: 20 kOhm
-    
-  - platform: ntc
-    sensor: ntc_sensor_internal
-    calibration:
-      b_constant: 3980
-      reference_temperature: 25°C
-      reference_resistance: 10 kOhm
-    name: NTC internal
-    icon: mdi:thermometer
-    id: NTC_temperature_internal
-
-# sensor_external
-  - platform: adc
-    pin: 35
-    id: adc_35    
-    update_interval: 1s
-    attenuation: auto
-    name: adc_35 
-
-  - platform: resistance
-    id: ntc_sensor_external
-    sensor: adc_35
-    configuration: UPSTREAM
-    resistor: 1 kOhm
-
-  - platform: ntc
-    sensor: ntc_sensor_external
-    calibration:
-      b_constant: 3980
-      reference_temperature: 25°C
-      reference_resistance: 10 kOhm
-    name: NTC external
-    icon: mdi:thermometer
-    id: NTC_temperature_external
-    filters:
-      - lambda: |-
-          if (x < -60 || x > 60) {
-            return id(bme680_t).state;
-            // return id(sht3x_t).state;
-            ESP_LOGW("Termostat", "Error connect NTC resistace");
-          } else
-            return x;
-
-# sensor__adc_34
-  - platform: adc
-    pin: 34
-    id: adc_34    
-    update_interval: 1s
-    attenuation: auto
-    name: adc_34 
-
-# sensor_adc_37
-  - platform: adc
-    pin: 37
-    id: adc_37   
-    update_interval: 1s
-    attenuation: auto
-    name: adc_37 
-
-# sensor_adc_38
-  - platform: adc
-    pin: 38
-    id: adc_38  
-    update_interval: 1s
-    attenuation: auto
-    name: adc_38 
-
-
-
 # sensor sound_leve
   - platform: sound_level
     passive: false
@@ -271,6 +142,36 @@ sensor:
       icon: mdi:waveform
       filters:
         - delta: 5
+
+#-------------------------------------------
+# I2S
+#-------------------------------------------
+i2s_audio:
+  i2s_lrclk_pin: 
+    number: 7
+    ignore_pin_validation_error: true
+  i2s_bclk_pin:  
+    number: 20
+
+#-------------------------------------------
+# MICROPHONE
+#-------------------------------------------
+microphone:
+  - platform: i2s_audio
+    id: external_mic
+    adc_type: external
+    i2s_din_pin:     
+      number: 8
+      ignore_pin_validation_error: true
+    channel: stereo
+    pdm: false
+    bits_per_sample: 16bit
+    bits_per_channel: 8bit
+    sample_rate: 16000
+    
+
+
+
 
 
 
