@@ -1,0 +1,152 @@
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: adc
+    pin: 36 # 8 #
+    id: adc_36    
+   # name: "adc_36"
+    update_interval: 0.1s
+    attenuation: auto
+    on_value_range:
+      - above: 1.3
+        below: 1.5
+        then:
+        - binary_sensor.template.publish:
+            id: bin_vp
+            state: ON
+        - binary_sensor.template.publish:
+            id: bin_vl
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_nl
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_np
+            state: OFF
+
+      - above: 1.7
+        below: 1.9
+        then:      
+        - binary_sensor.template.publish:
+            id: bin_vp
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_vl
+            state: ON
+        - binary_sensor.template.publish:
+            id: bin_nl
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_np
+            state: OFF
+
+      - above: 2.2
+        below: 2.4
+        then:      
+        - binary_sensor.template.publish:
+            id: bin_vp
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_vl
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_nl
+            state: ON
+        - binary_sensor.template.publish:
+            id: bin_np
+            state: OFF
+
+      - above: 2.8
+        below: 3.0
+        then:      
+        - binary_sensor.template.publish:
+            id: bin_vp
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_vl
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_nl
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_np
+            state: ON
+      - above: 3.05
+        below: 3.3
+        then:      
+        - binary_sensor.template.publish:
+            id: bin_vp
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_vl
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_nl
+            state: OFF
+        - binary_sensor.template.publish:
+            id: bin_np
+            state: OFF
+            
+#-------------------------------------------
+# BINARY_SENSOR
+#-------------------------------------------            
+binary_sensor:
+  - platform: template    
+    name: "VL"
+    id: bin_vl  
+    on_press:
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+              
+  - platform: template    
+    name: "NL"
+    id: bin_nl  
+    on_press:
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+              
+  - platform: template    
+    name: "VP"
+    id: bin_vp  
+    on_press:
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6' 
+        - light.turn_on: backlight
+        - lvgl.page.previous:
+        
+  - platform: template    
+    name: "NP"
+    id: bin_np 
+    on_press:
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+        - light.turn_on: backlight
+        - lvgl.page.next:  
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+            
