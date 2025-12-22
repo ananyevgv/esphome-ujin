@@ -1,0 +1,21 @@
+sensor:
+  - platform: adc
+    pin: $ntc_internal_pin
+    id: adc_internal
+    attenuation: auto
+
+  - platform: resistance
+    id: ntc_sensor_internal
+    sensor: adc_internal
+    configuration: UPSTREAM
+    resistor: 10 kOhm
+    
+  - platform: ntc
+    sensor: ntc_sensor_internal
+    calibration:
+      b_constant: 3980
+      reference_temperature: 25°C
+      reference_resistance: 10 kOhm
+    name: NTC internal
+    icon: mdi:thermometer
+    id: NTC_temperature_internal

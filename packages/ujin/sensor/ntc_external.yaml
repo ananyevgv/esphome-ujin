@@ -1,0 +1,30 @@
+sensor:
+# sensor_external
+  - platform: adc
+    pin: $ntc_external_pin
+    id: adc_external   
+    attenuation: auto
+    name: adc_35 
+
+  - platform: resistance
+    id: ntc_sensor_external
+    sensor: adc_external
+    configuration: UPSTREAM
+    resistor: 10 kOhm
+
+  - platform: ntc
+    sensor: ntc_sensor_external
+    calibration:
+      b_constant: 3980
+      reference_temperature: 25°C
+      reference_resistance: 10 kOhm
+    name: NTC external
+    icon: mdi:thermometer
+    id: NTC_temperature_external
+    filters:
+      - lambda: |-
+          if (x < -60 || x > 60) {
+            return id($rezerv_temp).state;
+            ESP_LOGW("Termostat", "Error connect NTC resistace");
+          } else
+            return x;

@@ -1,0 +1,8 @@
+sensor:
+  - platform: ltr_als_ps
+    address: 0x29
+    id: Ambient_light_id
+    update_interval: 1 s
+    type: ALS_PS  
+    ambient_light: "Освещенность"
+    ps_cooldown: 5 s
