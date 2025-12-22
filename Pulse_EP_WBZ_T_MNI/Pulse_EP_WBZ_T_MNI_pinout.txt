@@ -25,7 +25,7 @@ GPIO27 – на контакте 12 (J1) drive INF
 GPIO32 – на контакте 2 (J1)
 GPIO33 – на контакте 4 (J1)
 GPI34 – на контакте 7 (J1) 
-GPI35 – на контакте 1 (J1)
+GPI35 – на контакте 1 (J1) датчик протечки
 GPI36 – __________  
 GPI37 – резистивный датчик температуры 
 GPI38 – на контакте 3 (J1)
@@ -57,4 +57,5 @@ ZIGBEE 2652 (DIO8) - внешняя память Q  Serial Data Output
 ZIGBEE 2652 (DIO9) - внешняя память D  Serial Data Input 
 ZIGBEE 2652 (DIO10) - внешняя память C  Serial clock
 ZIGBEE 2652 (DIO21) - внешняя память S  Chip Select
+
 
