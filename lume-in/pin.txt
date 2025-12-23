@@ -11,12 +11,12 @@
 # GPIO13 – 
 # GPIO14 – 
 # GPIO15 – 
-# GPIO19 – dimm
+# GPIO19 – dimm2
 # GPIO20 – 
 # GPIO21 – 
-# GPIO22 – dimm
-# GPIO25 – external button 1
-# GPIO26 – external button 2
+# GPIO22 – dimm1
+# GPIO25 – external button 1  red
+# GPIO26 – external button 2 green
 # GPIO27 – 
 # GPIO32 – zero
 # GPIO33 – zero
@@ -27,3 +27,4 @@
 # GPI37 – 
 # GPI38 – 
 # GPI39 – 
+
