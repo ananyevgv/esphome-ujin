@@ -3,7 +3,7 @@
 # GPIO1 –  TXD (XS3)
 # GPIO2 –  &
 # GPIO3 –  ZIGBEE 2652 (DIO17) tx_pin RXD (XS3)
-# GPIO4 –  &
+# GPIO4 –  U3-3 (d1)
 # GPIO5 –  reset display
 # GPIO7 –  i2s lrclk
 # GPIO8 –  i2s din
@@ -41,3 +41,4 @@
 ###################
 # GPIO27 # GPIO35 #
 ###################
+
