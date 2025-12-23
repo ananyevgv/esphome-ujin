@@ -1,3 +1,33 @@
+# EN –     
+# GPIO0 - button
+# GPIO1 - 
+# GPIO2 –  
+# GPIO3 –  
+# GPIO4 – led
+# GPIO5 – 
+# GPIO7 –  
+# GPIO8 –  
+# GPIO12 – 
+# GPIO13 – 
+# GPIO14 – 
+# GPIO15 – 
+# GPIO19 – dimm2
+# GPIO20 – 
+# GPIO21 – 
+# GPIO22 – dimm1
+# GPIO25 – external button 1  red
+# GPIO26 – external button 2 green
+# GPIO27 – 
+# GPIO32 – zero
+# GPIO33 – zero
+#########################
+# GPI34 – &
+# GPI35 – &
+# GPI36 – 
+# GPI37 – 
+# GPI38 – 
+# GPI39 – 
+
 substitutions:
   name: ujin-lume-in
   device_description: ujin-lume-in
@@ -13,6 +43,13 @@ esp32:
   flash_size: 8MB
   framework:
     type: esp-idf
+
+#-------------------------------------------
+# PSRAM
+#------------------------------------------- 
+#psram:
+#  mode: quad
+#  speed: 80MHz
 
 #-------------------------------------------
 # EXTERNAL COMPONENTS
@@ -37,10 +74,13 @@ packages:
     vars:
       dimmer1_zero: GPIO32
       dimmer2_zero: GPIO33
-      dimmer1_gate: GPIO19  
-      dimmer2_gate: GPIO22 
+      dimmer1_gate: GPIO22
+      dimmer2_gate: GPIO19
       type_light1: monochromatic #binary # 
       type_light2: monochromatic # binary
+
+
+
 #-------------------------------------------
 # SENSOR
 #-------------------------------------------
@@ -92,6 +132,7 @@ binary_sensor:
           then:
             - light.turn_off: light_dimmer1
             - light.turn_off: light_dimmer2
+            - light.turn_off: led_relay
 
   - platform: gpio
     pin:
