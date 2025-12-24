@@ -1,14 +1,23 @@
+#packages:
+#  ntc_i: !include 
+#    file: packages/ujin/sensor/ntc_internal.yaml
+#    vars:
+#      ntc_internal_pin: 37
+# and copy file esphome/packages/ujin/sensor/
+
 sensor:
   - platform: adc
     pin: $ntc_internal_pin
     id: adc_internal
     attenuation: auto
-
+    internal: true
+    
   - platform: resistance
     id: ntc_sensor_internal
     sensor: adc_internal
     configuration: UPSTREAM
     resistor: 10 kOhm
+    internal: true
     
   - platform: ntc
     sensor: ntc_sensor_internal

@@ -1,17 +1,25 @@
+#packages:
+#  ntc_e: !include 
+#    file: packages/ujin/sensor/ntc_external.yaml
+#    vars:
+#      ntc_external_pin: 37
+# and copy file esphome/packages/ujin/sensor/
+
 sensor:
 # sensor_external
   - platform: adc
     pin: $ntc_external_pin
     id: adc_external   
     attenuation: auto
-    name: adc_35 
+    internal: true
 
   - platform: resistance
     id: ntc_sensor_external
     sensor: adc_external
     configuration: UPSTREAM
     resistor: 10 kOhm
-
+    internal: true
+    
   - platform: ntc
     sensor: ntc_sensor_external
     calibration:
@@ -23,7 +31,7 @@ sensor:
     id: NTC_temperature_external
     filters:
       - lambda: |-
-          if (x < -60 || x > 60) {
+          if (x < -38 || x > 60) {
             return id($rezerv_temp).state;
             ESP_LOGW("Termostat", "Error connect NTC resistace");
           } else

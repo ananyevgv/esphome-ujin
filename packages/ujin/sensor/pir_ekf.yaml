@@ -1,0 +1,67 @@
+#packages:
+#  pir: !include 
+#    file: packages/ujin/sensor/pir_ekf.yaml
+#    vars:
+#      pir_pin: GPIO2
+#      pir_addres: 0x2F
+# and copy file esphome/packages/ujin/sensor/
+
+#-------------------------------------------
+# EXTERNAL COMPONENTS
+#-------------------------------------------
+external_components:
+  - source: github://ananyevgv/esphome-components/
+    refresh: 0s
+
+#-------------------------------------------
+# MCP453X
+#-------------------------------------------
+mcp453x:
+  id: my_mcp453x
+  address: $pir_addres
+  
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------
+output:
+  - platform: mcp453x
+    id: pir_output
+    mcp453x_id: my_mcp453x  
+    
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO2
+    id: pir_id
+    name: pir  
+    icon: mdi:motion-sensor
+  
+#-------------------------------------------
+# SELECT
+#-------------------------------------------    
+select:
+  - platform: template
+    name: "Чувствительность датчика движения"
+    entity_category: config
+    icon: mdi:motion-sensor
+    options:
+     - "Очень высокая"      
+     - "Высокая"
+     - "Средняя"
+     - "Низкая"
+     - "Очень низкая"     
+    initial_option: "Очень высокая"
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0: id(pir_output).set_level(0); break;
+              case 1: id(pir_output).set_level(0.25); break;
+              case 2: id(pir_output).set_level(0.50); break;
+              case 3: id(pir_output).set_level(0.75); break;
+              case 4: id(pir_output).set_level(1.0); break;
+            }
