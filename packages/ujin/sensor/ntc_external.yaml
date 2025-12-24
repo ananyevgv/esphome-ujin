@@ -36,3 +36,8 @@ sensor:
             ESP_LOGW("Termostat", "Error connect NTC resistace");
           } else
             return x;
+            
+interval:
+  - interval: 30s
+    then:
+      - component.update: adc_external
