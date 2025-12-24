@@ -1,1 +1,64 @@
+#  servo: !include 
+#    file: packages/ujin/servo/servo_ekf.yaml
+#    vars:
+#      pin_close: GPIO25
+#      pin_open: GPIO17
 
+cover:
+  - platform: template
+    name: "Aqua servo"
+    id: aqua_servo
+    lambda: |-
+      if (id(valve_state).state == "Закрыт") {
+        return COVER_CLOSED;
+      } else {
+        return COVER_OPEN;
+      }
+    open_action:
+      - switch.turn_on: aqua_open
+      - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+      - switch.turn_off: aqua_open
+      - text_sensor.template.publish:
+          id: valve_state
+          state: "Открыт"
+    close_action:
+      - switch.turn_on: aqua_close
+      - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+      - switch.turn_off: aqua_close
+      - text_sensor.template.publish:
+          id: valve_state
+          state: "Закрыт"
+    stop_action:
+      - switch.turn_off: aqua_open
+      - switch.turn_off: aqua_close
+    optimistic: true
+    
+    
+switch:
+  - platform: gpio
+#    name: "Close"
+    id: aqua_close
+    pin: $pin_close
+
+  - platform: gpio
+#    name: "Open"
+    id: aqua_open
+    pin: $pin_open
+    
+    
+text_sensor:
+  - platform: template
+    name: "Состояние крана"
+    id: valve_state
+
+                  
+number:
+  - platform: template
+    name: "Drive activation time"
+    id: relay_delay_time
+    min_value: 1
+    max_value: 120
+    step: 1
+    initial_value: 22  # 22 секунды по умолчанию
+    optimistic: true
+    entity_category: config 
