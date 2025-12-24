@@ -1,0 +1,101 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  noise: !include 
+#    file: packages/ujin/sensor/noise_ekf.yaml
+#    vars:
+#      noise_bck: GPIO22
+#      noise_ws: GPIO19
+#      noise_din: GPIO21
+# and copy file esphome/ujin/sensor/
+
+#-------------------------------------------
+# I2S
+#-------------------------------------------
+i2s_audio:
+  i2s_lrclk_pin: $noise_ws
+  i2s_bclk_pin: $noise_bck
+
+#-------------------------------------------
+# MICROPHONE
+#-------------------------------------------
+microphone:
+  - platform: i2s_audio
+    id: external_mic
+    adc_type: external
+    i2s_din_pin: $noise_din
+    channel: stereo
+    pdm: true
+    bits_per_sample: 16bit
+    bits_per_channel: 8bit
+    sample_rate: 16000
+    
+    
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: analog_threshold
+    name: "Датчик шума"
+    id: noise
+    threshold: -20
+    sensor_id: Leq_id
+    device_class: sound
+    icon: mdi:speaker-wireless
+    
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: sound_level
+    passive: false
+    peak:
+      name: "шум пиковый уровень"
+      id: Leq_id
+      icon: mdi:waveform
+      filters:
+        - delta: 5
+        
+    
+#-------------------------------------------
+# SELECT
+#-------------------------------------------
+select:
+  - platform: template
+    name: "Чувствительность датчика звука"
+    entity_category: config
+    options:
+     - "Очень высокая"      
+     - "Высокая"
+     - "Средняя"
+     - "Низкая"
+     - "Очень низкая"     
+    initial_option: "Очень высокая"
+    optimistic: true
+    icon: mdi:microphone-message
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0:
+                 id(noise).set_lower_threshold(-50.0); 
+                 id(noise).set_upper_threshold(-50.0); 
+                 break;
+              case 1: 
+                id(noise).set_lower_threshold(-40.0);
+                id(noise).set_upper_threshold(-40.0); 
+                break;
+              case 2: 
+                id(noise).set_lower_threshold(-30.0);
+                id(noise).set_upper_threshold(-30.0); 
+                break;
+              case 3: 
+                id(noise).set_lower_threshold(-20.0);
+                 id(noise).set_upper_threshold(-20.0);
+                 break;
+              case 4: 
+                id(noise).set_lower_threshold(-10.0);
+                id(noise).set_upper_threshold(-10.0); 
+                break;
+            }
+        
