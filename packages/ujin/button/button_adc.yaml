@@ -1,11 +1,20 @@
 #-------------------------------------------
+# Add yaml 
+#packages:
+#  but: !include 
+#    file: packages/ujin/button/button_adc.yaml
+#    vars:
+#      button_pin: 36 # 8 #
+# and copy file esphome/packages/ujin/button
+
+#-------------------------------------------
 # SENSOR
 #-------------------------------------------
 sensor:
   - platform: adc
-    pin: 36 # 8 #
+    pin: $button_pin
     id: adc_36    
-   # name: "adc_36"
+    internal: true
     update_interval: 0.1s
     attenuation: auto
     on_value_range:
