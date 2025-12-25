@@ -1,0 +1,142 @@
+substitutions:
+  name: ujin-ekf
+  device_description: Ujin ekf
+
+esphome:
+  name: $name
+  friendly_name: ujin-ekf
+  on_boot:
+    - rtttl.play: 'short:d=20,o=5,b=100:e6' 
+
+esp32:
+  board: denky_d4
+  flash_size: 8MB
+  framework:
+    type: esp-idf
+
+#-------------------------------------------
+# PSRAM
+#-------------------------------------------
+psram:
+  mode: quad
+  speed: 80MHz
+
+#-------------------------------------------
+# I2c
+#-------------------------------------------
+i2c:
+  sda: GPIO13
+  scl: GPIO15
+
+
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+
+# Zigbee шлюз      
+ # zigbee: !include 
+ #   file: packages/ujin/zigbee.yaml
+  #  vars:
+  #    TX_Z: GPIO8
+   #   RX_Z: GPIO7 
+
+  valve: !include 
+    file: packages/ujin/valve/valve_ekf.yaml
+    vars:
+      pin_close: GPIO25
+      pin_open: GPIO27
+
+  led: !include 
+    file: packages/ujin/led/led_ekf_aqua.yaml
+    vars:
+      led_aqua_pin: GPIO5
+
+# and copy file esphome/packages/lume
+# Датчики  
+# Датчик освещености
+#  ltr: !include 
+#    file: packages/ujin/sensor/LTR329.yaml
+
+# Датчик температуры встроенный NTC
+  ntc_i: !include 
+    file: packages/ujin/sensor/ntc_internal.yaml
+    vars:
+      ntc_internal_pin: 37
+
+# Датчик температуры внешний NTC
+#  ntc_e: !include 
+#    file: packages/ujin/sensor/ntc_external.yaml
+#    vars:
+#      ntc_external_pin: &
+#      rezerv_temp: bme680_t
+
+# Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
+#  bme680_bsec: !include 
+#    file: packages/ujin/sensor/bme680_bsec2.yaml
+ #   vars:
+  #    id_bme680_t: bme680_t
+  #    id_bme680_h: bme680_h
+   #   id_bme680_p: bme680_p
+   #   id_bme680_iaq: bme680_iaq
+   #   id_bme680_co2: bme680_co2
+   #   id_bme680_voc: bme680_voc
+   #   model_bme: bme688
+   #   address_bme680: 0x76
+   #   t_offset: 0
+
+#  noise: !include 
+#    file: packages/ujin/sensor/noise_ekf.yaml
+#    vars:
+#      noise_bck: GPIO22
+#      noise_ws: GPIO19
+#      noise_din: GPIO21
+# and copy file esphome/ujin/sensor/
+
+#  pir: !include 
+#    file: packages/ujin/sensor/pir_ekf.yaml
+#    vars:
+#      pir_pin: GPIO2
+#      pir_addres: 0x2F
+# and copy file esphome/packages/ujin/sensor/
+
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------    
+output:
+  - platform: ledc
+    pin: GPIO12
+    id: rtttl_out
+
+#-------------------------------------------
+# RTTTL
+#-------------------------------------------
+rtttl:
+  output: rtttl_out
+  gain: 60%
+
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Звук"
+    id: sound_id
+    icon: mdi:light-switch-off
+    optimistic: True
+    entity_category: config
+
+
+  - platform: template
+    name: "Дисплей"
+    id: display_id
+    icon: mdi:light-switch-off
+    optimistic: True
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    
+
