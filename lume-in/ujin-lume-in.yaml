@@ -51,13 +51,6 @@ esp32:
 #  mode: quad
 #  speed: 80MHz
 
-#-------------------------------------------
-# EXTERNAL COMPONENTS
-#-------------------------------------------    
-external_components:
-  - source: github://pr#7072
-    components: [ac_dimmer]
-    refresh: 1h
     
 #-------------------------------------------
 # PACKAGES
