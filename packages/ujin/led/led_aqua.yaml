@@ -2,7 +2,7 @@
 # Add yaml 
 #packages:
 #  led: !include 
-#    file: packages/lume/led_aqua.yaml
+#    file: packages/ujin/led/led_aqua.yaml
 #    vars:
 #      led_lume_pin: GPIO26
 #      led_lume: 5
@@ -133,55 +133,28 @@ display:
       Color black = Color(0x000000);
       if (id(left_touch).state)
           it.rectangle(0, 2, 0, 2, id(color_press));
-      // else {
-      //  if (id(valve).state)
-      //    it.rectangle(0, 3, 0, 3, Color(0x0000FF));
-      //  else
-      //    it.rectangle(0, 3, 0, 3, Color(0x000000));
-      // }
 
       if (id(right_touch).state)
           it.rectangle(0, 4, 0, 4, id(color_press));
-      // else {
-      //  if (!(id(valve).state))
-      //    it.rectangle(0, 4, 0, 4, Color(0xFF0000));
-      //  else
-      //    it.rectangle(0, 4, 0, 4, Color(0x000000));
-      //}
-      static int i = 0;
-      i++;
-      if (i >= 40)
-        i=0;
-        
+
       if (!(id(wifi_id).is_connected())) {
         static int w = 0;
         w++;
         if ((w % 10) == 0) 
         it.rectangle(0, 0, 0, 3, Color(0xFF0000));
       } else {
-        if (id(leak).state || id(leak2).state)
+        if (id(leak).state)
           it.rectangle(0, 3, 0, 3, Color(0xFF0000)); 
         else {
-          if (id(valve).state) {
+          if (id(valve_state).state == "Открыт") {
             switch(i) {
               case 0 ... 9: it.rectangle(0, 0, 0, 3, Color(0x000000)); break;
               case 10 ... 19: it.rectangle(0, 0, 0, 1, Color(0x0000FF)); break;
               case 20 ... 29: it.rectangle(0, 0, 0, 2, Color(0x0000FF)); break;
               case 30 ... 39: it.rectangle(0, 0, 0, 3, Color(0x0000FF)); break;
             }
-         // } else {
-         //   switch(i) {
-         //     case 0 ... 9: it.rectangle(0, 0, 0, 3, Color(0x000000)); break;
-         //     case 10 ... 19: it.rectangle(0, 0, 0, 1, Color(0xFF0000)); break;
-         //     case 20 ... 29: it.rectangle(0, 0, 0, 2, Color(0xFF0000)); break;
-         //     case 30 ... 39: it.rectangle(0, 0, 0, 3, Color(0xFF0000)); break;
-         //   }
-           }
+          }
         } 
       }
       
-      
-
-
-
 
