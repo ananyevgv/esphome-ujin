@@ -137,6 +137,11 @@ display:
       if (id(right_touch).state)
           it.rectangle(0, 4, 0, 4, id(color_press));
 
+      static int i = 0;
+      i++;
+      if (i >= 40)
+        i=0;
+
       if (!(id(wifi_id).is_connected())) {
         static int w = 0;
         w++;
