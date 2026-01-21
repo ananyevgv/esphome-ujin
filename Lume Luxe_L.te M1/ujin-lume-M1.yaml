@@ -74,10 +74,6 @@ i2c:
   scan: true
   id: bus_a
 
-external_components:
-  - source: github://pr#7072
-    components: [ac_dimmer]
-    refresh: 1h
 #-------------------------------------------
 # PACKAGES
 #-------------------------------------------
