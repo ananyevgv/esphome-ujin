@@ -33,7 +33,6 @@ binary_sensor:
     threshold: $touch_threshold_left
     on_click: 
       then:
-        - switch.toggle: valve
         - if:
             condition:
               switch.is_on: sound
@@ -49,7 +48,6 @@ binary_sensor:
     threshold: $touch_threshold_right
     on_click: 
       then:
-        - switch.toggle: valve
         - if:
             condition:
               switch.is_on: sound
