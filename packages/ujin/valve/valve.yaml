@@ -1,0 +1,90 @@
+#  valve: !include 
+#    file: packages/ujin/valve/valve_ekf.yaml
+#    vars:
+#      pin_close: GPIO25
+#      pin_open: GPIO17
+#      pin_leak: GPIO35
+
+#esp32_ble_tracker:
+#  scan_parameters:
+  #  active: false
+  #  duration: 32s
+  #  interval: 320ms
+  #  window: 310ms     
+
+valve:
+  - platform: template
+    name: "Aqua valve"
+    id: aqua_valve
+    device_class: water
+    lambda: |-
+      if (id(valve_state).state == "Закрыт") {
+        return VALVE_CLOSED;
+      } else {
+        return VALVE_OPEN;
+      }
+    open_action:
+      - switch.turn_on: aqua_open
+      - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+      - switch.turn_off: aqua_open
+      - text_sensor.template.publish:
+          id: valve_state
+          state: "Открыт"
+    close_action:
+      - switch.turn_on: aqua_close
+      - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+      - switch.turn_off: aqua_close
+      - text_sensor.template.publish:
+          id: valve_state
+          state: "Закрыт"
+    stop_action:
+      - switch.turn_off: aqua_open
+      - switch.turn_off: aqua_close
+    optimistic: true
+    
+    
+switch:
+  - platform: gpio
+    id: aqua_close
+    pin: $pin_close
+
+  - platform: gpio
+    id: aqua_open
+    pin: $pin_open
+    
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: $pin_leak
+    id: leak_input
+    name: "leak input"
+
+  - platform: template
+    name: "Протечка"
+    id: leak
+    device_class: MOISTURE
+    condition:
+      or:
+        - binary_sensor.is_on: leak_input
+    on_press:
+      then:
+        - valve.template.publish:
+            id: aqua_valve
+            state: CLOSED
+              
+text_sensor:
+  - platform: template
+    name: "Состояние крана"
+    id: valve_state
+
+                  
+number:
+  - platform: template
+    name: "Drive activation time"
+    id: relay_delay_time
+    min_value: 1
+    max_value: 120
+    step: 1
+    initial_value: 22  # 22 секунды по умолчанию
+    optimistic: true
+    entity_category: config 
