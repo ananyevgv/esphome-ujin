@@ -41,11 +41,6 @@ i2c:
     ignore_pin_validation_error: true
   scan: true
 
-external_components:
-  - source: github://pr#7072
-    components: [ac_dimmer]
-    refresh: 1h
-
 #-------------------------------------------
 # PACKAGES
 #-------------------------------------------
