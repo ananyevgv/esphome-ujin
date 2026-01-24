@@ -30,6 +30,7 @@ i2c:
   scl: GPIO15 # 13
   scan: true
 
+
 #-------------------------------------------
 # PACKAGES
 #-------------------------------------------
@@ -40,14 +41,17 @@ packages:
   device_base: !include packages/device_base.yaml
 
 # Кнопки
-  button: !include packages/ujin/button/button_adc.yaml
+  button: !include 
+    file: packages/ujin/button/button_adc.yaml
+    vars:
+      button_pin: 36 # 8 #
 
 # Zigbee шлюз      
   zigbee: !include 
     file: packages/ujin/zigbee.yaml
     vars:
       TX_Z: GPIO14
-      RX_Z: GPIO3 
+      RX_Z: GPIO3
 
 # Датчики  
 # Датчик освещености
@@ -69,7 +73,7 @@ packages:
 
 # Датчик температуры, влажности, CO2, давления, VOC, качества воздуха 
   bme680_bsec: !include 
-    file: packages/ujin/sensor/bme680_bsec2_disp.yaml
+    file: packages/ujin/sensor/bme680_bsec2.yaml
     vars:
       id_bme680_t: bme680_t
       id_bme680_h: bme680_h
@@ -87,7 +91,7 @@ packages:
   thermostat: !include  packages/ujin/display/thermostat.yaml
   humm: !include packages/ujin/display/humm.yaml
   barometr: !include packages/ujin/display/barometr_page.yaml
- # barometr: !include  packages/ujin/display/barometr.yaml
+  #barometr: !include  packages/ujin/display/barometr.yaml
   co2: !include packages/ujin/display/co2.yaml
   iaq: !include packages/ujin/display/iaq.yaml
   voc: !include packages/ujin/display/voc.yaml
@@ -140,8 +144,22 @@ sensor:
       name: "шум пиковый уровень"
       id: Leq_id
       icon: mdi:waveform
-      filters:
-        - delta: 5
+   #   filters:
+    #    - delta: 5
+
+
+  - platform: adc
+    pin: 32
+    name: adc_32
+    id: adc_32
+    attenuation: auto
+    update_interval: 5s
+
+  - platform: resistance
+    sensor: adc_32
+    configuration: UPSTREAM
+    resistor: 100 kOhm
+    name: resistor_32 
 
 #-------------------------------------------
 # I2S
@@ -169,7 +187,6 @@ microphone:
     bits_per_channel: 8bit
     sample_rate: 16000
     
-
 
 
 
