@@ -31,14 +31,14 @@ font:
 # SENSOR
 #-------------------------------------------
 sensor:
-  - platform: bme68x_bsec2
+  - id: !extend bme_bsec2
     pressure:
-      - id: !extend bme680_p
-        on_value:
-          - lvgl.indicator.update:
-              id: barometr_meter
-              value: !lambda |- 
-                return x;      
+      on_value:
+        - lvgl.indicator.update:
+            id: barometr_meter
+            value: !lambda |- 
+              return x * 0.7500615;
+  
 #-------------------------------------------
 # LVGL
 #-------------------------------------------

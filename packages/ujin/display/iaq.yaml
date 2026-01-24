@@ -20,9 +20,8 @@ font:
 # SENSOR
 #-------------------------------------------
 sensor:
-  platform: bme68x_bsec2
-  iaq:
-    - id: !extend sensor_bme
+  - id: !extend bme_bsec2
+    iaq:
       on_value:
         - lvgl.indicator.update:
             id: iaq_meter

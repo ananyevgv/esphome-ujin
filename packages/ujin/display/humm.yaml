@@ -22,9 +22,8 @@ image:
 # SENSOR
 #-------------------------------------------
 sensor:
-  platform: bme68x_bsec2
-  humidity:
-    - id: !extend bme680_h
+  - id: !extend bme_bsec2
+    humidity:
       on_value:
         - lvgl.indicator.update:
             id: humm_meter

@@ -24,9 +24,8 @@ font:
 # SENSOR
 #-------------------------------------------
 sensor:
-  platform: bme68x_bsec2
-  co2_equivalent:
-    - id: !extend bme680_co2
+  - id: !extend bme_bsec2
+    co2_equivalent:
       on_value:
         - lvgl.indicator.update:
             id: co2_meter

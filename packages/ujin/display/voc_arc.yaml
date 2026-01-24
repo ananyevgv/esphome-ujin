@@ -1,0 +1,31 @@
+#############################################################################
+#----Страничка VOC ----------------------------------------------------------
+#############################################################################
+# Add yaml and copy file esphome/packages/ujin/display
+#packages:
+#  voc: !include file: packages/ujin/display/voc.yaml
+# 
+#############################################################################
+
+
+#-------------------------------------------
+# LVGL
+#-------------------------------------------
+lvgl:
+  pages:
+# Вывод на экран 
+    - id: voc_page
+      #width: 100%
+      bg_color: 0x000000
+      #opa: cover
+      scrollbar_mode: "OFF"
+      scrollable: false
+      widgets:
+        - arc:
+            id: gauge_arc
+            arc_width: 25
+            width: 240
+            height: 240
+            align: CENTER
+            start_angle: 120
+            end_angle: 270

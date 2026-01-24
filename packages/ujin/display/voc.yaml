@@ -23,9 +23,8 @@ font:
 # SENSOR
 #-------------------------------------------
 sensor:
-  platform: bme68x_bsec2
-  breath_voc_equivalent:
-    - id: !extend bme680_voc
+  - id: !extend bme_bsec2
+    breath_voc_equivalent:
       on_value:
         - lvgl.indicator.update:
             id: voc_meter
