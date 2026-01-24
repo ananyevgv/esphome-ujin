@@ -10,8 +10,11 @@
   #  active: false
   #  duration: 32s
   #  interval: 320ms
-  #  window: 310ms     
+  #  window: 310ms    
+  
 
+      
+      
 valve:
   - platform: template
     name: "Aqua valve"
@@ -24,19 +27,19 @@ valve:
         return VALVE_OPEN;
       }
     open_action:
-      - switch.turn_on: aqua_open
-      - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
-      - switch.turn_off: aqua_open
       - text_sensor.template.publish:
           id: valve_state
           state: "Открыт"
-    close_action:
-      - switch.turn_on: aqua_close
+      - switch.turn_on: aqua_open
       - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
-      - switch.turn_off: aqua_close
+      - switch.turn_off: aqua_open
+    close_action:
       - text_sensor.template.publish:
           id: valve_state
           state: "Закрыт"
+      - switch.turn_on: aqua_close
+      - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+      - switch.turn_off: aqua_close
     stop_action:
       - switch.turn_off: aqua_open
       - switch.turn_off: aqua_close
@@ -52,7 +55,31 @@ switch:
     id: aqua_open
     pin: $pin_open
     
+  
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
 binary_sensor:
+  - id: !extend left_touch
+    on_click:
+      then:
+        if:
+          condition:
+            lambda: return (id(aqua_valve).position == VALVE_CLOSED);
+          then:
+            - valve.open: aqua_valve
+          else:
+            - valve.close: aqua_valve
+  - id: !extend right_touch
+    on_click:
+      then:
+        if:
+          condition:
+            lambda:  return (id(aqua_valve).position == VALVE_CLOSED);
+          then:
+            - valve.open: aqua_valve
+          else:
+            - valve.close: aqua_valve
   - platform: gpio
     pin:
       number: $pin_leak
