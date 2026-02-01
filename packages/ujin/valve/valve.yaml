@@ -1,5 +1,15 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  valve: !include 
+#    file: packages/ujin/valve/valve.yaml
+#    vars:
+#      pin_close: GPIO25
+#      pin_open: GPIO17
+#      pin_leak: GPIO35
+#-------------------------------------------
 
-      
+
 #-------------------------------------------
 # VALVE
 #-------------------------------------------       
@@ -98,13 +108,17 @@ binary_sensor:
         - valve.template.publish:
             id: aqua_valve
             state: CLOSED
-              
+#-------------------------------------------
+# TEXT SENSOR
+#-------------------------------------------          
 text_sensor:
   - platform: template
     name: "Состояние крана"
     id: valve_state
 
-                  
+#-------------------------------------------
+# NUMBER
+#-------------------------------------------             
 number:
   - platform: template
     name: "Drive activation time"
