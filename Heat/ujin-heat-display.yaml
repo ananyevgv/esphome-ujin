@@ -15,7 +15,9 @@ esp32:
   flash_size: 8MB
   framework:
     type: esp-idf
-
+    advanced:
+      minimum_chip_revision: "3.1" 
+      
 #-------------------------------------------
 # Logger #32 356 байт
 #-------------------------------------------
