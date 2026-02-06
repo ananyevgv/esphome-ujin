@@ -1,0 +1,163 @@
+substitutions:
+  name:  basement-winter-water
+  device_description: Winter water
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  framework:
+    type: esp-idf
+    
+#-------------------------------------------
+# PSRAM
+#-------------------------------------------
+psram:
+  mode: quad
+  speed: 80MHz
+
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+  wifi: !include packages/wifi.yaml
+  device_base: !include packages/device_base.yaml
+  web: !include included/web.yaml
+  time: !include included/time.yaml
+  
+#-------------------------------------------
+# VALVE
+#-------------------------------------------       
+valve:
+  - platform: template
+    name: "Aqua valve"
+    id: aqua_valve
+    device_class: water
+    lambda: |-
+      if (id(water_valve).position == VALVE_CLOSED & id(sliv_valve).position == VALVE_OPEN) {
+        return VALVE_CLOSED;
+      } else {
+        if (id(water_valve).position == VALVE_OPEN & id(sliv_valve).position == VALVE_CLOSED) {
+          return VALVE_OPEN;
+        }
+      }
+    open_action:
+      - valve.close: sliv_valve
+      - while:
+          condition:
+            binary_sensor.is_on: b_sliv_close
+          then:
+            - valve.open: water_valve
+    close_action:
+      - valve.close: water_valve
+      - while:
+          condition:
+            binary_sensor.is_on: b_water_close
+          then:
+            - valve.open: sliv_valve
+    stop_action:
+      - valve.stop: water_valve
+      - valve.stop: sliv_valve
+    optimistic: true
+
+  - platform: template
+    name: "water valve"
+    id: water_valve
+    device_class: water
+    lambda: |-
+      if (id(b_water_close).state) {
+        return VALVE_CLOSED;
+      } else {
+        if (id(b_water_open).state) {
+          return VALVE_OPEN;
+        } 
+      }
+    open_action:
+      - switch.turn_on: water_open
+     # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+     # - switch.turn_off: water_open
+    close_action:
+      - switch.turn_on: water_close
+     # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+     # - switch.turn_off: water_close
+    stop_action:
+      - switch.turn_off: water_close
+      - switch.turn_off: water_open
+    optimistic: true
+
+  - platform: template
+    name: "sliv valve"
+    id: sliv_valve
+    device_class: water
+    lambda: |-
+      if (id(b_sliv_close).state) {
+        return VALVE_CLOSED;
+      } else {
+        if (id(b_sliv_open).state) {
+          return VALVE_OPEN;
+        }
+      }
+    open_action:
+      - switch.turn_on: sliv_open
+     # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+     # - switch.turn_off: sliv_open
+    close_action:
+      - switch.turn_on: sliv_close
+     # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+     # - switch.turn_off: sliv_close
+    stop_action:
+      - switch.turn_off: sliv_close
+      - switch.turn_off: sliv_open
+    optimistic: true
+
+
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: 16
+      inverted: true
+      mode: INPUT_PULLUP
+    id: b_sliv_open
+    name: b_sliv_open
+  - platform: gpio
+    pin:
+      number: 15
+      inverted: true
+      mode: INPUT_PULLUP
+    id: b_sliv_close
+    name: b_sliv_close
+  - platform: gpio
+    pin:
+      number: 10
+      inverted: true
+      mode: INPUT_PULLUP
+    id: b_water_open
+    name: b_water_open
+  - platform: gpio
+    pin:
+      number: 11
+      inverted: true
+      mode: INPUT_PULLUP
+    id: b_water_close
+    name: b_water_close
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------   
+switch:
+  - platform: gpio
+    id: sliv_open
+    pin: 18
+
+  - platform: gpio
+    id: sliv_close
+    pin: 17
+
+  - platform: gpio
+    id: water_open
+    pin: 14
+
+  - platform: gpio
+    id: water_close
+    pin: 13
