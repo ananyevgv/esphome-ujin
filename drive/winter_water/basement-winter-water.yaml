@@ -23,7 +23,19 @@ packages:
   device_base: !include packages/device_base.yaml
   web: !include included/web.yaml
   time: !include included/time.yaml
-  
+
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: esp32_rmt_led_strip
+    rgb_order: RGB
+    pin: GPIO38
+    num_leds: 1
+    chipset: ws2812
+    id: aqua_light
+    
+    icon: mdi:led-strip-variant
 #-------------------------------------------
 # VALVE
 #-------------------------------------------       
@@ -33,10 +45,10 @@ valve:
     id: aqua_valve
     device_class: water
     lambda: |-
-      if (id(water_valve).position == VALVE_CLOSED & id(sliv_valve).position == VALVE_OPEN) {
+      if (id(b_sliv_open).state & id(b_water_close).state) {
         return VALVE_CLOSED;
       } else {
-        if (id(water_valve).position == VALVE_OPEN & id(sliv_valve).position == VALVE_CLOSED) {
+        if (id(b_sliv_close).state & id(b_water_open).state) {
           return VALVE_OPEN;
         }
       }
@@ -44,23 +56,41 @@ valve:
       - valve.close: sliv_valve
       - while:
           condition:
-            binary_sensor.is_on: b_sliv_close
+            binary_sensor.is_off: b_sliv_close
           then:
-            - valve.open: water_valve
+            - delay: 1s
+      - valve.open: water_valve
     close_action:
       - valve.close: water_valve
       - while:
           condition:
-            binary_sensor.is_on: b_water_close
+            binary_sensor.is_off: b_water_close
           then:
-            - valve.open: sliv_valve
+            - delay: 1s
+      - valve.open: sliv_valve
     stop_action:
       - valve.stop: water_valve
       - valve.stop: sliv_valve
     optimistic: true
+    on_open:
+      - light.addressable_set:
+          id: aqua_light
+   #       range_from: 0
+   #       range_to: 50
+          red: 0%
+          green: 0%
+          blue: 100%
+    on_closed:
+      - light.addressable_set:
+          id: aqua_light
+   #       range_from: 0
+   #       range_to: 50
+          red: 100%
+          green: 0%
+          blue: 0%
 
   - platform: template
-    name: "water valve"
+  #  name: "water valve"
     id: water_valve
     device_class: water
     lambda: |-
@@ -73,19 +103,21 @@ valve:
       }
     open_action:
       - switch.turn_on: water_open
+      - delay: 8s
      # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
-     # - switch.turn_off: water_open
+      - switch.turn_off: water_open
     close_action:
       - switch.turn_on: water_close
+      - delay: 8s
      # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
-     # - switch.turn_off: water_close
+      - switch.turn_off: water_close
     stop_action:
       - switch.turn_off: water_close
       - switch.turn_off: water_open
-    optimistic: true
+
 
   - platform: template
-    name: "sliv valve"
+  #  name: "sliv valve"
     id: sliv_valve
     device_class: water
     lambda: |-
@@ -98,16 +130,18 @@ valve:
       }
     open_action:
       - switch.turn_on: sliv_open
+      - delay: 8s
      # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
-     # - switch.turn_off: sliv_open
+      - switch.turn_off: sliv_open
     close_action:
       - switch.turn_on: sliv_close
+      - delay: 8s
      # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
-     # - switch.turn_off: sliv_close
+      - switch.turn_off: sliv_close
     stop_action:
       - switch.turn_off: sliv_close
       - switch.turn_off: sliv_open
-    optimistic: true
+
 
 
 #-------------------------------------------
@@ -116,32 +150,33 @@ valve:
 binary_sensor:
   - platform: gpio
     pin:
-      number: 16
-      inverted: true
-      mode: INPUT_PULLUP
-    id: b_sliv_open
-    name: b_sliv_open
-  - platform: gpio
-    pin:
       number: 15
       inverted: true
       mode: INPUT_PULLUP
+    id: b_sliv_open
+  #  name: b_sliv_open
+  - platform: gpio
+    pin:
+      number: 16
+      inverted: true
+      mode: INPUT_PULLUP
     id: b_sliv_close
-    name: b_sliv_close
+  #  name: b_sliv_close
   - platform: gpio
     pin:
       number: 10
       inverted: true
       mode: INPUT_PULLUP
     id: b_water_open
-    name: b_water_open
+  #  name: b_water_open
   - platform: gpio
     pin:
       number: 11
       inverted: true
       mode: INPUT_PULLUP
     id: b_water_close
-    name: b_water_close
+   # name: b_water_close
+
 #-------------------------------------------
 # SWITCH
 #-------------------------------------------   
@@ -156,8 +191,8 @@ switch:
 
   - platform: gpio
     id: water_open
-    pin: 14
+    pin: 13
 
   - platform: gpio
     id: water_close
-    pin: 13
+    pin: 14
