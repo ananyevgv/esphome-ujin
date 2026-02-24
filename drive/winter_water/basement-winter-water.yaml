@@ -24,6 +24,7 @@ packages:
   web: !include included/web.yaml
   time: !include included/time.yaml
 
+
 #-------------------------------------------
 # LIGHT
 #-------------------------------------------
@@ -34,8 +35,8 @@ light:
     num_leds: 1
     chipset: ws2812
     id: aqua_light
-    
     icon: mdi:led-strip-variant
+
 #-------------------------------------------
 # VALVE
 #-------------------------------------------       
@@ -143,6 +144,15 @@ valve:
       - switch.turn_off: sliv_open
 
 
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------    
+sensor:
+  - platform: adc
+    pin: 6
+    id: adc_leak
+    update_interval: 5s
+    attenuation: 0db
 
 #-------------------------------------------
 # BINARY SENSOR
@@ -176,7 +186,14 @@ binary_sensor:
       mode: INPUT_PULLUP
     id: b_water_close
    # name: b_water_close
-
+  - platform: analog_threshold
+    sensor_id: adc_leak
+    threshold: 0.4
+    id: leak_input
+    name: "leak input"
+    on_press:
+      then:
+        - valve.close: aqua_valve
 #-------------------------------------------
 # SWITCH
 #-------------------------------------------   
