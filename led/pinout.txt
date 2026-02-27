@@ -1,0 +1,33 @@
+EN –    
+GPIO0 – es
+GPIO1 – TX
+GPIO2 –  
+GPIO3 – RX
+GPIO4 – es 
+GPIO5 – es
+GPIO6 – 
+GPIO7 – es
+GPIO8 – es
+GPIO9 –  
+GPIO10 – 
+GPIO11 – 
+GPIO12 – es
+GPIO13 – es
+GPIO14 – es
+GPIO15 – es
+GPIO19 – es
+GPIO20 – LED
+GPIO21 – TP
+GPIO22 – es
+GPIO25 – es
+GPIO26 – es
+GPIO27 – es
+GPIO32 – ADC
+GPIO33 – es r2 r3 делитель
+GPI34 – ADC
+GPI35 – ADC
+GPI36 – ADC
+GPI37 – ADC
+GPI38 – ADC
+GPI39 – ADC
+
