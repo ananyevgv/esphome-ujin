@@ -1,3 +1,5 @@
+ULL-WB-5C-M
+
 ======== DEVICE INFO ========
 
 MCU type:        ESP32-PICO-V3-02
