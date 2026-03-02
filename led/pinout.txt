@@ -22,14 +22,15 @@ GPIO22 – es
 GPIO25 – MOSFET R
 GPIO26 – MOSFET G
 GPIO27 – MOSFET B
-GPIO32 – ADC ch
-GPIO33 – es r2 r3 делитель 1.68
-GPI34 – ADC 1.43
-GPI35 – ADC NTC
-GPI36 – ADC ch
-GPI37 – ADC ch
-GPI38 – ADC ch
-GPI39 – ADC ch
+GPIO32 – ADC current B
+GPIO33 – VCC 3.3
+GPI34 –  V in
+GPI35 –  ADC NTC
+GPI36 –  ADC current W2
+GPI37 –  ADC current G
+GPI38 –  ADC current W1
+GPI39 –  ADC current R
+
 
 
 
