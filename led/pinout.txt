@@ -22,12 +22,13 @@ GPIO22 – es
 GPIO25 – es
 GPIO26 – es
 GPIO27 – es
-GPIO32 – ADC
-GPIO33 – es r2 r3 делитель
-GPI34 – ADC
-GPI35 – ADC
-GPI36 – ADC
-GPI37 – ADC
-GPI38 – ADC
-GPI39 – ADC
+GPIO32 – ADC ch
+GPIO33 – es r2 r3 делитель 1.68
+GPI34 – ADC 1.43
+GPI35 – ADC 1.75
+GPI36 – ADC ch
+GPI37 – ADC ch
+GPI38 – ADC ch
+GPI39 – ADC ch
+
 
