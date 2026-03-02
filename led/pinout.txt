@@ -1,9 +1,9 @@
 EN –    
-GPIO0 – es
+GPIO0 – button
 GPIO1 – TX
 GPIO2 –  
 GPIO3 – RX
-GPIO4 – es 
+GPIO4 – S1 
 GPIO5 – es
 GPIO6 – 
 GPIO7 – es
@@ -16,7 +16,7 @@ GPIO13 – es
 GPIO14 – es
 GPIO15 – es
 GPIO19 – es
-GPIO20 – LED
+GPIO20 – S2 
 GPIO21 – TP
 GPIO22 – es
 GPIO25 – es
@@ -30,5 +30,6 @@ GPI36 – ADC ch
 GPI37 – ADC ch
 GPI38 – ADC ch
 GPI39 – ADC ch
+
 
 
