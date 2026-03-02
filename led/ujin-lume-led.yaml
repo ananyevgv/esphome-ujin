@@ -144,7 +144,7 @@ sensor:
     update_interval: 10s
     attenuation: auto
     filters:
-      - multiply: 12
+      - multiply: 11.43
 
 ################### LED POWER RED 
   - platform: adc
@@ -157,7 +157,8 @@ sensor:
     update_interval: 10s
     attenuation: auto
     filters:
-      - multiply: 2.4
+      - lambda: return (x-0.075)*2.88;
+  #    - multiply: 2.4 #x-0.08*2.25
 
   - platform: template
     name: "power R"
@@ -188,7 +189,8 @@ sensor:
     update_interval: 10s
     attenuation: auto
     filters:
-      - multiply: 2.4
+      - lambda: return (x-0.075)*2.88;
+ #     - multiply: 2.4
 
   - platform: template
     name: "power G"
@@ -219,7 +221,8 @@ sensor:
     update_interval: 10s
     attenuation: auto
     filters:
-      - multiply: 2.4
+      - lambda: return (x-0.075)*2.88;
+   #   - multiply: 2.4
 
   - platform: template
     name: "power B"
@@ -250,7 +253,8 @@ sensor:
     update_interval: 10s
     attenuation: auto
     filters:
-      - multiply: 2.4
+      - lambda: return (x-0.075)*2.88;
+     # - multiply: 2.4
 
   - platform: template
     name: "power W1"
@@ -281,7 +285,8 @@ sensor:
     update_interval: 10s
     attenuation: auto
     filters:
-      - multiply: 2.4
+      - lambda: return (x-0.075)*2.88;
+    #  - multiply: 2.4
 
   - platform: template
     name: "power W2"
