@@ -25,11 +25,12 @@ GPIO27 – MOSFET B
 GPIO32 – ADC ch
 GPIO33 – es r2 r3 делитель 1.68
 GPI34 – ADC 1.43
-GPI35 – ADC 1.75
+GPI35 – ADC NTC
 GPI36 – ADC ch
 GPI37 – ADC ch
 GPI38 – ADC ch
 GPI39 – ADC ch
+
 
 
 
