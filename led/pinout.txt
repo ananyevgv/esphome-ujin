@@ -6,8 +6,8 @@ GPIO3 – RX
 GPIO4 – S1 
 GPIO5 – es
 GPIO6 – 
-GPIO7 – es
-GPIO8 – es
+GPIO7 – LED Green
+GPIO8 – LED Yellow
 GPIO9 –  
 GPIO10 – 
 GPIO11 – 
@@ -30,6 +30,7 @@ GPI36 – ADC ch
 GPI37 – ADC ch
 GPI38 – ADC ch
 GPI39 – ADC ch
+
 
 
 
