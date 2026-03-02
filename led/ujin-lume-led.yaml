@@ -138,7 +138,7 @@ sensor:
 
   - platform: adc
     pin: 34
-    id: adc_34    
+    id: v_in    
     accuracy_decimals: 1 
     name: "V in"
     update_interval: 10s
@@ -169,7 +169,8 @@ sensor:
     id: led_power_R
     lambda: return id(current_raw_r).state;
     filters:
-      - multiply: 12 # 12V lamp
+      - lambda: return x*id(v_in).state;
+#      - multiply: 12 # 12V lamp
   - platform: total_daily_energy
     name: "total daily energy R"
     power_id: led_power_R
@@ -201,7 +202,8 @@ sensor:
     id: led_power_G
     lambda: return id(current_raw_g).state;
     filters:
-      - multiply: 12 # 12V lamp
+      - lambda: return x*id(v_in).state;
+#      - multiply: 12 # 12V lamp
   - platform: total_daily_energy
     name: "total daily energy G"
     power_id: led_power_G
@@ -233,7 +235,8 @@ sensor:
     id: led_power_B
     lambda: return id(current_raw_b).state;
     filters:
-      - multiply: 12 # 12V lamp
+      - lambda: return x*id(v_in).state;
+#      - multiply: 12 # 12V lamp
   - platform: total_daily_energy
     name: "total daily energy B"
     power_id: led_power_B
@@ -265,7 +268,8 @@ sensor:
     id: led_power_W1
     lambda: return id(current_raw_w1).state;
     filters:
-      - multiply: 12 # 12V lamp
+      - lambda: return x*id(v_in).state;
+#      - multiply: 12 # 12V lamp
   - platform: total_daily_energy
     name: "total daily energy W1"
     power_id: led_power_W1
@@ -297,7 +301,8 @@ sensor:
     id: led_power_W2
     lambda: return id(current_raw_w2).state;
     filters:
-      - multiply: 12 # 12V lamp
+      - lambda: return x*id(v_in).state;
+#      - multiply: 12 # 12V lamp
   - platform: total_daily_energy
     name: "total daily energy W2"
     power_id: led_power_W2
