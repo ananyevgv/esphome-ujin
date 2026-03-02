@@ -1,0 +1,303 @@
+substitutions:
+  name: ujin-lume-led
+  device_description: ujin-pt-led-din-ch-m2
+  
+esphome:
+  name: "${name}"
+  friendly_name: ujin led
+  comment: "${device_description}"
+
+esp32:
+  board: denky_d4
+  flash_size: 8MB
+  framework:
+    type: esp-idf
+
+
+#-------------------------------------------
+# PSRAM
+#------------------------------------------- 
+#psram:
+#  mode: quad
+#  speed: 80MHz
+
+    
+#-------------------------------------------
+# PACKAGES
+#-------------------------------------------
+packages:
+# обязательные пакеты
+  wifi: !include packages/wifi.yaml
+  web: !include included/web.yaml
+  device_base: !include packages/device_base.yaml
+# Датчик температуры встроенный NTC
+  ntc_i: !include 
+    file: packages/ujin/sensor/ntc_internal.yaml
+    vars:
+      ntc_internal_pin: 35
+  time: !include included/time.yaml
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: gpio
+    pin: 
+      number: 7
+      ignore_pin_validation_error: true
+    name: "led green"
+  - platform: gpio
+    pin: 
+      number: 8
+      ignore_pin_validation_error: true
+    name: "led yellow"
+
+  - platform: gpio
+    pin: 
+      number: 13
+    name: "MOSFET W2"
+
+  - platform: gpio
+    pin: 
+      number: 14
+    name: "MOSFET W1"
+
+  - platform: gpio
+    pin: 
+      number: 25
+    name: "MOSFET R"
+
+  - platform: gpio
+    pin: 
+      number: 26
+    name: "MOSFET G"
+
+  - platform: gpio
+    pin: 
+      number: 27
+    name: "MOSFET B"
+
+
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: 0
+      inverted: yes
+    name: "Button"
+  - platform: gpio
+    pin: 
+      number: 4
+      inverted: yes
+    name: "S1"
+  - platform: gpio
+    pin: 
+      number: 20
+      inverted: yes
+    name: "S2"
+
+  - platform: gpio
+    pin: 
+      number: 5
+    name: "GPIO5"
+
+  - platform: gpio
+    pin: 
+      number: 12
+    name: "GPIO12"
+
+  - platform: gpio
+    pin: 
+      number: 15
+    name: "GPIO15"
+
+  - platform: gpio
+    pin: 
+      number: 19
+    name: "GPIO19"
+
+  - platform: gpio
+    pin: 
+      number: 22
+    name: "GPIO22"
+    
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: adc
+    pin: 33
+    id: adc_33    
+    name: "VCC"
+    update_interval: 10s
+    attenuation: auto
+    accuracy_decimals: 1
+    filters:
+      - multiply: 2
+
+  - platform: adc
+    pin: 34
+    id: adc_34    
+    accuracy_decimals: 1 
+    name: "V in"
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - multiply: 12
+
+################### LED POWER RED 
+  - platform: adc
+    pin: 39
+    id: current_raw_r  
+    name: "current R"
+    unit_of_measurement: A
+    accuracy_decimals: 1
+    device_class: current
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - multiply: 2.4
+
+  - platform: template
+    name: "power R"
+    unit_of_measurement: W
+    accuracy_decimals: 1
+    device_class: power
+    update_interval: 30s
+    id: led_power_R
+    lambda: return id(current_raw_r).state;
+    filters:
+      - multiply: 12 # 12V lamp
+  - platform: total_daily_energy
+    name: "total daily energy R"
+    power_id: led_power_R
+    filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
+    unit_of_measurement: kW
+
+################### LED POWER GREEN
+  - platform: adc
+    pin: 37
+    id: current_raw_g 
+    name: "current G"
+    unit_of_measurement: A
+    accuracy_decimals: 1
+    device_class: current
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - multiply: 2.4
+
+  - platform: template
+    name: "power G"
+    unit_of_measurement: W
+    accuracy_decimals: 1
+    device_class: power
+    update_interval: 30s
+    id: led_power_G
+    lambda: return id(current_raw_g).state;
+    filters:
+      - multiply: 12 # 12V lamp
+  - platform: total_daily_energy
+    name: "total daily energy G"
+    power_id: led_power_G
+    filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
+    unit_of_measurement: kW
+
+################### LED POWER BLUE
+  - platform: adc
+    pin: 32
+    id: current_raw_b 
+    name: "current B"
+    unit_of_measurement: A
+    accuracy_decimals: 1
+    device_class: current
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - multiply: 2.4
+
+  - platform: template
+    name: "power B"
+    unit_of_measurement: W
+    accuracy_decimals: 1
+    device_class: power
+    update_interval: 30s
+    id: led_power_B
+    lambda: return id(current_raw_b).state;
+    filters:
+      - multiply: 12 # 12V lamp
+  - platform: total_daily_energy
+    name: "total daily energy B"
+    power_id: led_power_B
+    filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
+    unit_of_measurement: kW
+
+################### LED POWER W1
+  - platform: adc
+    pin: 38
+    id: current_raw_w1 
+    name: "current W1"
+    unit_of_measurement: A
+    accuracy_decimals: 1
+    device_class: current
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - multiply: 2.4
+
+  - platform: template
+    name: "power W1"
+    unit_of_measurement: W
+    accuracy_decimals: 1
+    device_class: power
+    update_interval: 30s
+    id: led_power_W1
+    lambda: return id(current_raw_w1).state;
+    filters:
+      - multiply: 12 # 12V lamp
+  - platform: total_daily_energy
+    name: "total daily energy W1"
+    power_id: led_power_W1
+    filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
+    unit_of_measurement: kW
+
+################### LED POWER W2
+  - platform: adc
+    pin: 36
+    id: current_raw_w2    
+    name: "current W2"
+    unit_of_measurement: A
+    accuracy_decimals: 1
+    device_class: current
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - multiply: 2.4
+
+  - platform: template
+    name: "power W2"
+    unit_of_measurement: W
+    accuracy_decimals: 1
+    device_class: power
+    update_interval: 30s
+    id: led_power_W2
+    lambda: return id(current_raw_w2).state;
+    filters:
+      - multiply: 12 # 12V lamp
+  - platform: total_daily_energy
+    name: "total daily energy W2"
+    power_id: led_power_W2
+    filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
+    unit_of_measurement: kW
+
