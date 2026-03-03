@@ -17,11 +17,10 @@ esp32:
 #-------------------------------------------
 # PSRAM
 #------------------------------------------- 
-#psram:
-#  mode: quad
-#  speed: 80MHz
-
-    
+psram:
+  mode: quad
+  speed: 80MHz
+ 
 #-------------------------------------------
 # PACKAGES
 #-------------------------------------------
@@ -30,52 +29,79 @@ packages:
   wifi: !include packages/wifi.yaml
   web: !include included/web.yaml
   device_base: !include packages/device_base.yaml
+  led_с: !include packages/ujin/led/led_current.yaml 
+  led_p: !include packages/ujin/led/led_power.yaml # при использовании необходим led_current.yaml 
+  led_pt: !include packages/ujin/led/led_power_total.yaml # при использовании необходим led_current.yaml, led_power.yaml, time.yaml
+  time: !include included/time.yaml
 # Датчик температуры встроенный NTC
   ntc_i: !include 
     file: packages/ujin/sensor/ntc_internal.yaml
     vars:
       ntc_internal_pin: 35
-  time: !include included/time.yaml
+
+  #ble: !include # при использовании убрать psram
+   # file: packages/ble_adv_controller.yaml
+   # file: packages/ujin/ble/ble.yaml
+    #file: packages/ujin/ble/ble1.yaml
+    #file: packages/ujin/ble/ble2.yaml
+   # file: packages/ujin/ble/ble3.yaml
+  # file: packages/ujin/ble/ble_adv_proxy.yaml
+
 #-------------------------------------------
-# SWITCH
+# Light
 #-------------------------------------------
-switch:
-  - platform: gpio
+light:
+  - platform: rgbww
+    name: "Livingroom Lights"
+    red: out_R
+    green: out_G
+    blue: out_B
+    cold_white: out_W1
+    warm_white: out_W2
+    cold_white_color_temperature: 6536 K
+    warm_white_color_temperature: 2000 K
+
+  - platform:  status_led
+    name: "led green"
     pin: 
       number: 7
       ignore_pin_validation_error: true
-    name: "led green"
+    id: light_green
+
+  - platform: binary
+    name: "led yellow"
+    output: light_yellow
+
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------
+output:
   - platform: gpio
     pin: 
       number: 8
       ignore_pin_validation_error: true
-    name: "led yellow"
+    id: light_yellow
 
-  - platform: gpio
-    pin: 
-      number: 13
-    name: "MOSFET W2"
-
-  - platform: gpio
-    pin: 
-      number: 14
-    name: "MOSFET W1"
-
-  - platform: gpio
-    pin: 
-      number: 25
-    name: "MOSFET R"
-
-  - platform: gpio
-    pin: 
-      number: 26
-    name: "MOSFET G"
-
-  - platform: gpio
-    pin: 
-      number: 27
-    name: "MOSFET B"
-
+  - platform: ledc
+    id: out_R
+    pin: GPIO25
+    frequency: 1000 Hz
+  - platform: ledc
+    id: out_G
+    pin: GPIO26
+    frequency: 1000 Hz
+  - platform: ledc
+    id: out_B
+    pin: GPIO27
+    frequency: 1000 Hz
+  - platform: ledc
+    id: out_W1
+    pin: GPIO13
+    frequency: 1000 Hz
+  - platform: ledc
+    id: out_W2
+    pin: GPIO14
+    frequency: 1000 Hz
 
 #-------------------------------------------
 # BINARY SENSOR
@@ -97,6 +123,7 @@ binary_sensor:
       inverted: yes
     name: "S2"
 
+##################################################
   - platform: gpio
     pin: 
       number: 5
@@ -122,192 +149,3 @@ binary_sensor:
       number: 22
     name: "GPIO22"
     
-#-------------------------------------------
-# SENSOR
-#-------------------------------------------
-sensor:
-  - platform: adc
-    pin: 33
-    id: adc_33    
-    name: "VCC"
-    update_interval: 10s
-    attenuation: auto
-    accuracy_decimals: 1
-    filters:
-      - multiply: 2
-
-  - platform: adc
-    pin: 34
-    id: v_in    
-    accuracy_decimals: 1 
-    name: "V in"
-    update_interval: 10s
-    attenuation: auto
-    filters:
-      - multiply: 11.43
-
-################### LED POWER RED 
-  - platform: adc
-    pin: 39
-    id: current_raw_r  
-    name: "current R"
-    unit_of_measurement: A
-    accuracy_decimals: 1
-    device_class: current
-    update_interval: 10s
-    attenuation: auto
-    filters:
-      - lambda: return (x-0.075)*2.88;
-  #    - multiply: 2.4 #x-0.08*2.25
-
-  - platform: template
-    name: "power R"
-    unit_of_measurement: W
-    accuracy_decimals: 1
-    device_class: power
-    update_interval: 30s
-    id: led_power_R
-    lambda: return id(current_raw_r).state;
-    filters:
-      - lambda: return x*id(v_in).state;
-#      - multiply: 12 # 12V lamp
-  - platform: total_daily_energy
-    name: "total daily energy R"
-    power_id: led_power_R
-    filters:
-          # Multiplication factor from W to kW is 0.001
-          - multiply: 0.001
-    unit_of_measurement: kW
-
-################### LED POWER GREEN
-  - platform: adc
-    pin: 37
-    id: current_raw_g 
-    name: "current G"
-    unit_of_measurement: A
-    accuracy_decimals: 1
-    device_class: current
-    update_interval: 10s
-    attenuation: auto
-    filters:
-      - lambda: return (x-0.075)*2.88;
- #     - multiply: 2.4
-
-  - platform: template
-    name: "power G"
-    unit_of_measurement: W
-    accuracy_decimals: 1
-    device_class: power
-    update_interval: 30s
-    id: led_power_G
-    lambda: return id(current_raw_g).state;
-    filters:
-      - lambda: return x*id(v_in).state;
-#      - multiply: 12 # 12V lamp
-  - platform: total_daily_energy
-    name: "total daily energy G"
-    power_id: led_power_G
-    filters:
-          # Multiplication factor from W to kW is 0.001
-          - multiply: 0.001
-    unit_of_measurement: kW
-
-################### LED POWER BLUE
-  - platform: adc
-    pin: 32
-    id: current_raw_b 
-    name: "current B"
-    unit_of_measurement: A
-    accuracy_decimals: 1
-    device_class: current
-    update_interval: 10s
-    attenuation: auto
-    filters:
-      - lambda: return (x-0.075)*2.88;
-   #   - multiply: 2.4
-
-  - platform: template
-    name: "power B"
-    unit_of_measurement: W
-    accuracy_decimals: 1
-    device_class: power
-    update_interval: 30s
-    id: led_power_B
-    lambda: return id(current_raw_b).state;
-    filters:
-      - lambda: return x*id(v_in).state;
-#      - multiply: 12 # 12V lamp
-  - platform: total_daily_energy
-    name: "total daily energy B"
-    power_id: led_power_B
-    filters:
-          # Multiplication factor from W to kW is 0.001
-          - multiply: 0.001
-    unit_of_measurement: kW
-
-################### LED POWER W1
-  - platform: adc
-    pin: 38
-    id: current_raw_w1 
-    name: "current W1"
-    unit_of_measurement: A
-    accuracy_decimals: 1
-    device_class: current
-    update_interval: 10s
-    attenuation: auto
-    filters:
-      - lambda: return (x-0.075)*2.88;
-     # - multiply: 2.4
-
-  - platform: template
-    name: "power W1"
-    unit_of_measurement: W
-    accuracy_decimals: 1
-    device_class: power
-    update_interval: 30s
-    id: led_power_W1
-    lambda: return id(current_raw_w1).state;
-    filters:
-      - lambda: return x*id(v_in).state;
-#      - multiply: 12 # 12V lamp
-  - platform: total_daily_energy
-    name: "total daily energy W1"
-    power_id: led_power_W1
-    filters:
-          # Multiplication factor from W to kW is 0.001
-          - multiply: 0.001
-    unit_of_measurement: kW
-
-################### LED POWER W2
-  - platform: adc
-    pin: 36
-    id: current_raw_w2    
-    name: "current W2"
-    unit_of_measurement: A
-    accuracy_decimals: 1
-    device_class: current
-    update_interval: 10s
-    attenuation: auto
-    filters:
-      - lambda: return (x-0.075)*2.88;
-    #  - multiply: 2.4
-
-  - platform: template
-    name: "power W2"
-    unit_of_measurement: W
-    accuracy_decimals: 1
-    device_class: power
-    update_interval: 30s
-    id: led_power_W2
-    lambda: return id(current_raw_w2).state;
-    filters:
-      - lambda: return x*id(v_in).state;
-#      - multiply: 12 # 12V lamp
-  - platform: total_daily_energy
-    name: "total daily energy W2"
-    power_id: led_power_W2
-    filters:
-          # Multiplication factor from W to kW is 0.001
-          - multiply: 0.001
-    unit_of_measurement: kW
-
