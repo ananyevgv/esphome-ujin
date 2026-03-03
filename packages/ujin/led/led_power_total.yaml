@@ -1,0 +1,60 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  led_pt: !include: packages/ujin/led/led_power_total.yaml
+# and copy file esphome/packages/lume
+#-------------------------------------------
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+################### LED POWER RED 
+
+  - platform: total_daily_energy
+    name: "total daily energy R"
+    power_id: led_power_R
+    filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
+    unit_of_measurement: kW
+
+################### LED POWER GREEN
+
+  - platform: total_daily_energy
+    name: "total daily energy G"
+    power_id: led_power_G
+    filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
+    unit_of_measurement: kW
+
+################### LED POWER BLUE
+
+  - platform: total_daily_energy
+    name: "total daily energy B"
+    power_id: led_power_B
+    filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
+    unit_of_measurement: kW
+
+################### LED POWER W1
+
+  - platform: total_daily_energy
+    name: "total daily energy W1"
+    power_id: led_power_W1
+    filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
+    unit_of_measurement: kW
+
+################### LED POWER W2
+  - platform: total_daily_energy
+    name: "total daily energy W2"
+    power_id: led_power_W2
+    filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
+    unit_of_measurement: kW
+

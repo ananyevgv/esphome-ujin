@@ -1,0 +1,95 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  led_c: !include: packages/ujin/led/led_current.yaml
+# and copy file esphome/packages/lume
+#-------------------------------------------
+
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
+sensor:
+  - platform: adc
+    pin: 33
+    id: adc_33    
+    name: "VCC"
+    update_interval: 10s
+    attenuation: auto
+    accuracy_decimals: 1
+    filters:
+      - multiply: 2
+
+  - platform: adc
+    pin: 34
+    id: v_in    
+    accuracy_decimals: 1 
+    name: "V in"
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - multiply: 11.43
+      
+################### LED RED 
+  - platform: adc
+    pin: 39
+    id: current_raw_r  
+    name: "current R"
+    unit_of_measurement: A
+    accuracy_decimals: 1
+    device_class: current
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - lambda: return (x-0.075)*2.88;
+      
+################### LED GREEN
+  - platform: adc
+    pin: 37
+    id: current_raw_g 
+    name: "current G"
+    unit_of_measurement: A
+    accuracy_decimals: 1
+    device_class: current
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - lambda: return (x-0.075)*2.88;
+
+################### LED BLUE
+  - platform: adc
+    pin: 32
+    id: current_raw_b 
+    name: "current B"
+    unit_of_measurement: A
+    accuracy_decimals: 1
+    device_class: current
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - lambda: return (x-0.075)*2.88;
+
+################### LED W1
+  - platform: adc
+    pin: 38
+    id: current_raw_w1 
+    name: "current W1"
+    unit_of_measurement: A
+    accuracy_decimals: 1
+    device_class: current
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - lambda: return (x-0.075)*2.88;
+
+################### LED W2
+  - platform: adc
+    pin: 36
+    id: current_raw_w2    
+    name: "current W2"
+    unit_of_measurement: A
+    accuracy_decimals: 1
+    device_class: current
+    update_interval: 10s
+    attenuation: auto
+    filters:
+      - lambda: return (x-0.075)*2.88;
