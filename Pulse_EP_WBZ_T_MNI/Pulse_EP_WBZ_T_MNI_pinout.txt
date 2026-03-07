@@ -31,7 +31,7 @@ GPI37 – резистивный датчик температуры
 GPI38 – на контакте 3 (J1)
 GPI39 – на контакте 5 (J1)
 
-
+#точка
 ###### J1 #########
 # GPIO25 # GPIO27 #
 ###################
@@ -57,5 +57,6 @@ ZIGBEE 2652 (DIO8) - внешняя память Q  Serial Data Output
 ZIGBEE 2652 (DIO9) - внешняя память D  Serial Data Input 
 ZIGBEE 2652 (DIO10) - внешняя память C  Serial clock
 ZIGBEE 2652 (DIO21) - внешняя память S  Chip Select
+
 
 
