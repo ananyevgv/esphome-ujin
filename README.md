@@ -27,7 +27,7 @@
 
 | [Drive](./drive) | [Connect din](./Connect-din%20Wi-Fi) | [Lume LED](./led) |
 | ----------------------| ----------------------|----------------------|
-|![Drive](/drive/images/drive.jpg)|![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg) |![Lume LED](/led/images/lume-led.jpg) 
+|![Drive](/drive/images/driveS.jpg)|![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg) |![Lume LED](/led/images/lume-led.jpg) 
 
 
 
