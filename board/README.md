@@ -9,4 +9,4 @@
 2. IO25
 3. IO27
 
-<img src="/board.jpg">
+<img src="/board/board.jpg">
