@@ -8,3 +8,5 @@
 1. IO33
 2. IO25
 3. IO27
+
+<img src="/board.jpg">
