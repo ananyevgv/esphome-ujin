@@ -156,14 +156,34 @@ select:
     icon: mdi:phone-rotate-landscape
     on_value:
       then:
-        - lambda: |-
-            switch(i) {
-              case 0:  id(my_display).set_rotation(DISPLAY_ROTATION_0_DEGREES); break;
-              case 1:  id(my_display).set_rotation(DISPLAY_ROTATION_90_DEGREES); break;
-              case 2:  id(my_display).set_rotation(DISPLAY_ROTATION_180_DEGREES); break;
-              case 3:  id(my_display).set_rotation(DISPLAY_ROTATION_270_DEGREES); break;
-            }
-              //id(my_display).update(); 
+        - if:
+            condition:
+              select.is:
+                id: rotate
+                options: [0°]
+            then:
+              - lvgl.display.set_rotation: 0
+        - if:
+            condition:
+              select.is:
+                id: rotate
+                options: [90°]
+            then:
+              - lvgl.display.set_rotation: 90
+        - if:
+            condition:
+              select.is:
+                id: rotate
+                options: [180°]
+            then:
+              - lvgl.display.set_rotation: 180
+        - if:
+            condition:
+              select.is:
+                id: rotate
+                options: [270°]
+            then:
+              - lvgl.display.set_rotation: 270
         - lvgl.widget.redraw:
         
   - platform: template
