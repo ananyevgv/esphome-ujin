@@ -6,10 +6,7 @@
 #    vars:
 #      id_bh: light_bh
 # -------------------------------------------
-external_components:
-  - source: github://pr#15058
-    components: [analog_threshold]
-    refresh: 1h
+
     
 #-------------------------------------------
 # SENSOR BH1750
