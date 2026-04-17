@@ -30,6 +30,20 @@ microphone:
     sample_rate: 16000
     
 #-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Noise meter"
+   # lambda: return id(Leq_id)->is_running();
+    turn_on_action: 
+      then:
+        - sound_level.start #: Leq_id
+    turn_off_action: 
+      then:
+        - sound_level.stop # : Leq_id   
+    
+#-------------------------------------------
 # SENSOR
 #-------------------------------------------
 sensor:

@@ -6,7 +6,11 @@
 #    vars:
 #      id_bh: light_bh
 # -------------------------------------------
-
+external_components:
+  - source: github://pr#15058
+    components: [analog_threshold]
+    refresh: 1h
+    
 #-------------------------------------------
 # SENSOR BH1750
 #-------------------------------------------
@@ -53,23 +57,23 @@ select:
         - lambda: |-
             switch(i) {
               case 0:
-                 id(illum).set_lower_threshold(100.0); 
-                 id(illum).set_upper_threshold(100.0); 
+                 id(illum).set_lower_threshold([]() -> float { return 100.0f; });
+                 id(illum).set_upper_threshold([]() -> float { return 100.0f; });
                  break;
               case 1: 
-                id(illum).set_lower_threshold(150.0);
-                id(illum).set_upper_threshold(150.0); 
+                 id(illum).set_lower_threshold([]() -> float { return 150.0f; });
+                 id(illum).set_upper_threshold([]() -> float { return 150.0f; });
                 break;
               case 2: 
-                id(illum).set_lower_threshold(200.0);
-                id(illum).set_upper_threshold(200.0); 
+                 id(illum).set_lower_threshold([]() -> float { return 200.0f; });
+                 id(illum).set_upper_threshold([]() -> float { return 200.0f; });
                 break;
               case 3: 
-                id(illum).set_lower_threshold(250.0);
-                 id(illum).set_upper_threshold(250.0);
+                 id(illum).set_lower_threshold([]() -> float { return 250.0f; });
+                 id(illum).set_upper_threshold([]() -> float { return 250.0f; });
                  break;
               case 4: 
-                id(illum).set_lower_threshold(300.0);
-                id(illum).set_upper_threshold(300.0); 
+                 id(illum).set_lower_threshold([]() -> float { return 300.0f; });
+                 id(illum).set_upper_threshold([]() -> float { return 300.0f; });
                 break;
             }

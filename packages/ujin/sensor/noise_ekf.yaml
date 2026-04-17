@@ -24,10 +24,10 @@ microphone:
     id: external_mic
     adc_type: external
     i2s_din_pin: $noise_din
-    channel: stereo
+    channel: left
     pdm: true
     bits_per_sample: 16bit
-    bits_per_channel: 8bit
+   # bits_per_channel: 8bit
     sample_rate: 16000
     
     
@@ -43,6 +43,20 @@ binary_sensor:
     device_class: sound
     icon: mdi:speaker-wireless
     
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Noise meter"
+   # lambda: return id(Leq_id)->is_running();
+    turn_on_action: 
+      then:
+        - sound_level.start #: Leq_id
+    turn_off_action: 
+      then:
+        - sound_level.stop # : Leq_id
+        
 #-------------------------------------------
 # SENSOR
 #-------------------------------------------
@@ -78,24 +92,25 @@ select:
         - lambda: |-
             switch(i) {
               case 0:
-                 id(noise).set_lower_threshold(-50.0); 
-                 id(noise).set_upper_threshold(-50.0); 
+                 id(noise).set_lower_threshold(([]() -> float { return -50.0f; }));
+                 id(noise).set_upper_threshold(([]() -> float { return -50.0f; }));
                  break;
               case 1: 
-                id(noise).set_lower_threshold(-40.0);
-                id(noise).set_upper_threshold(-40.0); 
+                id(noise).set_lower_threshold(([]() -> float { return -40.0f; }));
+                id(noise).set_upper_threshold(([]() -> float { return -40.0f; }));
                 break;
               case 2: 
-                id(noise).set_lower_threshold(-30.0);
-                id(noise).set_upper_threshold(-30.0); 
+                id(noise).set_lower_threshold(([]() -> float { return -30.0f; }));
+                id(noise).set_upper_threshold(([]() -> float { return -30.0f; }));
                 break;
               case 3: 
-                id(noise).set_lower_threshold(-20.0);
-                 id(noise).set_upper_threshold(-20.0);
-                 break;
+                id(noise).set_lower_threshold(([]() -> float { return -20.0f; }));
+                id(noise).set_upper_threshold(([]() -> float { return -20.0f; }));
+                break;
               case 4: 
-                id(noise).set_lower_threshold(-10.0);
-                id(noise).set_upper_threshold(-10.0); 
+                id(noise).set_lower_threshold(([]() -> float { return -10.0f; }));
+                id(noise).set_upper_threshold(([]() -> float { return -10.0f; }));
                 break;
             }
+
         

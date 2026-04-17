@@ -27,7 +27,7 @@ microphone:
     channel: left
     pdm: false
     bits_per_sample: 16bit
-    bits_per_channel: 8bit
+   # bits_per_channel: 8bit
     sample_rate: 16000
     
 #-------------------------------------------
@@ -36,12 +36,28 @@ microphone:
 sensor:
   - platform: sound_level
     passive: false
+    microphone: external_mic
     peak:
       name: "шум пиковый уровень"
       id: Leq_id
       icon: mdi:waveform
       filters:
-        - delta: 5
+        - delta: 
+        
+#-------------------------------------------
+# SWITCH
+#-------------------------------------------
+switch:
+  - platform: template
+    name: "Noise meter"
+   # lambda: return id(Leq_id)->is_running();
+    turn_on_action: 
+      then:
+        - sound_level.start #: Leq_id
+    turn_off_action: 
+      then:
+        - sound_level.stop # : Leq_id
+        
 #-------------------------------------------
 # BINARY SENSOR
 #-------------------------------------------
@@ -129,26 +145,27 @@ select:
         - lambda: |-
             switch(i) {
               case 0:
-                 id(noise).set_lower_threshold(-50.0); 
-                 id(noise).set_upper_threshold(-50.0); 
+                 id(noise).set_lower_threshold(([]() -> float { return -50.0f; }));
+                 id(noise).set_upper_threshold(([]() -> float { return -50.0f; }));
                  break;
               case 1: 
-                id(noise).set_lower_threshold(-40.0);
-                id(noise).set_upper_threshold(-40.0); 
+                id(noise).set_lower_threshold(([]() -> float { return -40.0f; }));
+                id(noise).set_upper_threshold(([]() -> float { return -40.0f; }));
                 break;
               case 2: 
-                id(noise).set_lower_threshold(-30.0);
-                id(noise).set_upper_threshold(-30.0); 
+                id(noise).set_lower_threshold(([]() -> float { return -30.0f; }));
+                id(noise).set_upper_threshold(([]() -> float { return -30.0f; }));
                 break;
               case 3: 
-                id(noise).set_lower_threshold(-20.0);
-                 id(noise).set_upper_threshold(-20.0);
-                 break;
+                id(noise).set_lower_threshold(([]() -> float { return -20.0f; }));
+                id(noise).set_upper_threshold(([]() -> float { return -20.0f; }));
+                break;
               case 4: 
-                id(noise).set_lower_threshold(-10.0);
-                id(noise).set_upper_threshold(-10.0); 
+                id(noise).set_lower_threshold(([]() -> float { return -10.0f; }));
+                id(noise).set_upper_threshold(([]() -> float { return -10.0f; }));
                 break;
             }
+
 
   - platform: template
     name: "Шум действие"
@@ -175,9 +192,9 @@ select:
       then:
         - lambda: |-
             id(g_noise) = (i);
-        - logger.log:
-            format: "Noise option: %s (%d)"
-            args: ["x.c_str()", "i"]
+       # - logger.log:
+       #     format: "Noise option: %s (%d)"
+       #     args: ["x.c_str()", "i"]
 
 #-------------------------------------------
 # GLOBALS
