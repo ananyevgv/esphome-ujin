@@ -1,14 +1,4 @@
 #-------------------------------------------
-# Add yaml 
-#packages:
-#  2in: !include 
-#    file: packages/ujin/2in.yaml
-#    vars:
-#      one_pin: GPIO33
-#      two_pin: GPIO3
-# and copy file esphome/packages/ujin
-
-#-------------------------------------------
 # BINARY SENSOR
 #-------------------------------------------
 binary_sensor:
@@ -17,57 +7,61 @@ binary_sensor:
       number: $one_pin
       inverted: true
     id: "input1"
-    name: "${name} Вход 1"
+    name: "Вход 1"
     icon: mdi:inbox-arrow-down-outline
     on_press:
       then:
         - lambda: |-
             int8_t act_in1 = id(g_in1);
             switch(act_in1) {
-              case 0: break;
-              case 1: id(light_dimmer1).turn_on().set_brightness(1.0).perform(); break;
-              case 2 ... 4: id(light_dimmer1).toggle().perform(); break;
-
+              case 0: break;  // Не использовать
+              case 1: id(light_dimmer1).turn_on().perform(); break;  // Стандартный: включение по нажатию
+              case 2: id(light_dimmer1).toggle().perform(); break;  // Проходной: переключение по нажатию
+              case 3: id(light_dimmer1).turn_on().perform(); break;  // Без фиксации замыкающий: включение по нажатию
+              case 4: id(light_dimmer1).turn_off().perform(); break; // Без фиксации размыкающий: выключение по нажатию
             }
     on_release: 
       then:
         - lambda: |-
             int8_t act_in1 = id(g_in1);
             switch(act_in1) {
-              case 0: break;
-              case 1: id(light_dimmer1).turn_off().set_brightness(1.0).perform(); break;
-              case 2 ... 43: id(light_dimmer1).toggle().perform(); break;
+              case 0: break;  // Не использовать
+              case 1: id(light_dimmer1).turn_off().perform(); break;  // Стандартный: выключение по отпусканию
+              case 2: break;  // Проходной: ничего по отпусканию
+              case 3: id(light_dimmer1).turn_off().perform(); break;  // Без фиксации замыкающий: выключение по отпусканию
+              case 4: id(light_dimmer1).turn_on().perform(); break;   // Без фиксации размыкающий: включение по отпусканию
             }
-
-
 
   - platform: gpio
     pin:
       number: $two_pin
       inverted: true
     id: "input2"
-    name: "${name} Вход 2"       
+    name: "Вход 2"       
     icon: mdi:inbox-arrow-down-outline
     on_press:
       then:
         - lambda: |-
             int8_t act_in2 = id(g_in2);
             switch(act_in2) {
-              case 0: ; break;
-              case 1: id(light_dimmer2).turn_on().set_brightness(1.0).perform(); break;
-              case 2 ... 4: id(light_dimmer2).toggle(); break;
-
+              case 0: break;
+              case 1: id(light_dimmer2).turn_on().perform(); break;
+              case 2: id(light_dimmer2).toggle().perform(); break;
+              case 3: id(light_dimmer2).turn_on().perform(); break;
+              case 4: id(light_dimmer2).turn_off().perform(); break;
             }
     on_release: 
       then:
         - lambda: |-
             int8_t act_in2 = id(g_in2);
             switch(act_in2) {
-              case 0: ; break;
-              case 1: id(light_dimmer2).turn_off(); break;
-              case 2 ... 43: id(light_dimmer2).toggle(); break;
+              case 0: break;
+              case 1: id(light_dimmer2).turn_off().perform(); break;
+              case 2: break;
+              case 3: id(light_dimmer2).turn_off().perform(); break;
+              case 4: id(light_dimmer2).turn_on().perform(); break;
             }
-            
+
 #-------------------------------------------
 # SELECT
 #-------------------------------------------
@@ -88,10 +82,16 @@ select:
     on_value:
       then:
         - lambda: |-
-            id(g_in1) = (i);
+            std::string option = x;
+            if (option == "Не использовать") id(g_in1) = 0;
+            else if (option == "Стандартный") id(g_in1) = 1;
+            else if (option == "Проходной") id(g_in1) = 2;
+            else if (option == "Без фиксации замыкающий") id(g_in1) = 3;
+            else if (option == "Без фиксации размыкающий") id(g_in1) = 4;
         - logger.log:
-            format: "IN2 option: %s (%d)"
-            args: ["x.c_str()", "i"]
+            format: "IN1 option: %s (%d)"
+            args: ["x.c_str()", "id(g_in1)"]
+
   - platform: template
     name: "Тип внешнего выключателя 2"
     entity_category: config
@@ -108,10 +108,15 @@ select:
     on_value:
       then:
         - lambda: |-
-            id(g_in2) = (i);
+            std::string option = x;
+            if (option == "Не использовать") id(g_in2) = 0;
+            else if (option == "Стандартный") id(g_in2) = 1;
+            else if (option == "Проходной") id(g_in2) = 2;
+            else if (option == "Без фиксации замыкающий") id(g_in2) = 3;
+            else if (option == "Без фиксации размыкающий") id(g_in2) = 4;
         - logger.log:
             format: "IN2 option: %s (%d)"
-            args: ["x.c_str()", "i"]
+            args: ["x.c_str()", "id(g_in2)"]
 
 #-------------------------------------------
 # GLOBALS
@@ -119,12 +124,10 @@ select:
 globals:
   - id: g_in1
     type: int
-    restore_value: no
+    restore_value: true
     initial_value: '0'
 
   - id: g_in2
     type: int
-    restore_value: no
+    restore_value: true
     initial_value: '0'
-
-            
