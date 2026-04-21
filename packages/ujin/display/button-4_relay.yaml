@@ -1,0 +1,207 @@
+#############################################################################
+#----Страничка 4 кнопоки улица-----------------------------------------------------
+#############################################################################
+#  button: !include
+#    file: packages/ujin/display/button-4.yaml
+#    vars:
+#      relay_1: GPIO33 
+#      relay_2: GPIO25
+#      relay_3: GPIO27
+
+#      button4_icon_0_0: "\U000F07AA" 
+#      button4_icon_0_1: "\U000F07AB" 
+#      button4_icon_1_0: "\U000F07AC" 
+#      button4_icon_1_1: "\U000F07AD" 
+
+
+
+
+#########################
+#           #           #
+#           #           #
+#   0_0     #   0_1     #
+#           #           #
+#########################
+#           #           #
+#           #           #
+#   1_0     #   1_1     #
+#           #           #
+#########################
+
+font:
+  - file: 'font/materialdesignicons-webfont.ttf' # http://materialdesignicons.com/cdn/7.4.47/ 
+    id: button4_65
+    size: 65
+    bpp: 4
+    glyphs: [
+      $button4_icon_0_0,
+      $button4_icon_0_1,
+      $button4_icon_1_0,
+      $button4_icon_1_1
+      ]   
+      
+
+
+#-------------------------------------------
+# BINARY_SENSOR
+#-------------------------------------------            
+binary_sensor:
+  - id: !extend bin_vl
+    on_click:
+      then:
+        - light.turn_on: backlight
+        - lvgl.page.show: button4_page 
+        - light.toggle: light_relay_1
+
+  - id: !extend bin_nl
+    on_click:
+      then:
+        - light.turn_on: backlight
+        - lvgl.page.show: button4_page 
+        - light.toggle: light_relay_2
+
+
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------      
+output:
+  - platform: gpio
+    pin: $relay_1
+    id: 'relay_1'
+
+  - platform: gpio
+    pin: $relay_2
+    id: 'relay_2'
+
+    
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: binary
+    output: relay_1
+    name: "1 лампа"
+    id: light_relay_1
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-1-circle-outline
+    on_turn_on:
+      lvgl.widget.update:
+        id: w_button4_0_0
+        text_color: 0xFFFF00
+    on_turn_off:
+      lvgl.widget.update:
+        id: w_button4_0_0
+        text_color: 0xB6B6B6
+
+  - platform: binary
+    output: relay_2
+    name: "2 лампа"
+    id: light_relay_2
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-2-circle-outline
+    on_turn_on:
+      lvgl.widget.update:
+        id: w_button4_1_0
+        text_color: 0xFFFF00
+    on_turn_off:
+      lvgl.widget.update:
+        id: w_button4_1_0
+        text_color: 0xB6B6B6
+
+
+
+#-------------------------------------------
+# LVGL
+#-------------------------------------------
+lvgl:
+  pages:
+    - id: button4_page     
+      width: 100%
+      bg_color: 0x000000
+      bg_opa: cover
+      widgets:
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            width: 240
+            height: 240
+            align: TOP_LEFT
+            x: 0
+            y: 0
+            layout:
+              pad_row: 10
+              pad_column: 10
+              type: GRID
+              grid_columns: [FR(1), FR(1)]
+              grid_rows: [FR(1), FR(1)]
+            widgets:
+            ########################
+              - button:
+                 # checkable: $button4_checkable_0_0
+                  id: b_button4_0_0
+                  grid_cell_row_pos: 0 #Позиция ряд
+                  grid_cell_column_pos: 0 #Позиция колонка
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_row_span: 1 #Занять ячеек в ряде
+                  grid_cell_column_span: 1 #Занять ячеек в колонке
+                  bg_opa: 35%
+                  widgets:
+                    - label:
+                        text_font: button4_65
+                        align: center
+                        text: $button4_icon_0_0
+                        id: w_button4_0_0
+
+              - button:
+               #   checkable: $button4_checkable_0_1
+                  id: b_button4_0_1
+                  grid_cell_row_pos: 0 #Позиция ряд
+                  grid_cell_column_pos: 1 #Позиция колонка
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_row_span: 1 #Занять ячеек в ряде
+                  grid_cell_column_span: 1 #Занять ячеек в колонке
+                  bg_opa: 35%
+                  widgets:
+                    - label:
+                        text_font: button4_65
+                        align: center
+                        text: $button4_icon_0_1
+                        id: w_button4_0_1
+
+            ########################
+              - button:
+               #   checkable: $button4_checkable_1_0
+                  id: b_button4_1_0
+                  grid_cell_row_pos: 1 #Позиция ряд
+                  grid_cell_column_pos: 0 #Позиция колонка
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_row_span: 1 #Занять ячеек в ряде
+                  grid_cell_column_span: 1 #Занять ячеек в колонке
+                  bg_opa: 35%
+                  widgets:
+                    - label:
+                        text_font: button4_65
+                        align: center
+                        text: $button4_icon_1_0
+                        id: w_button4_1_0
+
+
+              - button:
+                #  checkable: $button4_checkable_1_1
+                  id: b_button4_1_1
+                  grid_cell_row_pos: 1 #Позиция ряд
+                  grid_cell_column_pos: 1 #Позиция колонка
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_row_span: 1 #Занять ячеек в ряде
+                  grid_cell_column_span: 1 #Занять ячеек в колонке
+                  bg_opa: 35%
+                  widgets:
+                    - label:
+                        text_font: button4_65
+                        align: center
+                        text: $button4_icon_1_1
+                        id: w_button4_1_1
