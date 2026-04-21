@@ -1,0 +1,73 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  but: !include 
+#    file: packages/ujin/button/button_relay_ekf.yaml
+# and copy file esphome/packages/ujin/button
+
+
+external_components:
+  - source: github://ananyevgv/esphome-components/
+    components: [ aw9310x ]
+
+#-------------------------------------------
+# TOUCH CAP
+#-------------------------------------------        
+aw9310x:
+  address: 0x12  # опционально, по умолчанию 0x12
+ # interrupt_pin: GPIO23  # если не указать, будет работать в опросном режиме
+ # threshold: 50000
+  id: aw9310x_sensor
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: aw9310x
+    aw9310x_id: aw9310x_sensor
+    channel: 0
+    name: "Left touch"
+    icon: mdi:gesture-tap-button
+    id: left_touch
+    on_click: 
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.toggle: light_relay_1
+      - timing:
+          - ON for at least 1s
+        then:
+          light.toggle: light_relay_3
+
+            
+  - platform: aw9310x  
+    aw9310x_id: aw9310x_sensor
+    channel: 2
+    name: "Right touch"
+    id: right_touch
+    icon: mdi:gesture-tap-button
+    on_click: 
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          light.toggle: light_relay_2
+      - timing:
+          - ON for at least 1s
+        then:
+          light.toggle: light_relay_3
+            
