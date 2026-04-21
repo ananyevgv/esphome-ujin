@@ -1,4 +1,14 @@
 #-------------------------------------------
+# Add yaml 
+#packages:
+#  2in: !include 
+#    file: packages/ujin/2in.yaml
+#    vars:
+#      one_pin: GPIO33
+#      two_pin: GPIO3
+# and copy file esphome/packages/ujin
+
+#-------------------------------------------
 # BINARY SENSOR
 #-------------------------------------------
 binary_sensor:
