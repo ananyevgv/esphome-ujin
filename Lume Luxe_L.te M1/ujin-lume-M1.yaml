@@ -95,7 +95,8 @@ packages:
       dimmer2_gate: GPIO25  
       type_light1: monochromatic #binary # 
       type_light2: monochromatic # binary
-
+      transition_length1: 1s # 0s binary
+      transition_length2: 1s # 0s binary
 # Один встроенный TEST, второй удаленный  прямое управление через BLE люстрой на 2 канале !!!!zero_dimm  убрать!!!! для lume L.te M1
 #  ble_adv: !include 
 #    file: packages/ujin/ble_adv_controller.yaml
