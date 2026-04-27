@@ -10,6 +10,8 @@
 #      dimmer2_gate: GPIO25  
 #      type_light1: monochromatic # binary
 #      type_light2: monochromatic # binary
+#      transition_length1: 1s # 0s binary
+#      transition_length2: 1s # 0s binary
 # and copy file esphome/packages/ujin
 
 #-------------------------------------------
@@ -49,6 +51,7 @@ light:
   - platform: $type_light1
     output: dimmer1
     name: "${name} 1 лампа"
+    default_transition_length: $transition_length1
     id: light_dimmer1
     restore_mode: ALWAYS_OFF
     icon: mdi:numeric-1-circle-outline
@@ -87,6 +90,7 @@ light:
   - platform: $type_light2 
     output: dimmer2
     name: "${name} 2 лампа"
+    default_transition_length: $transition_length2
     id: light_dimmer2
     restore_mode: ALWAYS_OFF
     icon: mdi:numeric-2-circle-outline
