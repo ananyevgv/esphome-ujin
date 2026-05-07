@@ -1,0 +1,53 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  zigbee: !include 
+#    file: packages/ujin/zigbee.yaml
+#    vars:
+#      TX_Z: 27
+#      RX_Z: 14
+# and copy file esphome/packages/ujin
+
+ 
+      
+#-------------------------------------------
+# UART
+#-------------------------------------------
+uart:
+  - id: uart_zigbee
+    rx_pin:
+      number: $RX_Z
+      mode:
+        input: true
+        output: false
+        open_drain: false
+        pullup: false
+        pulldown: false
+      inverted: false
+      ignore_strapping_warning: false
+      drive_strength: 20.0
+    tx_pin:
+      number: $TX_Z
+      mode:
+        output: true
+        input: false
+        open_drain: false
+        pullup: false
+        pulldown: false
+      inverted: false
+      ignore_strapping_warning: false
+      drive_strength: 20.0
+    baud_rate: 115200
+    rx_buffer_size: 256
+    stop_bits: 1
+    data_bits: 8
+    parity: NONE
+
+#-------------------------------------------
+# Serial_proxy
+#-------------------------------------------
+serial_proxy:
+  - id: zigbee_proxy
+    uart_id: uart_zigbee
+    name: Zigbee Device Ujin
+    port_type: TTL
