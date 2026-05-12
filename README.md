@@ -6,42 +6,69 @@
 [esphome-release-shield]: https://img.shields.io/static/v1?label=ESPHome&message=2026.4&color=green&logo=esphome
 [esphome-release]: https://GitHub.com/esphome/esphome/releases/
 
-# Перед прошивкой на ESPHome рекомендуется посмотреть LOG устройства и сделать backup.
+<div align="center">
+  <h1>⚡ Устройства UJIN в ESPHome</h1>
+  <p><strong>Готовые конфигурации, даташиты и прошивки для умного дома</strong></p>
+  <br/>
+</div>
 
-# Интегрированные устройства UJIN в ESPHome
+> ⚠️ **Важно**: Перед прошивкой на ESPHome обязательно посмотрите LOG устройства и сделайте **резервную копию (backup)**.
 
-| [Lume Luxe L.te M1](./Lume%20Luxe_L.te%20M1)  |  [Lume Wi-Fi Z1](./Lume%20Wi-Fi_Z1) | [wifi/BLE/IR/CO2](./Lume%20Wi-Fi_BLE_IR_CO2) | [Lume Luxe L.te M2](./Lume%20Luxe_L.te%20M2) | 
-|--------------------|---------------|----------------------|-------------------|
-| ![Lume Luxe L.te M1](/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg) | ![Lume Wi-Fi Z1](/Lume%20Wi-Fi_Z1/images/Lume%20WIFI%20Z1.jpg) | ![wifi/BLE/IR/CO2](/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg) | ![Lume Luxe L.te M2](/Lume%20Luxe_L.te%20M2/images/Lume%20Luxe_L.te%20M2.jpg) |
+---
 
+## 🧩 Поддерживаемые устройства
 
-| [Ujin EKF](./Pulse_EP_WBZ_T_MNI)    | [Aqua Sense](./Aqua-Sense%20BLE)    | [Heat Wi-Fi](./Heat%20Wi-Fi)           |   [Aqua Wi-Fi](./Aqua%20Wi-Fi_BLE_220В_СУ-02_R2)       | 
-|--------------------|---------------|----------------------|-------------------|
-| ![Pulse_EP_WBZ_T_MNI](/Pulse_EP_WBZ_T_MNI/images/Pulse_EP_WBZ_T_MNI_1.jpg) | ![Aqua Sense](/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg) | ![Heat Wi-Fi](/Heat%20Wi-Fi/images/heat_1.jpg) | ![Aqua Wi-Fi](/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_1.jpg) |
+### 💡 Освещение и свет
+| Lume Luxe L.te M1 | Lume Wi-Fi Z1 | Lume Luxe L.te M2 | Ujin EKF (Pulse) |
+|:---:|:---:|:---:|:---:|
+| [![Lume Luxe L.te M1](/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg)](/Lume%20Luxe_L.te%20M1) | [![Lume Wi-Fi Z1](/Lume%20Wi-Fi_Z1/images/Lume%20WIFI%20Z1.jpg)](/Lume%20Wi-Fi_Z1) | [![Lume Luxe L.te M2](/Lume%20Luxe_L.te%20M2/images/Lume%20Luxe_L.te%20M2.jpg)](/Lume%20Luxe_L.te%20M2) | [![Pulse_EP_WBZ_T_MNI](/Pulse_EP_WBZ_T_MNI/images/Pulse_EP_WBZ_T_MNI_1.jpg)](/Pulse_EP_WBZ_T_MNI) |
 
+| Lume Wi-Fi + BLE/IR/CO₂ | lume‑in (диммер) | Lume LED |
+|:---:|:---:|:---:|
+| [![wifi/BLE/IR/CO2](/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg)](/Lume%20Wi-Fi_BLE_IR_CO2) | [![lume-in](/lume-in/images/lume-in.jpg)](/lume-in) | [![Lume LED](/led/images/lume-led.jpg)](/led) |
 
-| [lume-in](./lume-in) | [Connect-in](./connect-in) | [Heat EKF](./Heat) | [Aqua EKF](./Aqua-EA)|
-|--------------------|---------------|----------------------|----------------------|
-|![lume-in](/lume-in/images/lume-in.jpg) |![Connect-in](/connect-in/images/connect_in0.jpg) | ![Heat](/Heat/images/heat.jpg) | ![Heat](/Aqua-EA/images/ujin-ekf-aqua.jpg) 
+### 💧 Вода и защита от протечек
+| Aqua Sense (BLE) | Aqua Wi-Fi (220В) | Aqua EKF | Drive |
+|:---:|:---:|:---:|:---:|
+| [![Aqua Sense](/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE.jpg)](/Aqua-Sense%20BLE) | [![Aqua Wi-Fi](/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2/images/Aqua%20Wi-Fi_1.jpg)](/Aqua%20Wi-Fi_BLE_220%D0%92_%D0%A1%D0%A3-02_R2) | [![Aqua EKF](/Aqua-EA/images/ujin-ekf-aqua.jpg)](/Aqua-EA) | [![Drive](/drive/images/driveS.jpg)](/drive) |
 
+### 🌡️ Тепло
+| Heat Wi-Fi | Heat EKF |
+|:---:|:---:|
+| [![Heat Wi-Fi](/Heat%20Wi-Fi/images/heat_1.jpg)](/Heat%20Wi-Fi) | [![Heat](/Heat/images/heat.jpg)](/Heat) |
 
-| [Drive](./drive) | [Connect din](./Connect-din%20Wi-Fi) | [Lume LED](./led) |
-| ----------------------| ----------------------|----------------------|
-|![Drive](/drive/images/driveS.jpg)|![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg) |![Lume LED](/led/images/lume-led.jpg) 
+### 🎛️ Контроллеры и реле
+| Connect din Wi-Fi | Connect‑in |
+|:---:|:---:|
+| [![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg)](/Connect-din%20Wi-Fi) | [![Connect-in](/connect-in/images/connect_in0.jpg)](/connect-in) |
 
+---
 
+## 📖 Полезная информация
 
-[Расшифровка моделей по датчикам](/datasheet/data.jpg)
+| 📄 Документация | 🔗 Ссылка |
+|----------------|-----------|
+| 🧠 Расшифровка моделей по датчикам | [`/datasheet/data.jpg`](/datasheet/data.jpg) |
+| 📚 Даташиты на компоненты | [`/datasheet`](./datasheet) |
+| ⚠️ Отличие устройств Pulse | Отсутствие исполнительных устройств (димер, реле) |
+| 🎛️ Connect din Wi-Fi | Контроллер на DIN-рейку |
+| 🔌 Connect‑in | Реле в подрозетник |
+| 🎚️ lume‑in | Диммер в подрозетник |
 
-Отличие устройст Pulse заключается в отсутствие исполнительных устройств (димер, реле)  
+---
 
-[Даташиты на компоненты](./datasheet)  
+## 🛠️ Проекты с использованием UJIN
 
+| Проект | Описание |
+|--------|----------|
+| [❄️ «Зимняя вода для улицы»](/drive/winter_water) | Защита системы водоснабжения в морозы |
+| [🔄 Альтернативная плата под корпус EKF](/board/) | Замена платы для Aqua, Pulse, Heat |
 
-# Проекты с использованием Ujin
+---
 
-["Зимняя вода для улицы"](./drive/winter_water) 
-
-[Альтернативная плата под корпус EKF (aqua, pulse, heat)](/board/) 
-
-
+<div align="center">
+  <sub>
+    💡 Собрано сообществом UJIN | 
+    📦 ESPHome 2026.4+
+  </sub>
+</div>
