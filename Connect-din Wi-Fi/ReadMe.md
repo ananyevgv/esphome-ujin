@@ -1,15 +1,99 @@
+[![License][license-shield]][license]
+[![ESPHome release][esphome-release-shield]][esphome-release]
 
-![Connect-Din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi_5.png)
+[license-shield]: https://img.shields.io/static/v1?label=License&message=MIT&color=orange&logo=license
+[license]: https://opensource.org/licenses/MIT
+[esphome-release-shield]: https://img.shields.io/static/v1?label=ESPHome&message=2026.4&color=green&logo=esphome
+[esphome-release]: https://GitHub.com/esphome/esphome/releases/
 
-Для перевода ESP в режим прошивки, нажмите и удерживайте кнопку "Настройка", до подачи питания.
+<div align="center">
+  <h1>📡 Connect-Din Wi-Fi</h1>
+  <p><strong>DIN-рейка контроллер / реле с Wi-Fi</strong></p>
+  <br/>
+</div>
 
-![Прошивка реле](/Connect-din%20Wi-Fi/images/connect-din_wi-fi_firmware2.jpg)
+> ⚠️ **Важно**: Перед прошивкой на ESPHome обязательно посмотрите LOG устройства и сделайте **резервную копию (backup)**.
 
-Второй вариант прошивки.
+---
 
-![Прошивка реле](/Connect-din%20Wi-Fi/images/connect-din_wi-fi_firmware.jpg)
+## 📌 Об устройстве
 
-Подробная инструкция по прошивке программатором CH341A с прищепкой.
+<div align="center">
+  <img src="/Connect-din%20Wi-Fi/images/connect-din_wi-fi_5.png" width="400">
+  <br/>
+  <sub>Внешний вид Connect-Din Wi-Fi</sub>
+</div>
 
-http://xeonlive.ru/instruktsii/proshivka-bios-programmatorom-ch341a-s-prishchepkoj?ysclid=ma27og9c7a156344069
+**Connect-Din Wi-Fi** — это контроллер/реле на DIN-рейку с поддержкой Wi-Fi.
 
+---
+
+## 🔧 Способы прошивки
+
+### Способ 1. Переход в режим прошивки через кнопку
+
+Для перевода ESP в режим прошивки:
+
+1. Нажмите и **удерживайте** кнопку **«Настройка»**
+2. **Не отпуская** кнопку, подайте питание
+3. Отпустите кнопку после подачи питания
+
+<div align="center">
+  <img src="/Connect-din%20Wi-Fi/images/connect-din_wi-fi_firmware2.jpg" width="400">
+  <br/>
+  <sub>Местоположение кнопки «Настройка»</sub>
+</div>
+
+---
+
+### Способ 2. Альтернативный вариант прошивки
+
+<div align="center">
+  <img src="/Connect-din%20Wi-Fi/images/connect-din_wi-fi_firmware.jpg" width="400">
+  <br/>
+  <sub>Альтернативные контакты для прошивки</sub>
+</div>
+
+---
+
+### Способ 3. Прошивка программатором CH341A с прищепкой
+
+Для опытных пользователей — подробная инструкция:
+
+🔗 [Прошивка BIOS программатором CH341A с прищепкой](http://xeonlive.ru/instruktsii/proshivka-bios-programmatorom-ch341a-s-prishchepkoj?ysclid=ma27og9c7a156344069)
+
+> ⚙️ **Метод**: программатор CH341A + прищепка (SOP8 clip)
+
+---
+
+## 📊 Способы прошивки — кратко
+
+| Способ | Метод | Сложность |
+|:------:|-------|:---------:|
+| 1 | Кнопка «Настройка» + питание | ⭐ Лёгкий |
+| 2 | Альтернативные контакты | ⭐⭐ Средний |
+| 3 | CH341A с прищепкой | ⭐⭐⭐ Продвинутый |
+
+---
+
+## ⚠️ Важное примечание
+
+> При использовании **ESPHome** для прошивки через USB-UART адаптер, убедитесь, что устройство переведено в режим загрузки (способ 1 или 2).
+
+---
+
+## 📦 Что вам понадобится
+
+- ✅ USB-UART адаптер (например, CH340G / CP2102)
+- ✅ Перемычки (dupont)
+- ✅ Питание устройства (220В или 5В/3.3В)
+- ✅ (для способа 3) Программатор CH341A + прищепка
+
+---
+
+<div align="center">
+  <sub>
+    💡 Разработано для ESPHome | 
+    📦 Требуется ESPHome 2026.4+
+  </sub>
+</div>
