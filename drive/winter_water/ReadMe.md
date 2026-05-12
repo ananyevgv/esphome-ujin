@@ -1,6 +1,6 @@
 ##  "Вода для улицы с автосливом" 
 
-![Winter water](/drive/winter_water/winter%20water1.jpg) 
+![Winter water](/drive/winter_water/winter%20water1.png) 
 
 ![Schematic](/drive/winter_water/Schematic_Drive-2ch.png) 
 
