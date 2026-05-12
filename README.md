@@ -68,7 +68,6 @@
 
 <div align="center">
   <sub>
-    💡 Собрано сообществом UJIN | 
     📦 ESPHome 2026.4+
   </sub>
 </div>
