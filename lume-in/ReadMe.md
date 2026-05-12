@@ -1,5 +1,10 @@
-[!\[License](https://img.shields.io/static/v1?label=License\&message=MIT\&color=orange\&logo=license)](https://opensource.org/licenses/MIT)
-[!\[ESPHome release](https://img.shields.io/static/v1?label=ESPHome\&message=2026.4\&color=green\&logo=esphome)](https://GitHub.com/esphome/esphome/releases/)
+[![License][license-shield]][license]
+[![ESPHome release][esphome-release-shield]][esphome-release]
+
+[license-shield]: https://img.shields.io/static/v1?label=License&message=MIT&color=orange&logo=license
+[license]: https://opensource.org/licenses/MIT
+[esphome-release-shield]: https://img.shields.io/static/v1?label=ESPHome&message=2026.4&color=green&logo=esphome
+[esphome-release]: https://GitHub.com/esphome/esphome/releases/
 
 <div align="center">
   <h1>🎛️ Встраиваемый диммер в подрозетник</h1>
