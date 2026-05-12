@@ -8,7 +8,7 @@
 
 <div align="center">
   <h1>📡 Connect-Din Wi-Fi</h1>
-  <p><strong>DIN-рейка контроллер / реле с Wi-Fi</strong></p>
+  <p><strong>Коммутатор на DIN-рейку </strong></p>
   <br/>
 </div>
 
@@ -19,12 +19,13 @@
 ## 📌 Об устройстве
 
 <div align="center">
-  <img src="/Connect-din%20Wi-Fi/images/connect-din_wi-fi_5.png" width="400">
+  <img src="/Connect-din%20Wi-Fi/images/connect din.png" width="400">
   <br/>
   <sub>Внешний вид Connect-Din Wi-Fi</sub>
 </div>
+ <br/>
 
-**Connect-Din Wi-Fi** — это контроллер/реле на DIN-рейку с поддержкой Wi-Fi.
+**Connect-Din Wi-Fi** — это коммутатор для управления электрическими нагрузками по двум каналам с помощью двух независимых электромагнитных реле с перекидными контактами. Коммутатор имеет два входа для подключения внешних выключателей, переключателей или проводных датчиков.
 
 ---
 
