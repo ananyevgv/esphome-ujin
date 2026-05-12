@@ -40,7 +40,7 @@
 3. Отпустите кнопку после подачи питания
 
 <div align="center">
-  <img src="/Connect-din%20Wi-Fi/images/connect-din_wi-fi_firmware2.jpg" width="400">
+  <img src="/Connect-din%20Wi-Fi/images/connect din 0.png" width="400">
   <br/>
   <sub>Местоположение кнопки «Настройка» и пинов для подключения программатора</sub>
 </div>
