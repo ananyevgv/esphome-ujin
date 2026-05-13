@@ -7,12 +7,11 @@
 [esphome-release]: https://GitHub.com/esphome/esphome/releases/
 
 <div align="center">
-  <h1>💧 UAS-B / UAS-W — Датчик протечки воды</h1>
+  <h1>💧 UAS-B  — Датчик протечки воды</h1>
   <p><strong>Беспроводной сенсор протечки с псевдо-BLE на чипе NRF24</strong></p>
   <br/>
 </div>
 
-> ⚠️ **Важно**: Перед прошивкой на ESPHome обязательно посмотрите LOG устройства и сделайте **резервную копию (backup)**.
 
 ---
 
@@ -21,7 +20,7 @@
 | Модель | Тип | Поддержка |
 |--------|-----|-----------|
 | **UAS-B** | Беспроводной | ✅ через псевдо-BLE (NRF24) |
-| **UAS-W** | Проводной | ✅ в пакете `valve` |
+
 
 ---
 
@@ -50,7 +49,7 @@
 ### Шаг 3: Разбудить сенсор
 
 <div align="center">
-  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_3.jpg" width="300">
+  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_1.jpg" width="300">
   <br/>
   <sub>Разбудите сенсор нажатием кнопки или замыканием контактов</sub>
 </div>
@@ -60,7 +59,7 @@
 В приложении найдите устройство с именем:
 
 <div align="center">
-  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_4.png" width="300">
+  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_3.jpg" width="300">
   <br/>
   <sub>Имя устройства: <strong>LD-S</strong></sub>
 </div>
@@ -71,17 +70,3 @@
 
 ---
 
-## 📝 Пример конфигурации ESPHome
-
-```yaml
-# Пример конфигурации для подключения датчика UAS-B
-esp32_ble_tracker:
-
-ble_client:
-  - mac_address: "XX:XX:XX:XX:XX:XX"  # замените на MAC адрес вашего датчика
-    id: uas_sensor
-
-sensor:
-  - platform: uas_water_leak  # или используйте valve для UAS-W
-    name: "Датчик протечки"
-    ble_client_id: uas_sensor
