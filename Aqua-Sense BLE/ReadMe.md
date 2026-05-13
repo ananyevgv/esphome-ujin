@@ -49,7 +49,7 @@
 ### Шаг 3: Разбудить сенсор
 
 <div align="center">
-  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_3.jpg" width="300">
+  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_1.jpg" width="300">
   <br/>
   <sub>Разбудите сенсор нажатием кнопки или замыканием контактов</sub>
 </div>
@@ -59,7 +59,7 @@
 В приложении найдите устройство с именем:
 
 <div align="center">
-  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_3.png" width="300">
+  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_3.jpg" width="300">
   <br/>
   <sub>Имя устройства: <strong>LD-S</strong></sub>
 </div>
