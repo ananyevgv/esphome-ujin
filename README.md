@@ -19,7 +19,7 @@
 ## 🧩 Поддерживаемые устройства
 
 ### 💡 Освещение и свет
-| Lume Luxe L.te M1 | Lume Wi-Fi Z1 | Lume Luxe L.te M2 | Ujin EKF (Pulse) |
+| Lume Luxe L.te M1 | Lume Wi-Fi Z1 | Lume Luxe L.te M2 | Ujin EKF |
 |:---:|:---:|:---:|:---:|
 | [![Lume Luxe L.te M1](/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg)](/Lume%20Luxe_L.te%20M1) | [![Lume Wi-Fi Z1](/Lume%20Wi-Fi_Z1/images/Lume%20WIFI%20Z1.jpg)](/Lume%20Wi-Fi_Z1) | [![Lume Luxe L.te M2](/Lume%20Luxe_L.te%20M2/images/Lume%20Luxe_L.te%20M2.jpg)](/Lume%20Luxe_L.te%20M2) | [![Pulse_EP_WBZ_T_MNI](/Pulse_EP_WBZ_T_MNI/images/Pulse_EP_WBZ_T_MNI_1.jpg)](/Pulse_EP_WBZ_T_MNI) |
 
