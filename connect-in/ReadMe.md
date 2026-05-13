@@ -45,7 +45,7 @@
 
 |Плата ESP|Общий вид|Монтаж|
 |:-:|:-:|:-:|
-|<img src="/connect-in/images/esp\_connect.png" width="250">|<img src="/connect-in/images/connect\_in.jpg" width="250">|<img src="/connect-in/images/connect\_in2.jpg" width="250">|
+|<img src="./connect-in/images/esp\_connect.png" width="250">|<img src="./connect-in/images/connect\_in.jpg" width="250">|<img src="./connect-in/images/connect\_in2.jpg" width="250">|
 
 </div>
 
@@ -72,20 +72,6 @@
 |⏱️ Потреблённая энергия|✅|
 
 \---
-
-## 📏 Установка
-
-|Шаг|Описание|
-|:-:|-|
-|1|Отключите питание в электрощите|
-|2|Установите модуль в **подрозетник** (глубина не менее 45мм)|
-|3|Подключите нагрузку к выходу реле|
-|4|При необходимости подключите внешний выключатель|
-|5|Подайте питание и настройте Wi-Fi|
-
-\---
-
-
 
 
 <div align="center">
