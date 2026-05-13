@@ -59,7 +59,7 @@
 В приложении найдите устройство с именем:
 
 <div align="center">
-  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_4.png" width="300">
+  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_3.png" width="300">
   <br/>
   <sub>Имя устройства: <strong>LD-S</strong></sub>
 </div>
@@ -70,4 +70,3 @@
 
 ---
 
-## 📝 Пример конфигурации ESPHome
