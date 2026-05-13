@@ -1,5 +1,10 @@
-[!\[License](https://img.shields.io/static/v1?label=License\&message=MIT\&color=orange\&logo=license)](https://opensource.org/licenses/MIT)
-[!\[ESPHome release](https://img.shields.io/static/v1?label=ESPHome\&message=2026.4\&color=green\&logo=esphome)](https://GitHub.com/esphome/esphome/releases/)
+[![License][license-shield]][license]
+[![ESPHome release][esphome-release-shield]][esphome-release]
+
+[license-shield]: https://img.shields.io/static/v1?label=License&message=MIT&color=orange&logo=license
+[license]: https://opensource.org/licenses/MIT
+[esphome-release-shield]: https://img.shields.io/static/v1?label=ESPHome&message=2026.4&color=green&logo=esphome
+[esphome-release]: https://GitHub.com/esphome/esphome/releases/
 
 <div align="center">
   <h1>🔄 Альтернативная плата для Ujin EKF</h1>
@@ -7,7 +12,6 @@
   <br/>
 </div>
 
-> ⚠️ \*\*Важно\*\*: Перед прошивкой на ESPHome обязательно посмотрите LOG устройства и сделайте \*\*резервную копию (backup)\*\*.
 
 \---
 
@@ -17,9 +21,9 @@
 
 |Устройство|Тип|
 |-|-|
-|💧 **Aqua**|Контроллер протечки воды|
-|⚡ **Pulse**|Управление светом / диммер|
-|🌡️ **Heat**|Термостат|
+|💧 **Aqua EKF**|Контроллер протечки воды|
+|⚡ **Pulse EKF**|Управление светом / диммер|
+|🌡️ **Heat EKF**|Термостат|
 
 \---
 
