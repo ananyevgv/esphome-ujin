@@ -7,12 +7,11 @@
 [esphome-release]: https://GitHub.com/esphome/esphome/releases/
 
 <div align="center">
-  <h1>💧 UAS-B / UAS-W — Датчик протечки воды</h1>
+  <h1>💧 UAS-B  — Датчик протечки воды</h1>
   <p><strong>Беспроводной сенсор протечки с псевдо-BLE на чипе NRF24</strong></p>
   <br/>
 </div>
 
-> ⚠️ **Важно**: Перед прошивкой на ESPHome обязательно посмотрите LOG устройства и сделайте **резервную копию (backup)**.
 
 ---
 
@@ -21,7 +20,7 @@
 | Модель | Тип | Поддержка |
 |--------|-----|-----------|
 | **UAS-B** | Беспроводной | ✅ через псевдо-BLE (NRF24) |
-| **UAS-W** | Проводной | ✅ в пакете `valve` |
+
 
 ---
 
@@ -72,16 +71,3 @@
 ---
 
 ## 📝 Пример конфигурации ESPHome
-
-```yaml
-# Пример конфигурации для подключения датчика UAS-B
-esp32_ble_tracker:
-
-ble_client:
-  - mac_address: "XX:XX:XX:XX:XX:XX"  # замените на MAC адрес вашего датчика
-    id: uas_sensor
-
-sensor:
-  - platform: uas_water_leak  # или используйте valve для UAS-W
-    name: "Датчик протечки"
-    ble_client_id: uas_sensor
