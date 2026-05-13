@@ -112,3 +112,14 @@
 ---
 
 **📊 ИТОГ:** LD-S | 🔋 80% | 🖱️ input 
+
+---
+
+
+#### Пример отображения датчиков в прошивке
+
+<div align="center">
+  <img src="/Aqua-Sense%20BLE/images/Aqua-Sense%20BLE_4.png" width="500">
+  <br/>
+  <sub></sub>
+</div>
