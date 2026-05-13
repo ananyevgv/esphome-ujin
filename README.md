@@ -34,7 +34,7 @@
 
 для проводного датчика UAS-W подержка в пакете valve
 
-### 🌡️ Тепло
+### 🌡️ТТермостаты
 | Heat Wi-Fi | Heat EKF |
 |:---:|:---:|
 | [![Heat Wi-Fi](/Heat%20Wi-Fi/images/heat_1.jpg)](/Heat%20Wi-Fi) | [![Heat](/Heat/images/heat.jpg)](/Heat) |
