@@ -44,7 +44,7 @@
 
 | Плата ESP | Общий вид | Монтаж |
 |:---:|:---:|:---:|
-| <img src="./connect-in/images/esp_connect.png" width="250"> | <img src="./connect-in/images/connect_in.jpg" width="250"> | <img src="./connect-in/images/connect_in2.jpg" width="250"> |
+| <img src="./images/esp_connect.png" width="250"> | <img src="./images/connect_in.jpg" width="250"> | <img src="./images/connect_in2.jpg" width="250"> |
 
 </div>
 
