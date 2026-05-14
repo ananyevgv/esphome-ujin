@@ -31,9 +31,6 @@
 | **Питание** | Автономное (батарейное) |
 
 ---
-## Прямая интеграция в Home assistant 
-
-https://github.com/NagibinA/ha-ujin-aqua-sense
 
 ## 📍 Пошаговая настройка подключения к ESPHome
 
