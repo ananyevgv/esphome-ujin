@@ -81,9 +81,9 @@ binary_sensor:
             condition:
               lambda: return (id(aqua_valve).position == 0.0);
             then:
-              - valve.open: aqua_valve
-            else:
               - valve.close: aqua_valve
+            else:
+              - valve.open: aqua_valve
   - id: !extend right_touch
     on_multi_click:
       - timing:
