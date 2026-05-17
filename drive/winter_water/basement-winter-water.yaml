@@ -22,7 +22,7 @@ psram:
 packages:
   wifi: !include packages/wifi.yaml
   device_base: !include packages/device_base.yaml
-  web: !include included/web.yaml
+  #web: !include included/web.yaml
   time: !include included/time.yaml
   
 #-------------------------------------------
@@ -53,7 +53,6 @@ valve:
           return VALVE_OPEN;
         }
       }
-      return {};
     open_action:
       then:
         - valve.close: sliv_valve
@@ -108,7 +107,6 @@ valve:
           return VALVE_OPEN;
         } 
       }
-      return {};
     open_action:
       then:
         - switch.turn_on: water_open
@@ -139,7 +137,6 @@ valve:
           return VALVE_OPEN;
         }
       }
-      return {};
     open_action:
       then:
         - switch.turn_on: sliv_open
@@ -186,9 +183,9 @@ binary_sensor:
           condition:
             lambda: 'return id(aqua_valve).position == 0.0;'
           then:
-            - valve.close: aqua_valve
-          else:
             - valve.open: aqua_valve
+          else:
+            - valve.close: aqua_valve
 
   - platform: gpio
     pin:
