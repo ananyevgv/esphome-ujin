@@ -77,13 +77,13 @@ binary_sensor:
           - ON for at most 0.5s
           - OFF for at least 0.5s
         then:
-          if:
-            condition:
-              lambda: return (id(aqua_valve).position == 0.0);
-            then:
-              - valve.close: aqua_valve
-            else:
-              - valve.open: aqua_valve
+          - if:
+              condition:
+                lambda: 'return id(aqua_valve).position == 0.0;'
+              then:
+                - valve.open: aqua_valve
+              else:
+                - valve.close: aqua_valve
   - id: !extend right_touch
     on_multi_click:
       - timing:
