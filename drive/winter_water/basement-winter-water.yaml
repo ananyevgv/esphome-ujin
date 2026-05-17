@@ -46,32 +46,38 @@ valve:
     id: aqua_valve
     device_class: water
     lambda: |-
-      if (id(b_sliv_open).state & id(b_water_close).state) {
+      if (id(b_water_close).state) {
         return VALVE_CLOSED;
       } else {
-        if (id(b_sliv_close).state & id(b_water_open).state) {
+        if (id(b_water_open).state) {
           return VALVE_OPEN;
         }
       }
+      return {};
     open_action:
-      - valve.close: sliv_valve
-      - while:
-          condition:
-            binary_sensor.is_off: b_sliv_close
-          then:
-            - delay: 1s
-      - valve.open: water_valve
+      then:
+        - valve.close: sliv_valve
+        - while:
+            condition:
+              binary_sensor.is_off: b_sliv_close
+            then:
+              - delay: 1s
+        - valve.open: water_valve
     close_action:
-      - valve.close: water_valve
-      - while:
-          condition:
-            binary_sensor.is_off: b_water_close
-          then:
-            - delay: 1s
-      - valve.open: sliv_valve
+      then:
+        - valve.close: water_valve
+        - while:
+            condition:
+              binary_sensor.is_off: b_water_close
+            then:
+              - delay: 1s
+        - valve.open: sliv_valve
+        - delay: 20s
+        - valve.close: sliv_valve
     stop_action:
-      - valve.stop: water_valve
-      - valve.stop: sliv_valve
+      then:
+        - valve.stop: water_valve
+        - valve.stop: sliv_valve
     optimistic: true
     on_open:
       - light.addressable_set:
@@ -102,19 +108,23 @@ valve:
           return VALVE_OPEN;
         } 
       }
+      return {};
     open_action:
-      - switch.turn_on: water_open
-      - delay: 8s
-     # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
-      - switch.turn_off: water_open
+      then:
+        - switch.turn_on: water_open
+        - delay: 8s
+      # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+        - switch.turn_off: water_open
     close_action:
-      - switch.turn_on: water_close
-      - delay: 8s
-     # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
-      - switch.turn_off: water_close
+      then:
+        - switch.turn_on: water_close
+        - delay: 8s
+      # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+        - switch.turn_off: water_close
     stop_action:
-      - switch.turn_off: water_close
-      - switch.turn_off: water_open
+      then:
+        - switch.turn_off: water_close
+        - switch.turn_off: water_open
 
 
   - platform: template
@@ -129,19 +139,23 @@ valve:
           return VALVE_OPEN;
         }
       }
+      return {};
     open_action:
-      - switch.turn_on: sliv_open
-      - delay: 8s
-     # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
-      - switch.turn_off: sliv_open
+      then:
+        - switch.turn_on: sliv_open
+        - delay: 8s
+      # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+        - switch.turn_off: sliv_open
     close_action:
-      - switch.turn_on: sliv_close
-      - delay: 8s
-     # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
-      - switch.turn_off: sliv_close
+      then:
+        - switch.turn_on: sliv_close
+        - delay: 8s
+      # - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
+        - switch.turn_off: sliv_close
     stop_action:
-      - switch.turn_off: sliv_close
-      - switch.turn_off: sliv_open
+      then:
+        - switch.turn_off: sliv_close
+        - switch.turn_off: sliv_open
 
 
 #-------------------------------------------
@@ -158,6 +172,24 @@ sensor:
 # BINARY SENSOR
 #-------------------------------------------
 binary_sensor:
+  - platform: gpio
+    name: Toggle_valve
+    icon: mdi:water-pump
+    pin:
+      number: 5
+      inverted: true
+      mode: INPUT_PULLUP
+    filters:
+      - delayed_off: 10ms
+    on_press: 
+      - if:
+          condition:
+            lambda: 'return id(aqua_valve).position == 0.0;'
+          then:
+            - valve.close: aqua_valve
+          else:
+            - valve.open: aqua_valve
+
   - platform: gpio
     pin:
       number: 15
@@ -192,9 +224,9 @@ binary_sensor:
     id: leak_input
     name: "leak input"
     on_press:
-      then:
-        - valve.close: aqua_valve
-#-------------------------------------------
+      - valve.close: aqua_valve
+
+#-------------------------------------------   
 # SWITCH
 #-------------------------------------------   
 switch:

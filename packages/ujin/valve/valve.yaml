@@ -24,6 +24,7 @@ valve:
       } else {
         return VALVE_OPEN;
       }
+      return {};
     open_action:
       - switch.turn_on: aqua_open
       - delay: !lambda 'return (uint32_t)(id(relay_delay_time).state * 1000);'
@@ -71,25 +72,31 @@ sensor:
 #-------------------------------------------
 binary_sensor:
   - id: !extend left_touch
-    on_click:
-      then:
-        if:
-          condition:
-            lambda: return (id(aqua_valve).position == VALVE_CLOSED);
-          then:
-            - valve.open: aqua_valve
-          else:
-            - valve.close: aqua_valve
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          if:
+            condition:
+              lambda: return (id(aqua_valve).position == 0.0);
+            then:
+              - valve.close: aqua_valve
+            else:
+              - valve.open: aqua_valve
   - id: !extend right_touch
-    on_click:
-      then:
-        if:
-          condition:
-            lambda:  return (id(aqua_valve).position == VALVE_CLOSED);
-          then:
-            - valve.open: aqua_valve
-          else:
-            - valve.close: aqua_valve
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.5s
+        then:
+          if:
+            condition:
+              lambda: return (id(aqua_valve).position == 0.0);
+            then:
+              - valve.open: aqua_valve
+            else:
+              - valve.close: aqua_valve
   - platform: analog_threshold
     sensor_id: adc_leak
     threshold: 0.4
