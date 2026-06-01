@@ -1,0 +1,76 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  zero_dimm: !include 
+#    file: packages/ujin/zero_dimm_in.yaml
+#    vars:
+#      dimmer1_zero: GPIO32 
+#      dimmer2_zero: GPIO33
+#      dimmer1_gate: GPIO19  
+#      dimmer2_gate: GPIO22  
+#      type_light1: monochromatic # binary
+#      type_light2: monochromatic # binary
+# and copy file esphome/packages/ujin
+
+external_components:
+  - source: github://InspectorTrinket/advanced_ac_dimmer
+    components: [advanced_ac_dimmer]
+    
+#-------------------------------------------
+# OUTPUT
+#-------------------------------------------      
+output:
+  - platform: advanced_ac_dimmer
+    gate_pin: $dimmer1_gate 
+    id: dimmer1
+    zero_cross_pin:
+      number: $dimmer1_zero
+      mode:
+        input: true
+      inverted: yes
+
+    method: leading              #  leading_pulse | leading
+    zc_method: edges             # edges | pulse | inverted_pulse
+    init_with_n_half_cycles: 10  # 0–255, default 0
+    min_power: 0.30              # 0.0–1.0, default 0.0
+    max_power: 1.0               # 0.0–1.0, default 1.0
+    max_flat_threshold: 0.63     # 0.01–0.99, optional
+
+  - platform: advanced_ac_dimmer
+    id: dimmer2
+    gate_pin: $dimmer2_gate
+    zero_cross_pin:
+      number: $dimmer2_zero
+      mode:
+        input: true
+      inverted: yes
+    method: leading              #  leading_pulse | leading
+    zc_method: edges             # edges | pulse | inverted_pulse
+    init_with_n_half_cycles: 10  # 0–255, default 0
+    min_power: 0.30              # 0.0–1.0, default 0.0
+    max_power: 1.0               # 0.0–1.0, default 1.0
+    max_flat_threshold: 0.63     # 0.01–0.99, optional
+    
+#-------------------------------------------
+# LIGHT
+#-------------------------------------------
+light:
+  - platform: $type_light1
+    output: dimmer1
+    name: "1 лампа"
+    id: light_dimmer1
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-1-circle-outline
+
+
+  - platform: $type_light2 
+    output: dimmer2
+    name: "2 лампа"
+    id: light_dimmer2
+    restore_mode: ALWAYS_OFF
+    icon: mdi:numeric-2-circle-outline
+
+
+
+
+
