@@ -46,10 +46,7 @@
 |:---:|:---:|:---:|:---:|
 | [![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg)](/Connect-din%20Wi-Fi) | [![Connect-in](/connect-in/images/connect_in0.jpg)](/connect-in) |  [![Lume LED](/led/images/lume-led.jpg)](/led) | [![lume-in](/lume-in/images/lume-in.jpg)](/lume-in) |
 
-| 🎛️ Connect din Wi-Fi | Коммутатор с двумя реле на DIN-рейку |
-| 🔌 Connect‑in | Реле в подрозетник |
-| 🎚️ lume‑in | Диммер в подрозетник |
-| 🎚️ Lume LED | 5 канальный контроллер LED ленты|
+| 🎛️ Connect din Wi-Fi Коммутатор с двумя реле на DIN-рейку | 🔌 Connect‑in  Реле в подрозетник | 🎚️ lume‑in  Диммер в подрозетник | 🎚️ Lume LED  5 канальный контроллер LED ленты |
 
 ---
 
