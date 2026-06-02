@@ -41,7 +41,7 @@
 |:---:|:---:|
 | [![Heat Wi-Fi](/Heat%20Wi-Fi/images/heat_1.jpg)](/Heat%20Wi-Fi) | [![Heat](/Heat/images/heat.jpg)](/Heat) |
 
-### 🎛️ Коммутаторы
+### 🎛️ Прочее
 | Connect din Wi-Fi | Connect‑in | Lume LED | lume‑in |
 |:---:|:---:|:---:|:---:|
 | [![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg)](/Connect-din%20Wi-Fi) | [![Connect-in](/connect-in/images/connect_in0.jpg)](/connect-in) |  [![Lume LED](/led/images/lume-led.jpg)](/led) | [![lume-in](/lume-in/images/lume-in.jpg)](/lume-in) |
