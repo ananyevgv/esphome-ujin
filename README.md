@@ -18,14 +18,14 @@
 
 ## 🧩 Поддерживаемые устройства
 
-### 💡 Освещение
+### 💡 Выключатели
 | Lume Luxe L.te M1 | Lume Wi-Fi Z1 | Lume Luxe L.te M2 | Ujin EKF |
 |:---:|:---:|:---:|:---:|
 | [![Lume Luxe L.te M1](/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg)](/Lume%20Luxe_L.te%20M1) | [![Lume Wi-Fi Z1](/Lume%20Wi-Fi_Z1/images/Lume%20WIFI%20Z1.jpg)](/Lume%20Wi-Fi_Z1) | [![Lume Luxe L.te M2](/Lume%20Luxe_L.te%20M2/images/Lume%20Luxe_L.te%20M2.jpg)](/Lume%20Luxe_L.te%20M2) | [![Pulse_EP_WBZ_T_MNI](/Pulse_EP_WBZ_T_MNI/images/Pulse_EP_WBZ_T_MNI_1.jpg)](/Pulse_EP_WBZ_T_MNI) |
 
-| Lume Wi-Fi + BLE/IR/CO₂ | Lume LED | lume‑in |
-|:---:|:---:|:---:|
-| [![wifi/BLE/IR/CO2](/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg)](/Lume%20Wi-Fi_BLE_IR_CO2) | [![Lume LED](/led/images/lume-led.jpg)](/led) | [![lume-in](/lume-in/images/lume-in.jpg)](/lume-in) |
+| Lume Wi-Fi + BLE/IR/CO₂ | 
+|:---:|
+| [![wifi/BLE/IR/CO2](/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg)](/Lume%20Wi-Fi_BLE_IR_CO2) |
 
 ### 💧 Вода и защита от протечек
 | Aqua Sense (BLE) | Aqua Wi-Fi | Aqua EKF | Drive |
@@ -40,9 +40,9 @@
 | [![Heat Wi-Fi](/Heat%20Wi-Fi/images/heat_1.jpg)](/Heat%20Wi-Fi) | [![Heat](/Heat/images/heat.jpg)](/Heat) |
 
 ### 🎛️ Коммутаторы
-| Connect din Wi-Fi | Connect‑in |
-|:---:|:---:|
-| [![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg)](/Connect-din%20Wi-Fi) | [![Connect-in](/connect-in/images/connect_in0.jpg)](/connect-in) |
+| Connect din Wi-Fi | Connect‑in | Lume LED | lume‑in |
+|:---:|:---:|:---:|:---:|
+| [![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg)](/Connect-din%20Wi-Fi) | [![Connect-in](/connect-in/images/connect_in0.jpg)](/connect-in) |  [![Lume LED](/led/images/lume-led.jpg)](/led) | [![lume-in](/lume-in/images/lume-in.jpg)](/lume-in) |
 
 ---
 
