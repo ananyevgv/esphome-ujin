@@ -1,57 +1,31 @@
 #-------------------------------------------
 # EXTERNAL COMPONENT
 #-------------------------------------------
- # source: github://NicoIIT/esphome-ble_adv_proxy
- # https://github.com/NicoIIT/ha-ble-adv
- # https://github.com/NicoIIT/esphome-components
-
-#-------------------------------------------
-# EXTERNAL COMPONENT
-#-------------------------------------------
 external_components:
-  - source: github://aronsky/esphome-components
-    components: [ble_adv_controller]
+  - source: github://Xmister/esphome-smartlampfan-components@nico
     refresh: 0s
 
-api:
-  custom_services: True
-  
-#-------------------------------------------
-# BLE ADV
-#-------------------------------------------
 ble_adv_controller:
   - id: my_controller
-    encoding: lampsmart_pro
-    variant: v1
-    # max_duration (default 3000, range 300 -> 10000): the maximum duration in ms during which the command is advertized.
-    # if a command is received before the 'max_duration' but after the 'duration', it is processed immediately 
-    # Increasing this parameter will have no major consequences, the component will just keep advertize the command
-    # Could be interesting at pairing time to have the pairing command advertized for a long time
- #   max_duration: 3000
-    # duration (default 200, range 100 -> 500): the MINIMUM duration in ms during which the command is sent.
-    # It corresponds to the maximum time the controlled device is taking to process a command and be ready to receive a new one.
-    # if a command is received before the 'duration' it is queued and processed later, 
-    # if there is already a similar command pending, in this case the pending command is removed from the queue
-    # Increasing this parameter will make the combination of commands slower. See 'Dynamic Configuration'.
-    # Can be configured dynamically in HA directly, device 'Configuration' section, "Duration".
-    duration: 100
-    
-#-------------------------------------------
-# LIGHT
-#-------------------------------------------
+    encoding: zhijia
+    variant: v2
+   # forced_id: xxxxxx
+    index: 1
+
 light:
   - platform: ble_adv_controller
     ble_adv_controller_id: my_controller
+    type: cww
     id: light_dimmer1
     name: "Люстра"
-    min_brightness: 5%
     
-#-------------------------------------------
-# BUTTON
-#-------------------------------------------
 button:
-  - platform: ble_adv_controller
-    ble_adv_controller_id: my_controller
-    name: "Сопряжение люстры"
-    id: pair
-    cmd: pair
+  - platform: template
+    name: Pair
+    on_press:
+      ble_adv_controller.pair: my_controller
+  
+
+  
+
+    
