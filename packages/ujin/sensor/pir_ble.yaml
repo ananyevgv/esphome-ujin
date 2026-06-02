@@ -158,9 +158,6 @@ select:
       then:
         - lambda: |-
             id(g_pir) = (i);
-        - logger.log:
-            format: "Pir option: %s (%d)"
-            args: ["x.c_str()", "i"]
             
 #-------------------------------------------
 # SCRIPT

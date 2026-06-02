@@ -26,7 +26,7 @@ microphone:
     channel: left
     pdm: true
     bits_per_sample: 16bit
-    bits_per_channel: 8bit
+   # bits_per_channel: 8bit
     sample_rate: 16000
     
 #-------------------------------------------
@@ -174,9 +174,7 @@ select:
       then:
         - lambda: |-
             id(g_noise) = (i);
-        - logger.log:
-            format: "Noise option: %s (%d)"
-            args: ["x.c_str()", "i"]
+
 
 #-------------------------------------------
 # GLOBALS
