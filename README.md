@@ -23,6 +23,8 @@
 |:---:|:---:|:---:|:---:|
 | [![Lume Luxe L.te M1](/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg)](/Lume%20Luxe_L.te%20M1) | [![Lume Wi-Fi Z1](/Lume%20Wi-Fi_Z1/images/Lume%20WIFI%20Z1.jpg)](/Lume%20Wi-Fi_Z1) | [![Lume Luxe L.te M2](/Lume%20Luxe_L.te%20M2/images/Lume%20Luxe_L.te%20M2.jpg)](/Lume%20Luxe_L.te%20M2) | [![Pulse_EP_WBZ_T_MNI](/Pulse_EP_WBZ_T_MNI/images/Pulse_EP_WBZ_T_MNI_1.jpg)](/Pulse_EP_WBZ_T_MNI) |
 
+| ⚠️ Отличие устройств Pulse | Отсутствие исполнительных устройств ( таких как диммер, реле) |
+
 | Lume Wi-Fi + BLE/IR/CO₂ | 
 |:---:|
 | [![wifi/BLE/IR/CO2](/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg)](/Lume%20Wi-Fi_BLE_IR_CO2) |
@@ -44,6 +46,11 @@
 |:---:|:---:|:---:|:---:|
 | [![Connect din](/Connect-din%20Wi-Fi/images/connect-din_wi-fi.jpg)](/Connect-din%20Wi-Fi) | [![Connect-in](/connect-in/images/connect_in0.jpg)](/connect-in) |  [![Lume LED](/led/images/lume-led.jpg)](/led) | [![lume-in](/lume-in/images/lume-in.jpg)](/lume-in) |
 
+| 🎛️ Connect din Wi-Fi | Коммутатор с двумя реле на DIN-рейку |
+| 🔌 Connect‑in | Реле в подрозетник |
+| 🎚️ lume‑in | Диммер в подрозетник |
+| 🎚️ Lume LED | 5 канальный контроллер LED ленты|
+
 ---
 
 ## 📖 Полезная информация
@@ -52,10 +59,6 @@
 |----------------|-----------|
 | 🧠 Расшифровка моделей по датчикам | [`/datasheet/data.jpg`](/datasheet/data.jpg) |
 | 📚 Даташиты на компоненты | [`/datasheet`](./datasheet) |
-| ⚠️ Отличие устройств Pulse | Отсутствие исполнительных устройств ( таких как диммер, реле) |
-| 🎛️ Connect din Wi-Fi | Коммутатор с двумя реле на DIN-рейку |
-| 🔌 Connect‑in | Реле в подрозетник |
-| 🎚️ lume‑in | Диммер в подрозетник |
 
 ---
 
