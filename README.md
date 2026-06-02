@@ -23,11 +23,11 @@
 |:---:|:---:|:---:|:---:|
 | [![Lume Luxe L.te M1](/Lume%20Luxe_L.te%20M1/images/Luxe_Lte%20M1_1.jpg)](/Lume%20Luxe_L.te%20M1) | [![Lume Wi-Fi Z1](/Lume%20Wi-Fi_Z1/images/Lume%20WIFI%20Z1.jpg)](/Lume%20Wi-Fi_Z1) | [![Lume Luxe L.te M2](/Lume%20Luxe_L.te%20M2/images/Lume%20Luxe_L.te%20M2.jpg)](/Lume%20Luxe_L.te%20M2) | [![Pulse_EP_WBZ_T_MNI](/Pulse_EP_WBZ_T_MNI/images/Pulse_EP_WBZ_T_MNI_1.jpg)](/Pulse_EP_WBZ_T_MNI) |
 
-| ⚠️ Отличие устройств Pulse | Отсутствие исполнительных устройств ( таких как диммер, реле) |
-
 | Lume Wi-Fi + BLE/IR/CO₂ | 
 |:---:|
 | [![wifi/BLE/IR/CO2](/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg)](/Lume%20Wi-Fi_BLE_IR_CO2) |
+
+| ⚠️ Отличие устройств Pulse | Отсутствие исполнительных устройств ( таких как диммер, реле) |
 
 ### 💧 Вода и защита от протечек
 | Aqua Sense (BLE) | Aqua Wi-Fi | Aqua EKF | Drive |
