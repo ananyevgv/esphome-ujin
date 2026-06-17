@@ -1,0 +1,48 @@
+esphome:
+  on_boot:
+    - priority: 600
+      then:
+        - lambda: |-
+            id(rf24_status_code_${leak_name}).publish_state(0); 
+
+esp32_ble_tracker:
+  on_ble_manufacturer_data_advertise:
+    - mac_address: $leak_mac
+      manufacturer_id: 'ffff'
+      then:
+        - lambda: |-        
+            struct __attribute__((packed)) dataStruct {
+            int16_t  initial_two_bytes;
+            uint8_t battery_level;
+            uint8_t status_code;
+            uint8_t counter;
+            } myData;            
+            memcpy(&myData, &*x.begin(), sizeof(myData)); 
+            id(rf24_battery_level_${leak_name}).publish_state(myData.battery_level);
+            id(rf24_status_code_${leak_name}).publish_state(myData.status_code);
+
+
+sensor:
+  - platform: template
+    name: "battery_level ${leak_name}"
+    id: rf24_battery_level_${leak_name}
+    unit_of_measurement: '%'
+    accuracy_decimals: 0
+    device_class: battery
+
+  - platform: template
+    id: rf24_status_code_${leak_name}
+    accuracy_decimals: 0
+
+binary_sensor:
+  - platform: template
+    name: "Протечка ${leak_name}"
+    id: leak_${leak_name}
+    lambda: return (id(rf24_status_code_${leak_name}).state == 2 || id(rf24_status_code_${leak_name}).state == 4 || id(rf24_status_code_${leak_name}).state == 6);
+    device_class: MOISTURE
+
+  - id: !extend leak
+    condition:
+      or:
+        - binary_sensor.is_on: leak_${leak_name}
+    
