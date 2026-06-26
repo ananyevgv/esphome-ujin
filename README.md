@@ -3,7 +3,7 @@
 
 [license-shield]: https://img.shields.io/static/v1?label=License&message=MIT&color=orange&logo=license
 [license]: https://opensource.org/licenses/MIT
-[esphome-release-shield]: https://img.shields.io/static/v1?label=ESPHome&message=2026.4&color=green&logo=esphome
+[esphome-release-shield]: https://img.shields.io/github/v/release/esphome/esphome?label=ESPHome&color=green&logo=esphome
 [esphome-release]: https://GitHub.com/esphome/esphome/releases/
 
 <div align="center">
@@ -72,3 +72,7 @@
     📦 ESPHome 2026.4+
   </sub>
 </div>
+
+## ⭐ Поддержать проект
+
+Если проект оказался полезным — поставьте ⭐ на GitHub!
