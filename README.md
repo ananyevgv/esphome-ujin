@@ -25,7 +25,7 @@
 | Lume Wi-Fi + BLE/IR/CO₂ | 
 | [![wifi/BLE/IR/CO2](/Lume%20Wi-Fi_BLE_IR_CO2/images/Lume%20wifi_BLE_IR_CO2_1.jpg)](/Lume%20Wi-Fi_BLE_IR_CO2) |
 
- ⚠️ Отличие устройств Pulse - отсутствие исполнительных устройств ( таких как диммер, реле) 
+ ⚠️ Отличие устройств Pulse - отсутствие исполнительных устройств (таких как диммер, реле) 
 
 ### 💧 Вода и защита от протечек
 | Aqua Sense (BLE) | Aqua Wi-Fi | Aqua EKF | Drive |
