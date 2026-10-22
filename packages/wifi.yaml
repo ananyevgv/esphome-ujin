@@ -7,41 +7,60 @@
 #-------------------------------------------
 # WIFI
 #-------------------------------------------
+# WI-FI
+#-------------------------------------------
+
+api:
+  #password: !secret api_pass
+  encryption:
+    key:  !secret api_key
+    
+ota:
+  - platform: esphome
+   # encryption:
+    
+  
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-  
+  min_auth_mode: WPA2
+ # power_save_mode: none
+  id: wifi_id
+ 
+#-------------------------------------------
+# TEXT SENSOR
+#-------------------------------------------
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+      icon: mdi:ip
+    ssid:
+      name: "SSID"
+      icon: mdi:access-point-network
+    mac_address:
+      name: "Mac"
+      icon: mdi:lan
 #-------------------------------------------
 # SENSOR
 #-------------------------------------------
 sensor:
   - platform: wifi_signal
-    name: "${name} Wifi"
+    name: "Wifi"
     update_interval: 60s  
     id: wifi_signal_db
     entity_category: "diagnostic"
-    icon: mdi:wifi
     
+  # WI-FI Signal
   - platform: copy # Reports the WiFi signal strength in %
     source_id: wifi_signal_db
-    name: "${name} WiFi Percent"
+    id: wifi_signal_percent
+    name: "WiFi Percent"
     filters:
       - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
     unit_of_measurement: "%"
     entity_category: "diagnostic"
-    id: WiFiP
     icon: mdi:wifi
-#-------------------------------------------
-# TEXT SENSOR
-#------------------------------------------- 
-text_sensor:
-  - platform: wifi_info
-    ip_address:
-      name: "${name} IP Address"
-      icon: mdi:ip
-    ssid:
-      name: "${name} SSID"
-      icon: mdi:access-point-network
-    mac_address:
-      name: "${name} Mac"
-      icon: mdi:lan
+
+    
+   
