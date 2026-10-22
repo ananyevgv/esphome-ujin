@@ -8,7 +8,8 @@ esp32:
   variant: esp32s3
   framework:
     type: esp-idf
-    
+    advanced:
+      flash_chip: generic      # экономит небольшой объём IRAM    
 #-------------------------------------------
 # PSRAM
 #-------------------------------------------
@@ -16,6 +17,8 @@ psram:
   mode: quad
   speed: 80MHz
 
+logger:
+  
 #-------------------------------------------
 # PACKAGES
 #-------------------------------------------
@@ -30,7 +33,7 @@ packages:
 #-------------------------------------------
 light:
   - platform: esp32_rmt_led_strip
-    rgb_order: RGB
+    channel_colors: RGB
     pin: GPIO38
     num_leds: 1
     chipset: ws2812
@@ -78,22 +81,22 @@ valve:
         - valve.stop: water_valve
         - valve.stop: sliv_valve
     optimistic: true
-    on_open:
-      - light.addressable_set:
-          id: aqua_light
+  #  on_open:
+   #   - light.addressable_set:
+    #      id: aqua_light
    #       range_from: 0
    #       range_to: 50
-          red: 0%
-          green: 0%
-          blue: 100%
-    on_closed:
-      - light.addressable_set:
-          id: aqua_light
+    #      red: 0%
+     #     green: 0%
+     #     blue: 100%
+    #on_closed:
+    #  - light.addressable_set:
+    #      id: aqua_light
    #       range_from: 0
    #       range_to: 50
-          red: 100%
-          green: 0%
-          blue: 0%
+    #      red: 100%
+    #      green: 0%
+    #      blue: 0%
 
   - platform: template
   #  name: "water valve"
@@ -200,21 +203,21 @@ binary_sensor:
       inverted: true
       mode: INPUT_PULLUP
     id: b_sliv_close
-  #  name: b_sliv_close
+   # name: b_sliv_close
   - platform: gpio
     pin:
       number: 10
       inverted: true
       mode: INPUT_PULLUP
     id: b_water_open
-  #  name: b_water_open
+   # name: b_water_open
   - platform: gpio
     pin:
       number: 11
       inverted: true
       mode: INPUT_PULLUP
     id: b_water_close
-   # name: b_water_close
+  #  name: b_water_close
   - platform: analog_threshold
     sensor_id: adc_leak
     threshold: 0.4
@@ -242,3 +245,39 @@ switch:
   - platform: gpio
     id: water_close
     pin: 14
+
+
+color:
+  - id: red
+    red: 100%
+    green: 0%
+    blue: 0%
+
+  - id: yellow
+    red: 100%
+    green: 100%
+    blue: 0%
+
+  - id: blue
+    red: 0%
+    green: 100%
+    blue: 100%          
+#-------------------------------------------
+# DISPLAY
+#-------------------------------------------
+display:
+  - platform: addressable_light
+    id: aqua_display
+    addressable_light_id: aqua_light
+    width: 1
+    height: 1
+    update_interval: 0.1s
+    lambda: |-
+      if (id(aqua_valve).position == VALVE_OPEN) {
+        it.line(0, 0, 0, 0, blue);
+      } else if (id(aqua_valve).position == VALVE_CLOSED) {
+        it.line(0, 0, 0, 0, red);
+      } else {
+        it.line(0, 0, 0, 0, yellow);
+      }
+
