@@ -1,0 +1,61 @@
+# https://stuvel.eu/post/2022-06-05-esphome-touch-dimmer/
+
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  but: !include 
+#    file: packages/ujin/button/button_ekf_aqua.yaml
+
+# and copy file esphome/packages/ujin/button
+
+
+external_components:
+  - source: github://ananyevgv/esphome-components
+    components: [ aw9310x ]
+   # ref: MQ
+    refresh: 0s        
+        
+#-------------------------------------------
+# TOUCH CAP
+#-------------------------------------------        
+aw9310x:
+  address: 0x12  # опционально, по умолчанию 0x12
+ # interrupt_pin: GPIO23  # если не указать, будет работать в опросном режиме
+ # threshold: 50000
+  id: aw9310x_sensor
+  
+#-------------------------------------------
+# BINARY SENSOR
+#-------------------------------------------
+binary_sensor:
+  - platform: aw9310x
+    aw9310x_id: aw9310x_sensor
+    channel: 0
+    name: "левая кнопка"
+    id: left_touch
+    icon: mdi:gesture-tap-button
+    on_click: 
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+
+  - platform: aw9310x
+    aw9310x_id: aw9310x_sensor
+    channel: 1
+    name: "правая кнопка"
+    id: right_touch
+    icon: mdi:gesture-tap-button
+    on_click: 
+      then:
+        - if:
+            condition:
+              switch.is_on: sound
+            then:
+              - rtttl.play: 'short:d=20,o=5,b=100:e6'  
+
+          
+
+              
