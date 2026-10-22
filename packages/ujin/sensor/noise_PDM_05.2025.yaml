@@ -62,7 +62,7 @@ switch:
 binary_sensor:
   - platform: analog_threshold
     name: "Датчик шума"
-    id: noise
+    id: binary_noise
     threshold: -20
     sensor_id: Leq_id
     device_class: sound
@@ -143,24 +143,24 @@ select:
         - lambda: |-
             switch(i) {
               case 0:
-                 id(noise).set_lower_threshold(([]() -> float { return -50.0f; }));
-                 id(noise).set_upper_threshold(([]() -> float { return -50.0f; }));
+                 id(binary_noise).set_lower_threshold(([]() -> float { return -50.0f; }));
+                 id(binary_noise).set_upper_threshold(([]() -> float { return -50.0f; }));
                  break;
               case 1: 
-                id(noise).set_lower_threshold(([]() -> float { return -40.0f; }));
-                id(noise).set_upper_threshold(([]() -> float { return -40.0f; }));
+                id(binary_noise).set_lower_threshold(([]() -> float { return -40.0f; }));
+                id(binary_noise).set_upper_threshold(([]() -> float { return -40.0f; }));
                 break;
               case 2: 
-                id(noise).set_lower_threshold(([]() -> float { return -30.0f; }));
-                id(noise).set_upper_threshold(([]() -> float { return -30.0f; }));
+                id(binary_noise).set_lower_threshold(([]() -> float { return -30.0f; }));
+                id(binary_noise).set_upper_threshold(([]() -> float { return -30.0f; }));
                 break;
               case 3: 
-                id(noise).set_lower_threshold(([]() -> float { return -20.0f; }));
-                id(noise).set_upper_threshold(([]() -> float { return -20.0f; }));
+                id(binary_noise).set_lower_threshold(([]() -> float { return -20.0f; }));
+                id(binary_noise).set_upper_threshold(([]() -> float { return -20.0f; }));
                 break;
               case 4: 
-                id(noise).set_lower_threshold(([]() -> float { return -10.0f; }));
-                id(noise).set_upper_threshold(([]() -> float { return -10.0f; }));
+                id(binary_noise).set_lower_threshold(([]() -> float { return -10.0f; }));
+                id(binary_noise).set_upper_threshold(([]() -> float { return -10.0f; }));
                 break;
             }
 
