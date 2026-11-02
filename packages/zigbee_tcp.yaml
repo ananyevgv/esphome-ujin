@@ -44,7 +44,7 @@ uart:
     parity: NONE
 
 #-------------------------------------------
-# Serial_proxy
+# Serial_tcp
 #-------------------------------------------
 serial_tcp:
   - id: zigbee_tcp
