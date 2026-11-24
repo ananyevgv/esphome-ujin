@@ -12,7 +12,7 @@
 # EXTERNAL COMPONENTS
 #-------------------------------------------
 external_components:
-  - source: github://ananyevgv/esphome-components/
+  - source: github://ananyevgv/esphome-components
     refresh: 0s
 
 #-------------------------------------------
@@ -173,9 +173,9 @@ select:
       then:
         - lambda: |-
             id(g_pir) = (i);
-        - logger.log:
-            format: "Pir option: %s (%d)"
-            args: ["x.c_str()", "i"]
+     #   - logger.log:
+     #       format: "Pir option: %s (%d)"
+      #      args: ["x.c_str()", "i"]
             
 #-------------------------------------------
 # SCRIPT
