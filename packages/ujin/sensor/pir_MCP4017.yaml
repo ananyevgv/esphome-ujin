@@ -12,7 +12,7 @@
 # EXTERNAL COMPONENTS
 #-------------------------------------------
 external_components:
-  - source: github://ananyevgv/esphome-components/
+  - source: github://ananyevgv/esphome-components
     refresh: 0s
 
 #-------------------------------------------
