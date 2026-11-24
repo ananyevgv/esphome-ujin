@@ -8,7 +8,7 @@
 #      id_hts221_h: hts221_h
 #-------------------------------------------
 external_components:
-  - source: github://ananyevgv/esphome-components/
+  - source: github://ananyevgv/esphome-components
     refresh: 0s
     
 #-------------------------------------------
